@@ -1,4 +1,5 @@
 module.exports = {
     component: require('./component'),
-    initial: require('./initial')
+    initial: require('./initial'),
+    service: require('./service')
 };
