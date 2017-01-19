@@ -9,10 +9,7 @@ module.exports = (rootDir, name) => {
     const templates = getTemplates(rootDir);
 
     if (checkHasName(name)) {
-        erector.construct([
-            { name: 'filename', answer: name},
-            { name: 'serviceName', answer: utilities.dashToCap(name) + 'Service' }
-        ], templates, true);
+        generateWithKnownName(name, templates);
     } else {
         erector.build(getAllQuestions(), templates);
     }
@@ -36,6 +33,16 @@ const getTemplates = (rootDir) => {
     ]);
 };
 
+const generateWithKnownName = (name, templates) => {
+    const knownAnswers = [
+        { name: 'filename', answer: name},
+        { name: 'serviceName', answer: utilities.dashToCap(name) + 'Service' }
+    ];
+
+    erector.construct(knownAnswers, templates, true);
+    notifyUser(knownAnswers);
+}
+
 const getAllQuestions = () => [
     {
         name: 'filename',
@@ -53,3 +60,12 @@ const getAllQuestions = () => [
         useAnswer: 'filename'
     }
 ];
+
+const notifyUser = (answers) => {
+    const serviceName = answers.find((answer) => answer.name === 'serviceName');
+    const filename = answers.find((answer) => answer.name === 'filename');
+
+    console.info(`Don't forget to add the following to the module.ts file:`);
+    console.info(`    import { ${serviceName.answer} } from './services/${filename.answer}.service';`);
+    console.info(`And to add ${serviceName.answer} to the NgModule providers list or add as a provider to one or more components`);
+};

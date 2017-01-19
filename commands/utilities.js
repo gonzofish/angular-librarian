@@ -26,9 +26,12 @@ exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, ans
     return result;
 };
 
+const dashToCamel = (value) =>
+    value.replace(/(-.)/g, (match) => match.replace('-', '').toUpperCase());
+exports.dashToCamel = dashToCamel;
+
 exports.dashToCap = (value) =>
-    value[0].toUpperCase() +
-    value.slice(1).replace(/(-.)/g, (match) => match.replace('-', '').toUpperCase());
+    value[0].toUpperCase() + dashToCamel(value.slice(1))
 
 const deleteFolder = (folder) => {
     if (fs.existsSync(folder)) {

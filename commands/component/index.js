@@ -5,14 +5,16 @@ const path = require('path');
 const utilities = require('../utilities');
 
 module.exports = (rootDir, selector) => {
+    const templates = getTemplates(rootDir);
+
     if (utilities.checkIsDashFormat(selector)) {
-        createWithKnownSelector(rootDir, selector);
+        createWithKnownSelector(selector, templates);
     } else {
-        createWithMissingSelector(rootDir);
+        createWithMissingSelector(templates);
     }
 };
 
-const createWithKnownSelector = (rootDir, selector) => {
+const createWithKnownSelector = (selector, templates) => {
     const knownAnswers = [
         { answer: selector, name: 'selector' },
         { answer: utilities.dashToCap(selector) + 'Component', name: 'componentName' }
@@ -20,8 +22,26 @@ const createWithKnownSelector = (rootDir, selector) => {
     const questions = getComponentOptionQuestions(knownAnswers);
 
     erector.inquire(questions).then((answers) => {
-        erector.construct(knownAnswers.concat(answers), getFiles(rootDir), true);
+        const allAnswers = knownAnswers.concat(answers);
+
+        erector.construct(allAnswers, templates, true);
+        notifyUser(allAnswers);
     });
+};
+
+const createWithMissingSelector = (templates) => {
+    const questions = getAllQuestions();
+
+    erector.build(questions, templates).then(notifyUser);
+};
+
+const getAllQuestions = () => {
+    const baseQuestions = [
+        { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => utilities.checkIsDashFormat(value) ? value : null },
+        { name: 'componentName', transform: (value) => utilities.dashToCap(value) + 'Component', useAnswer: 'selector' }
+    ];
+
+    return baseQuestions.concat(getComponentOptionQuestions());
 };
 
 const getComponentOptionQuestions = (knownAnswers) => [
@@ -125,7 +145,7 @@ const setLifecycleMethods = (value) => {
     return methods;
 };
 
-const getFiles = (rootDir) => {
+const getTemplates = (rootDir) => {
     const componentDir = path.resolve(rootDir, 'src', '{{ selector }}');
 
     return utilities.getTemplates(rootDir, __dirname, [
@@ -157,3 +177,12 @@ const checkIsInline = (answers, type) => {
 
     return answer.answer === '``';
 }
+
+const notifyUser = (answers) => {
+    const componentName = answers.find((answer) => answer.name === 'componentName');
+    const selector = answers.find((answer) => answer.name === 'selector');
+
+    console.info(`\nDon't forget to add the following to the module.ts file:`);
+    console.info(`    import { ${componentName.answer} } from './${selector.answer}/${selector.answer}.component';`);
+    console.info(`And to add ${componentName.answer} to the NgModule declarations list`);
+};
