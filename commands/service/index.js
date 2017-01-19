@@ -46,13 +46,8 @@ const generateWithKnownName = (name, templates) => {
 const getAllQuestions = () => [
     {
         name: 'filename',
-        question: 'Service name:', transform: (value) => {
-            if (!utilities.checkIsDashFormat(value)) {
-                value = null;
-            }
-
-            return value;
-        }
+        question: 'Service name (in dash-case):',
+        transform: (value) => utilities.checkIsDashFormat(value) ? value : null
     },
     {
         name: 'serviceName',
