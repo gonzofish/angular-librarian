@@ -176,7 +176,7 @@ for a service--a `service.ts` and `service.spec.ts` file.
       |__<service-name>.service.ts
 ```
 
-### pipd (alias: p)
+### pipe (alias: p)
 
 Generates a pipe
 
