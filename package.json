@@ -1,0 +1,30 @@
+{
+  "name": "angular-library-set",
+  "version": "0.0.0-alpha",
+  "description": "An erector-set-powered scaffolding for Angular 2+ libraries",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gonzofish/angular-library-set.git"
+  },
+  "keywords": [
+    "erector",
+    "set",
+    "generator",
+    "angular",
+    "webpack"
+  ],
+  "author": "Matt Fehskens <matt.fehskens@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gonzofish/angular-library-set/issues"
+  },
+  "homepage": "https://github.com/gonzofish/angular-library-set#readme",
+  "dependencies": {
+    "erector-set": "^1.0.2-alpha"
+  }
+}
