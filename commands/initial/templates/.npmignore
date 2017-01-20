@@ -1,1 +1,13 @@
 *.spec.ts
+.gitignore
+coverage
+debug.log
+karma.conf.js
+node_modules
+test.ts
+tsconfig.json
+tslint.json
+typings
+typings.json
+vendor.ts
+webpack
