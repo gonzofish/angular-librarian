@@ -6,7 +6,6 @@
   "scripts": {
     "g": "node ./node_modules/angular-library-set",
     "lint": "tslint ./src/**/*.ts",
-    "postinstall": "typings install",
     "start": "webpack-dev-server --config ./webpack/webpack.dev.js",
     "test": "karma start ./karma.conf.js",
     "test:headless": "karma start ./karma.conf.js --browsers PhantomJS"

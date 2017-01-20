@@ -68,11 +68,20 @@ npm run g i
 Creates the project structure and a slew of files:
 
 ```
-|__node_modules
+|__examples/
+   |__example.component.html
+   |__example.component.ts
+   |__example.main.ts
+   |__example.module.ts
+   |__index.html
+|__node_modules/
    |__...
-|__src
+|__src/
    |__<library name>.module.ts
    |__index.ts
+|__webpack/
+   |__webpack.dev.js
+   |__webpack.test.js
 |__.gitignore
 |__.npmignore
 |__index.ts
@@ -82,14 +91,22 @@ Creates the project structure and a slew of files:
 |__test.ts
 |__tsconfig.json
 |__tslint.json
-|__typings.json
 ```
 
+- `examples/`: where the example usage of the library can be shown
+- `examples/example.component.html`: the example application's root component template
+- `examples/example.component.ts`: the example application's root component
+- `examples/example.main.ts`: the example application's main file
+- `examples/example.module.ts`: the example application module
+- `examples/index.html`: the example application's main HTML file
 - `node_modules/`: where the dependencies installed via NPM are stored
 - `src/`: where the bulk of application & test code is.
 - `src/<librar name>.module.ts`: the main module of the library
 - `src/index.ts`: a barrel file for easy exporting of classes; makes it easier
     on consumers to access parts of the code for importing.
+- `webpack/`: contains the Wepack configuration files
+- `webpack/webpack.dev.js`: this file is used when running the webpack-dev-server
+- `webpack/webpack.test.js`: used when running unit tests
 - `.gitignore`: the list of file & folder patterns to not commit to git
 - `.npmignore`: the list of file & folder patterns to not publish to NPM
 - `index.ts`: another barrel file
@@ -101,7 +118,8 @@ Creates the project structure and a slew of files:
 - `test.ts`: contains code needed to get the Angular test environment bootstrapped
 - `tsconfig.json`: the TypeScript configuration for the project
 - `tslint.json`: the linting rules for the project
-- `typings.json`: needed for installing `@typings` type definitions
+- `vendor.ts`: contains a list of dependencies that Angular needs loaded before the
+    application is loaded
 
 
 ### component (alias: c)

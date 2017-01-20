@@ -24,7 +24,6 @@ module.exports = (rootDir) => {
             { name: 'test.ts' },
             { name: 'tsconfig.json' },
             { name: 'tslint.json' },
-            { blank: true, name: 'typings.json', },
             { name: 'vendor.ts' },
             { name: 'webpack/webpack.dev.js' },
             { name: 'webpack/webpack.test.js' }
