@@ -10,7 +10,7 @@ module.exports = (rootDir) => {
     erector.inquire(getQuestions()).then((answers) => {
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
-            { name: '.npmignore' },
+            { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
             { name: 'examples/example.component.html' },
             { name: 'examples/example.component.ts' },
             { name: 'examples/example.main.ts' },
@@ -32,7 +32,7 @@ module.exports = (rootDir) => {
         let templates;
 
         if (gitAnswer.answer) {
-            templateList.push({ name: '.gitignore' });
+            templateList.push({ destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' });
         }
 
         templates = utilities.getTemplates(rootDir, __dirname, templateList);
