@@ -17,15 +17,35 @@ module.exports = {
     devtool: 'source-map',
     entry: {
         app: [ path.resolve(rootDir, 'examples', 'example.main') ],
-        vendor: [ path.resolve(rootDir, 'vendor') ]
+        vendor: [ path.resolve(rootDir, 'vendor') ],
+        styles: [ path.resolve(rootDir, 'examples', 'styles.scss') ]
     },
     module: {
         loaders: [
-            { loader: 'raw-loader', test: /\.(s?css|html)$/ },
+            { loader: 'raw-loader', test: /\.html$/ },
+            {
+                exclude: /node_modules/,
+                loaders: ['style-loader', 'css-loader'],
+                test: /\.css$/
+            },
+            {
+                exclude: /node_modules/,
+                loaders: ['raw-loader', 'sass-loader'],
+                test: /component\.scss$/
+            },
+            {
+                exclude: /node_modules/,
+                loaders: ['style-loader', 'css-loader', 'sass-loader'],
+                test: /styles\.scss$/
+            },
             {
                 exclude: /node_modules/,
                 loaders: ['awesome-typescript-loader', 'angular2-template-loader?keepUrl=true'],
                 test: /\.ts$/
+            },
+            {
+                loaders: ['url-loader?limit=10000'],
+                test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|gif|png)(\?v=\d+\.\d+\.\d+)?$/
             }
         ]
     },

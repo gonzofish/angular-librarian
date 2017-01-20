@@ -11,10 +11,13 @@ module.exports = (rootDir) => {
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
             { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
-            { name: 'examples/example.component.html' },
+            { blank: true, name: 'examples/example.component.html' },
+            { blank: true, name: 'examples/example.component.scss' },
             { name: 'examples/example.component.ts' },
             { name: 'examples/example.main.ts' },
             { name: 'examples/example.module.ts' },
+            { name: 'examples/index.html' },
+            { blank: true, name: 'examples/styles.scss' },
             { name: 'index.ts' },
             { name: 'karma.conf.js' },
             { destination: path.resolve(srcDir, '{{ name }}.module.ts'), name: 'module.ts' },
