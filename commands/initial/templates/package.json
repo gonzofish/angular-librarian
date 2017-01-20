@@ -5,13 +5,11 @@
   "main": "index.js",
   "scripts": {
     "g": "node ./node_modules/angular-library-set",
-    "build": "webpack --config webpack/webpack.prod.js",
-    "initial": "node ./scripts/initial",
     "lint": "tslint ./src/**/*.ts",
     "postinstall": "typings install",
     "start": "webpack-dev-server --config ./webpack/webpack.dev.js",
-    "test": "karma start ./src/test/karma/karma.conf.js",
-    "test:headless": "karma start ./src/test/karma/karma.conf.js --browsers PhantomJS"
+    "test": "karma start ./karma.conf.js",
+    "test:headless": "karma start ./karma.conf.js --browsers PhantomJS"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +29,8 @@
     "@types/jasmine": "2.5.38",
     "@types/node": "^6.0.42",
     "angular-library-set": "0.0.0-alpha",
+    "angular2-template-loader": "^0.6.0",
+    "awesome-typescript-loader": "^3.0.0-beta.18",
     "codelyzer": "~2.0.0-beta.1",
     "file-loader": "^0.8.5",
     "html-webpack-plugin": "^2.19.0",

@@ -1,4 +1,4 @@
-import './polyfills.ts';
+import './vendor.ts';
 
 import 'zone.js/dist/long-stack-trace-zone';
 import 'zone.js/dist/proxy.js';
@@ -22,7 +22,7 @@ getTestBed().initTestEnvironment(
     BrowserDynamicTestingModule,
     platformBrowserDynamicTesting()
 );
-const context = require.context('./', true, /\.spec\.ts$/);
+const context = require.context('./src', true, /\.spec\.ts$/);
 // load modules
 context.keys().map(context);
 // start karma

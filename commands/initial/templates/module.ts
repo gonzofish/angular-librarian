@@ -12,10 +12,10 @@ import { NgModule } from '@angular/core';
         BrowserModule
     ]
 })
-export class {{ moduleName }}Module {
+export class {{ moduleName }} {
     static forRoot() {
         return {
-            ngModule: {{ moduleName }}Module,
+            ngModule: {{ moduleName }},
             providers: []
         };
     }

@@ -11,6 +11,10 @@ module.exports = (rootDir) => {
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
             { name: '.npmignore' },
+            { name: 'examples/example.component.html' },
+            { name: 'examples/example.component.ts' },
+            { name: 'examples/example.main.ts' },
+            { name: 'examples/example.module.ts' },
             { name: 'index.ts' },
             { name: 'karma.conf.js' },
             { destination: path.resolve(srcDir, '{{ name }}.module.ts'), name: 'module.ts' },
@@ -20,7 +24,10 @@ module.exports = (rootDir) => {
             { name: 'test.ts' },
             { name: 'tsconfig.json' },
             { name: 'tslint.json' },
-            { blank: true, name: 'typings.json', }
+            { blank: true, name: 'typings.json', },
+            { name: 'vendor.ts' },
+            { name: 'webpack/webpack.dev.js' },
+            { name: 'webpack/webpack.test.js' }
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
         let templates;
@@ -38,6 +45,7 @@ module.exports = (rootDir) => {
         if (gitAnswer.answer) {
             initGit(rootDir);
         }
+
         console.info('Installing Node modules');
         execute('npm i');
         console.info('Node modules installed');
@@ -50,7 +58,7 @@ const getQuestions = () => [
     { name: 'readmeTitle', question: 'README Title:' },
     { name: 'repoUrl', question: 'Repository URL:' },
     { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: utilities.createYesNoValue('n') },
-    { name: 'moduleName', useAnswer: 'name', transform: utilities.dashToCap },
+    { name: 'moduleName', useAnswer: 'name', transform: (value) => utilities.dashToCap(value) + 'Module' },
     { name: 'version', useAnswer: 'repoUrl', transform: () => '0.0.0' }
 ];
 

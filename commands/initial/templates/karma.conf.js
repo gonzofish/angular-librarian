@@ -4,15 +4,17 @@ module.exports = function (config) {
         frameworks: ['jasmine'],
         plugins: [
             require('karma-chrome-launcher'),
-            require('karma-phantomjs-launcher'),
             require('karma-jasmine'),
-            require('karma-remap-istanbul')
+            require('karma-phantomjs-launcher'),
+            require('karma-remap-istanbul'),
+            require('karma-sourcemap-loader'),
+            require('karma-webpack')
         ],
         files: [
-            { pattern: './src/test.ts', watched: false }
+            { pattern: './test.ts', watched: false }
         ],
         preprocessors: {
-            './test.ts': ['angular-cli']
+            './test.ts': ['webpack', 'sourcemap']
         },
         mime: {
             'text/x-typescript': ['ts','tsx']
@@ -29,6 +31,8 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         autoWatch: true,
         browsers: ['Chrome', 'PhantomJS'],
-        singleRun: false
+        singleRun: false,
+        webpack: require('./webpack/webpack.test.js'),
+        webpackServer: { noInfo: true }
     });
 };
