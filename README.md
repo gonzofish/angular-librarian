@@ -45,7 +45,7 @@ npm run g <command_name> [<args>]
 
 Note that all arguments are optional.
 
-### initialize (aliases: i, init)
+### <a name="init"></a>initialize (aliases: i, init)
 
 Setups the project
 
@@ -101,7 +101,7 @@ Creates the project structure and a slew of files:
 - `examples/index.html`: the example application's main HTML file
 - `node_modules/`: where the dependencies installed via NPM are stored
 - `src/`: where the bulk of application & test code is.
-- `src/<librar name>.module.ts`: the main module of the library
+- `src/<library name>.module.ts`: the main module of the library
 - `src/index.ts`: a barrel file for easy exporting of classes; makes it easier
     on consumers to access parts of the code for importing.
 - `webpack/`: contains the Wepack configuration files
@@ -122,7 +122,7 @@ Creates the project structure and a slew of files:
     application is loaded
 
 
-### component (alias: c)
+### <a name="component"></a>component (alias: c)
 
 Generates a component
 
@@ -164,7 +164,7 @@ and a `component.ts`, `component.spec.ts`, and, if necessary, `component.html` a
       |__<selector>.component.ts
 ```
 
-### service (alias: s)
+### <a name="service"></a>service (alias: s)
 
 Generates a service
 
@@ -194,7 +194,7 @@ for a service--a `service.ts` and `service.spec.ts` file.
       |__<service-name>.service.ts
 ```
 
-### pipe (alias: p)
+### <a name="pipe"></a>pipe (alias: p)
 
 Generates a pipe
 
@@ -224,6 +224,47 @@ for a service--a `pipe.ts` and `pipe.spec.ts` file.
       |__<pipe-name>.pipe.ts
 ```
 
-### Unit Testing
+### <a name="unit"></a>Unit Testing
 
-### Packaging
+Unit testing is done using Karma and Webpack. The setup is all done during the `initialize` command.
+The provided testing commands will watch your files for changes.
+
+The two following commands are provided by default:
+
+# `npm test`: runs tests through a Chrome browser
+# `npm run test:headless`: runs tests through a headless browser (PhantomJS)
+
+### <a name="pack"></a>Packaging
+
+Packaging is as simple as publishing to NPM by doing
+
+```shell
+npm publish
+```
+
+To test your packages output before publishing, you can run
+
+```shell
+npm pack
+```
+
+Which will generate a compressed file containing your library as it will look when packaged up and
+published to NPM. The basic structure of a published library is:
+
+```
+|__examples/
+   |__example.component.html
+   |__example.component.ts
+   |__example.main.ts
+   |__example.module.ts
+   |__index.html
+|__src/
+   |__<library name>.module.ts
+   |__index.ts
+|__.npmignore
+|__index.ts
+|__package.json
+|__README.md
+```
+
+As you can see, the packaging removes any files specific to developing your library.
