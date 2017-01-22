@@ -2,8 +2,11 @@
   "name": "{{ name }}",
   "version": "{{ version }}",
   "description": "{{ readmeTitle }}, an Angular library",
-  "main": "index.js",
+  "main": "{{ name }}.bundle.js",
+  "jsnext:main": "{{ name }}.module.js",
+  "types": "{{ name }}.module.d.ts",
   "scripts": {
+    "build": "ngc",
     "g": "node ./node_modules/angular-library-set",
     "lint": "tslint ./src/**/*.ts",
     "start": "webpack-dev-server --config ./webpack/webpack.dev.js",
