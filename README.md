@@ -231,8 +231,8 @@ The provided testing commands will watch your files for changes.
 
 The two following commands are provided by default:
 
-# `npm test`: runs tests through a Chrome browser
-# `npm run test:headless`: runs tests through a headless browser (PhantomJS)
+- `npm test`: runs tests through a Chrome browser
+- `npm run test:headless`: runs tests through a headless browser (PhantomJS)
 
 ### <a name="pack"></a>Packaging
 
