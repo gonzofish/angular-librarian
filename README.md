@@ -45,9 +45,17 @@ npm run g <command_name> [<args>]
 
 Note that all arguments are optional.
 
+Command     | Purpose
+---         | ---
+[initial](#init)     | Sets up the project
+[component](#component)   | Creates a component
+[directive](#directive)   | Creates a directive
+[pipe](#pipe)        | Creates a pipe
+[service](#service)     | Creates a service
+
 ### <a name="init"></a>initialize (aliases: i, init)
 
-Setups the project
+Sets up the project
 
 #### Call signature
 
@@ -164,6 +172,36 @@ and a `component.ts`, `component.spec.ts`, and, if necessary, `component.html` a
       |__<selector>.component.ts
 ```
 
+### <a name="directive"></a>directive (alias: d)
+
+Generates a directive
+
+#### Call signatures
+
+```shell
+npm run g d
+npm run g d <directive-name>
+```
+
+#### Prompts
+
+- `Directive name (in dash-case):` this prompt is asking for the name of the directive,
+    in dash-case. If the directive name is provided when the command is executed,
+    this prompt is skipped. The directive name is used to generate the directive's
+    filenames, class name and the actual directive used in templates.
+
+#### Output
+
+In the `src` directory, under a `directives` sub-directory, two files will be added
+for a service--a `directive.ts` and `directive.spec.ts` file.
+
+```shell
+|__src
+   |__directives
+      |__<directive-name>.directive.spec.ts
+      |__<directive-name>.directive.ts
+```
+
 ### <a name="service"></a>service (alias: s)
 
 Generates a service
@@ -223,6 +261,19 @@ for a service--a `pipe.ts` and `pipe.spec.ts` file.
       |__<pipe-name>.pipe.spec.ts
       |__<pipe-name>.pipe.ts
 ```
+
+## Project Commands
+
+There are commands provided out of the box, as NPM scripts. They are:
+
+Command     | Purpose
+---         | ---
+build       | Runs code through build process via Angular compiler (ngc)
+g           | Generate code files (see above)
+lint        | Verify code matches linting rules
+start       | Run Webpack's dev-server on project
+test        | Execute tests in Chrome
+test:headless   | Execute tests in PhantomJS
 
 ### <a name="unit"></a>Unit Testing
 
