@@ -43,7 +43,7 @@ const generateWithKnownName = (name, templates) => {
 const getAllQuestions = () => [
     { name: 'name', question: 'Directive name (in dash-case):', transform: utilities.testIsDashFormat },
     { name: 'selector', transform: utilities.dashToCamel, useAnswer: 'name' },
-    { name: 'className', tranform: (value) => utilities.dashToCap(value) + 'Directive', useAnswer: 'name' }
+    { name: 'className', transform: (value) => utilities.dashToCap(value) + 'Directive', useAnswer: 'name' }
 ];
 
 const notifyUser = (answers) => {
