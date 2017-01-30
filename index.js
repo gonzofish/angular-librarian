@@ -22,6 +22,9 @@ const getCommandName = (command) => {
         case 'c':
         case 'component':
             return 'component';
+        case 'd':
+        case 'directive':
+            return 'directive';
         case 'i':
         case 'init':
         case 'initial':

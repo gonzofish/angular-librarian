@@ -3,10 +3,13 @@
 const fs = require('fs');
 const path = require('path');
 
-exports.checkIsDashFormat = (value) =>
+exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
+
+const checkIsDashFormat = (value) =>
     !!value && typeof value === 'string' &&
     value.length > 0 &&
     value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*$/i);
+exports.checkIsDashFormat = checkIsDashFormat;
 
 exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, answers) => {
     const lookup = { n: false, y: true };
