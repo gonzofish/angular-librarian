@@ -51,7 +51,7 @@ module.exports = (rootDir) => {
         console.info('Installing Node modules');
         execute('npm i');
         console.info('Node modules installed');
-        process.chdir(startDir);
+        process.chdir(startingDir);
     });
 };
 
