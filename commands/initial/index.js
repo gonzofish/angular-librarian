@@ -24,7 +24,7 @@ module.exports = (rootDir) => {
             { name: 'package.json' },
             { name: 'README.md' },
             { destination: path.resolve(srcDir, 'index.ts'), name: 'src-index.ts' },
-            { name: 'test.ts' },
+            { destination: path.resolve(srcDir, 'test.ts'), name: 'src-test.ts' },
             { name: 'tsconfig.json' },
             { name: 'tslint.json' },
             { name: 'vendor.ts' },
@@ -51,7 +51,7 @@ module.exports = (rootDir) => {
         console.info('Installing Node modules');
         execute('npm i');
         console.info('Node modules installed');
-        process.chdir(startDir);
+        process.chdir(startingDir);
     });
 };
 

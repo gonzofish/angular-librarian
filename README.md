@@ -87,6 +87,7 @@ Creates the project structure and a slew of files:
 |__src/
    |__<library name>.module.ts
    |__index.ts
+   |__test.ts
 |__webpack/
    |__webpack.dev.js
    |__webpack.test.js
@@ -96,7 +97,6 @@ Creates the project structure and a slew of files:
 |__karma.conf.js
 |__package.json
 |__README.md
-|__test.ts
 |__tsconfig.json
 |__tslint.json
 ```
