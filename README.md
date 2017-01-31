@@ -274,6 +274,7 @@ lint        | Verify code matches linting rules
 start       | Run Webpack's dev-server on project
 test        | Execute tests in Chrome
 test:headless   | Execute tests in PhantomJS
+tagVersion  | Creates tag for new version and publishes
 
 ### <a name="unit"></a>Unit Testing
 
@@ -290,7 +291,7 @@ The two following commands are provided by default:
 Packaging is as simple as publishing to NPM by doing
 
 ```shell
-npm publish
+npm tagVersion
 ```
 
 To test your packages output before publishing, you can run
