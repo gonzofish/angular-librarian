@@ -291,7 +291,7 @@ The two following commands are provided by default:
 Packaging is as simple as publishing to NPM by doing
 
 ```shell
-npm tagVersion
+npm run tagVersion
 ```
 
 To test your packages output before publishing, you can run
