@@ -10,9 +10,9 @@
     "g": "node ./node_modules/angular-library-set",
     "lint": "tslint ./src/**/*.ts",
     "start": "webpack-dev-server --config ./webpack/webpack.dev.js",
+    "tagVersion": "np",
     "test": "karma start ./karma.conf.js",
-    "test:headless": "karma start ./karma.conf.js --browsers PhantomJS",
-    "tagVersion": "np"
+    "test:headless": "karma start ./karma.conf.js --browsers PhantomJS"
   },
   "keywords": [],
   "author": "",
