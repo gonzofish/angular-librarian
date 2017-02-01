@@ -77,6 +77,7 @@ module.exports = {
         })
     ],
     resolve: {
-        extensions: [ '.js', '.ts' ]
+        extensions: [ '.js', '.ts' ],
+        modules: [path.resolve(rootDir, 'node_modules')]
     }
 };
