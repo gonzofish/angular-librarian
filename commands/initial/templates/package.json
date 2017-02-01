@@ -11,8 +11,7 @@
     "lint": "tslint ./src/**/*.ts",
     "start": "webpack-dev-server --config ./webpack/webpack.dev.js",
     "tagVersion": "np",
-    "test": "karma start ./karma.conf.js",
-    "test:headless": "karma start ./karma.conf.js --browsers PhantomJS"
+    "test": "node ./tasks/test"
   },
   "keywords": [],
   "author": "",
