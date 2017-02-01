@@ -11,10 +11,10 @@ module.exports = function (config) {
             require('karma-webpack')
         ],
         files: [
-            { pattern: './test.ts', watched: false }
+            { pattern: './src/test.js', watched: false }
         ],
         preprocessors: {
-            './test.ts': ['webpack', 'sourcemap']
+            './src/test.js': ['webpack', 'sourcemap']
         },
         mime: {
             'text/x-typescript': ['ts','tsx']

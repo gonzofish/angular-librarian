@@ -17,7 +17,7 @@ module.exports = {
     devtool: 'source-map',
     entry: {
         app: [ path.resolve(rootDir, 'examples', 'example.main') ],
-        vendor: [ path.resolve(rootDir, 'vendor') ],
+        vendor: [ path.resolve(rootDir, 'src', 'vendor') ],
         styles: [ path.resolve(rootDir, 'examples', 'styles.scss') ]
     },
     module: {

@@ -87,6 +87,7 @@ Creates the project structure and a slew of files:
 |__src/
    |__<library name>.module.ts
    |__index.ts
+   |__test.ts
 |__webpack/
    |__webpack.dev.js
    |__webpack.test.js
@@ -96,7 +97,6 @@ Creates the project structure and a slew of files:
 |__karma.conf.js
 |__package.json
 |__README.md
-|__test.ts
 |__tsconfig.json
 |__tslint.json
 ```
@@ -281,10 +281,26 @@ tagVersion  | Creates tag for new version and publishes
 Unit testing is done using Karma and Webpack. The setup is all done during the `initialize` command.
 The provided testing commands will watch your files for changes.
 
-The two following commands are provided by default:
+The two following command is provided by default:
 
-- `npm test`: runs tests through a Chrome browser
-- `npm run test:headless`: runs tests through a headless browser (PhantomJS)
+```shell
+npm test
+```
+
+This command calls the script at `tasks/test.js` and runs the Karma test runner to execute the tests.
+Prior to running Karma, the `test` command looks for a command line argument, if the argument is known,
+it will run the associated configuration, otherwise it will run the default configuration.
+
+Configurations:
+
+Command | Testing TypeScript
+---     | ---
+default | Run through Chrome & PhantomJS with files being watched & tests automatically re-run
+headless| Run through PhantomJS with files being watched & tests automatically re-run
+single  | Run through PhantomJS one time with no file watching
+watch   | Run through Chrome with files being watched & tests automatically re-run
+
+Note that Chrome still requires a manual refresh on the Debug tab to see updated test results.
 
 ### <a name="pack"></a>Packaging
 
