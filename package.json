@@ -1,6 +1,6 @@
 {
   "name": "angular-library-set",
-  "version": "0.0.7-alpha",
+  "version": "0.0.8-alpha",
   "description": "An erector-set-powered scaffolding for Angular 2+ libraries",
   "main": "index.js",
   "scripts": {
