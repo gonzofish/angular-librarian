@@ -10,7 +10,7 @@ describe('{{ componentName }}', () => {
         TestBed.configureTestingModule({
             declarations: [
                 {{ componentName }}
-            ],
+            ]
         });
         TestBed.compileComponents();
     }));

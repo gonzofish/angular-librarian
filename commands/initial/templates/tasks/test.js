@@ -10,7 +10,7 @@ function run(type) {
     });
 
     server.start();
-};
+}
 
 function getConfig(type) {
     switch (type) {
