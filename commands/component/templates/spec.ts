@@ -17,7 +17,7 @@ describe('{{ componentName }}', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent({{ componentName }});
-        component = fixture.debugElement.componentInstance;
+        component = fixture.componentInstance;
     });
 
     it('should create the {{ selector }}', () => {
