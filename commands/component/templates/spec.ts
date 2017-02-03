@@ -1,21 +1,26 @@
 /* ts-lint:disable:no-unused-variable */
-import { TestBed, async } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { {{ componentName }} } from './{{ selector }}.component';
 
 describe('{{ componentName }}', () => {
-    beforeEach(() => {
+    let component: {{ componentName }};
+    let fixture: ComponentFixture<{{ componentName }}>;
+
+    beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
                 {{ componentName }}
             ],
         });
         TestBed.compileComponents();
+    }));
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent({{ componentName }});
+        component = fixture.debugElement.componentInstance;
     });
 
-    it('should create the {{ selector }}', async(() => {
-        const fixture = TestBed.createComponent({{ componentName }});
-        const component = fixture.debugElement.componentInstance;
-
+    it('should create the {{ selector }}', () => {
         expect(component).toBeTruthy();
-    }));
+    });
 });
