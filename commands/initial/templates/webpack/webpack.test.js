@@ -33,7 +33,7 @@ module.exports = {
     ],
     resolve: {
         extensions: ['.js', '.ts'],
-        modules: [path.resolve('.', 'src'), 'node_modules'],
+        modules: [path.resolve('.', 'src'), path.resolve(rootDir, 'node_modules')],
         moduleExtensions: ['-loader']
     }
 };
