@@ -29,6 +29,9 @@ module.exports = {
             options: {
                 emitErrors: true
             }
+        }),
+        new webpack.SourceMapDevToolPlugin({
+            test: /\.(ts|js)$/
         })
     ],
     resolve: {
