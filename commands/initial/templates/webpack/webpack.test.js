@@ -6,6 +6,8 @@ const webpack = require('webpack');
 const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 
+const rootDir = process.cwd();
+
 module.exports = {
     devtool: 'inline-source-map',
     module: {
