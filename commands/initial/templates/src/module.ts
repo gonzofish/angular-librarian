@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 @NgModule({
@@ -9,7 +9,7 @@ import { NgModule } from '@angular/core';
 
     ],
     imports: [
-        BrowserModule
+        CommonModule
     ]
 })
 export class {{ moduleName }} {
