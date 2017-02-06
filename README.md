@@ -1,7 +1,15 @@
 # angular-library-set
+
 An Angular 2+ scaffolding setup using
 [erector-set](https://github.com/gonzofish/erector-set). The intention was to
 keep creation of an Angular 2+ library as simple and concise as possible.
+
+## Important Note
+
+This library is currently under heavy development and you should use it with caution.
+To get the latest point your `package.json` to this repository using:
+
+`git://github.com/gonzofish/angular-library-set.git`**
 
 ## Usage
 
