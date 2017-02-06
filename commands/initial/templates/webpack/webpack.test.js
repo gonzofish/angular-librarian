@@ -14,11 +14,28 @@ module.exports = {
         loaders: [
             {
                 exclude: /node_modules/,
-                loaders: ['awesome-typescript-loader', 'angular2-template-loader?keepUrl=true'],
-                test: /\.ts$/
+                test: /\.ts$/,
+                loaders: [
+                    'awesome-typescript-loader?configFileName=' + path.resolve(rootDir, 'tsconfig.test.json'),
+                    'angular2-template-loader?keepUrl=true'
+                ],
             },
             { loader: 'raw-loader', test: /\.(s?css|html)$/ },
-            { enforce: 'pre', exclude: /node_modules/, loader: 'tslint-loader', test: /\.ts$/ }
+            {
+                enforce: 'pre',
+                exclude: /node_modules/,
+                loader: 'tslint-loader',
+                test: /\.ts$/
+            },
+            {
+                enforce: 'post',
+                exclude: [
+                    /node_modules/,
+                    /\.(e2e|spec\.)ts$/
+                ],
+                loader: 'istanbul-instrumenter-loader?esModules=true',
+                test: /\.ts$/
+            }
         ]
     },
     performance: { hints: false },
@@ -33,6 +50,7 @@ module.exports = {
             }
         }),
         new webpack.SourceMapDevToolPlugin({
+            filename: null,
             test: /\.(ts|js)$/
         })
     ],

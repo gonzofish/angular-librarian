@@ -2,30 +2,29 @@ module.exports = function (config) {
     config.set({
         basePath: '',
         frameworks: ['jasmine'],
+        files: [
+            { pattern: './src/test.js', watched: false }
+        ],
+        mime: {
+            'text/x-typescript': ['ts','tsx']
+        },
         plugins: [
             require('karma-chrome-launcher'),
             require('karma-jasmine'),
             require('karma-phantomjs-launcher'),
-            require('karma-remap-istanbul'),
+            require('karma-coverage-istanbul-reporter'),
             require('karma-sourcemap-loader'),
             require('karma-webpack')
-        ],
-        files: [
-            { pattern: './src/test.js', watched: false }
         ],
         preprocessors: {
             './src/test.js': ['webpack', 'sourcemap']
         },
-        mime: {
-            'text/x-typescript': ['ts','tsx']
+        coverageIstanbulReporter: {
+            dir: './coverage',
+            fixWebpackSourcePaths: true,
+            reports: ['html', 'lcov']
         },
-        remapIstanbulReporter: {
-            reports: {
-                html: 'coverage',
-                lcovonly: './coverage/coverage.lcov'
-            }
-        },
-        reporters: ['progress', 'karma-remap-istanbul'],
+        reporters: ['progress', 'coverage-istanbul'],
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,

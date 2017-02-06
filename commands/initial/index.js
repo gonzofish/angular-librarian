@@ -26,6 +26,7 @@ module.exports = (rootDir) => {
             { destination: path.resolve(srcDir, 'index.ts'), name: 'src/index.ts' },
             { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js' },
             { name: 'tsconfig.json' },
+            { name: 'tsconfig.test.json' },
             { name: 'tslint.json' },
             { destination: path.resolve(srcDir, 'vendor.ts'), name: 'src/vendor.ts' },
             { name: 'tasks/test.js' },
