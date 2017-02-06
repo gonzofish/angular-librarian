@@ -31,7 +31,7 @@
     "@types/jasmine": "2.5.38",
     "@types/node": "^6.0.42",
     "angular-library-set": "git://github.com/gonzofish/angular-library-set.git#HEAD",
-    "angular2-template-loader": "^0.6.0",
+    "angular2-template-loader": "0.6.0",
     "awesome-typescript-loader": "^3.0.0-beta.18",
     "codelyzer": "~2.0.0-beta.1",
     "css-loader": "^0.26.1",

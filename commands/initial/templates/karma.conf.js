@@ -22,7 +22,7 @@ module.exports = function (config) {
         coverageIstanbulReporter: {
             dir: './coverage',
             fixWebpackSourcePaths: true,
-            reports: ['html', 'lcov']
+            reports: ['html', 'lcovonly']
         },
         reporters: ['progress', 'coverage-istanbul'],
         port: 9876,
