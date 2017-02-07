@@ -3,6 +3,9 @@
   "version": "0.0.11-alpha",
   "description": "An erector-set-powered scaffolding for Angular 2+ libraries",
   "main": "index.js",
+  "bin": {
+    "ngl": "bin/index.js"
+  },
   "scripts": {
     "start": "node .",
     "test": "test"

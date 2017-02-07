@@ -4,17 +4,56 @@ const erector = require('erector-set');
 const path = require('path');
 const utilities = require('../utilities');
 
-module.exports = (rootDir, selector) => {
+module.exports = function createComponent(rootDir, selector) {
     const templates = getTemplates(rootDir);
+    const options = utilities.parseOptions(Array.from(arguments).slice(2), [
+        'd',
+        'defaults',
+        'hooks',
+        'h',
+        'inline-styles',
+        'inline-template',
+        'is',
+        'it'
+    ]);;
+    const remaining = getRemainingQuestions(selector, options);
+    const knownAnswers = remaining.answers;
+    const questions = remaining.questions.reduce((all, method) => all.concat(method(knownAnswers)), []);
 
-    if (utilities.checkIsDashFormat(selector)) {
-        createWithKnownSelector(selector, templates);
-    } else {
-        createWithMissingSelector(templates);
-    }
+    erector.inquire(questions).then((answers) => {
+        const allAnswers = knownAnswers.concat(answers);
+
+        erector.construct(allAnswers, templates, true);
+        notifyUser(allAnswers);
+    });
+
+    // if (utilities.checkIsDashFormat(selector)) {
+        // createWithKnownSelector(selector, templates, options);
+    // } else {
+        // createWithMissingSelector(templates, options);
+    // }
 };
 
-const createWithKnownSelector = (selector, templates) => {
+const getRemainingQuestions = (selectorName, options) => {
+    const all = [
+        getKnownSelector(selectorName),
+        getKnownStyle(options),
+        getKnownTemplate(options),
+        getKnownLifecycleHooks(options)
+    ];
+
+    return all.reduce((groups, part) => {
+        if (part.answers) {
+            groups.answers = groups.answers.concat(part.answers);
+        } else if (part.questions) {
+            groups.questions = groups.questions.concat(part.questions);
+        }
+
+        return groups;
+    }, { answers: [], questions: []});
+};
+
+const createWithKnownSelector = (selector, templates, options) => {
     const knownAnswers = [
         { answer: selector, name: 'selector' },
         { answer: utilities.dashToCap(selector) + 'Component', name: 'componentName' }
@@ -29,8 +68,72 @@ const createWithKnownSelector = (selector, templates) => {
     });
 };
 
-const createWithMissingSelector = (templates) => {
-    const questions = getAllQuestions();
+const getKnownSelector = (selector) => {
+    if (utilities.checkIsDashFormat(selector)) {
+        return {
+            answers: [
+                { answer: selector, name: 'selector' },
+                { answer: utilities.dashToCap(selector) + 'Component', name: 'componentName' }
+            ]
+        };
+    } else {
+        return {
+            questions: getSelectorQuestions
+        };
+    }
+};
+
+const getSelectorQuestions = () => [
+    { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => utilities.checkIsDashFormat(value) ? value : null },
+    { name: 'componentName', transform: (value) => utilities.dashToCap(value) + 'Component', useAnswer: 'selector' }
+];
+
+const getKnownStyle = (options) => {
+    const keys = Object.keys(options);
+
+    if (keys.indexOf('is') === -1 && keys.indexOf('inline-styles') === -1) {
+        return {
+            questions: getStyleQuestions
+        };
+    } else {
+        return {
+            answers: [
+                { answer: setInlineStyles(true, []), name: 'styles' },
+                { answer: pickStyleAttribute(``), name: 'styleAttribute' }
+            ]
+        }
+    }
+};
+
+const getStyleQuestions = (knownAnswers) => [
+    { allowBlank: true, name: 'styles', question: 'Use inline styles (y/N)?', transform: utilities.createYesNoValue('n', knownAnswers, setInlineStyles) },
+    { name: 'styleAttribute', useAnswer: 'styles', transform: pickStyleAttribute }
+];
+
+const getKnownTemplate = (options) => {
+    const keys = Object.keys(options);
+
+    if (keys.indexOf('it') === -1 && keys.indexOf('inline-template') === -1) {
+        return {
+            questions: getTemplateQuestions
+        };
+    } else {
+        return {
+            answers: [
+                { answer: setInlineTemplate(true, []), name: 'template' },
+                { answer: pickTemplateAttribute(``), name: 'templateAttribute' }
+            ]
+        }
+    }
+};
+
+const getTemplateQuestions = (knownAnswers) => [
+    { allowBlank: true, name: 'template', question: 'Use inline template (y/N)?', transform: utilities.createYesNoValue('n', knownAnswers, setInlineTemplate) },
+    { name: 'templateAttribute', useAnswer: 'template', transform: pickTemplateAttribute }
+];
+
+const createWithMissingSelector = (templates, options) => {
+    const questions = getAllQuestions(options);
 
     erector.build(questions, templates).then(notifyUser);
 };
@@ -81,6 +184,25 @@ const pickTemplateAttribute = (value) => {
     }
 
     return 'template' + attribute;
+};
+
+const getKnownLifecycleHooks = (options) => {
+    const keys = Object.keys(options);
+
+    if (keys.indexOf('h') === -1 && keys.indexOf('hooks') === -1) {
+        return {
+            questions: getLifecycleHookQuestions
+        };
+    } else {
+        const hooks = setLifecycleHooks((options.h || options.hooks).join(','));
+        return {
+            answers: [
+                { answer: hooks, name: 'hooks' },
+                { answer: setLifecycleImplements(hooks), name: 'implements' },
+                { answer: setLifecycleMethods(hooks), name: 'lifecycleNg' }
+            ]
+        };
+    }
 };
 
 const getLifecycleHookQuestions = () => [

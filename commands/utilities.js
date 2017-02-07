@@ -59,3 +59,25 @@ exports.getTemplates = (rootDir, directory, filenames) => filenames.map((filenam
     destination: filename.destination || path.resolve(rootDir, filename.name),
     template: filename.blank ? undefined : [directory, 'templates', filename.name].join(path.sep)
 }));
+
+exports.parseOptions = (options, valid) => options.map((option) => {
+    option = option.trim();
+
+    if (option[0] !== '-') {
+        option = '=' + option;
+    }
+
+    return option;
+}).join('').split('-').reduce((all, optionValue) => {
+    if (optionValue) {
+        const split = optionValue.split('=');
+        const option = split[0].replace(/^\-+/, '');
+        const value = split.slice(1).map((value) => value.replace(/,$/, ''));
+
+        if (valid.indexOf(option) !== -1 && !all.hasOwnProperty(options)) {
+            all[option] = value;
+        }
+    }
+
+    return all;
+}, {});
