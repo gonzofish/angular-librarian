@@ -21,7 +21,7 @@ module.exports = (rootDir) => {
             { name: 'index.ts' },
             { name: 'karma.conf.js', overwrite: true },
             { destination: path.resolve(srcDir, '{{ name }}.module.ts'), name: 'src/module.ts' },
-            { name: 'package.json', update: true },
+            { name: 'package.json', update: 'json' },
             { name: 'README.md' },
             { destination: path.resolve(srcDir, 'index.ts'), name: 'src/index.ts' },
             { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js', overwrite: true },
