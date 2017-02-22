@@ -19,19 +19,19 @@ module.exports = (rootDir) => {
             { name: 'examples/index.html' },
             { blank: true, name: 'examples/styles.scss' },
             { name: 'index.ts' },
-            { name: 'karma.conf.js' },
+            { name: 'karma.conf.js', overwrite: true },
             { destination: path.resolve(srcDir, '{{ name }}.module.ts'), name: 'src/module.ts' },
-            { name: 'package.json' },
+            { name: 'package.json', update: 'json' },
             { name: 'README.md' },
             { destination: path.resolve(srcDir, 'index.ts'), name: 'src/index.ts' },
-            { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js' },
-            { name: 'tsconfig.json' },
-            { name: 'tsconfig.test.json' },
-            { name: 'tslint.json' },
+            { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js', overwrite: true },
+            { name: 'tsconfig.json', overwrite: true },
+            { name: 'tsconfig.test.json', overwrite: true },
+            { name: 'tslint.json', overwrite: true },
             { destination: path.resolve(srcDir, 'vendor.ts'), name: 'src/vendor.ts' },
-            { name: 'tasks/test.js' },
-            { name: 'webpack/webpack.dev.js' },
-            { name: 'webpack/webpack.test.js' }
+            { name: 'tasks/test.js', overwrite: true },
+            { name: 'webpack/webpack.dev.js', overwrite: true },
+            { name: 'webpack/webpack.test.js', overwrite: true }
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
         let templates;
@@ -41,7 +41,7 @@ module.exports = (rootDir) => {
         }
 
         templates = utilities.getTemplates(rootDir, __dirname, templateList);
-        erector.construct(answers, templates, true);
+        erector.construct(answers, templates);
 
         const startingDir = __dirname;
 
@@ -63,7 +63,7 @@ const getQuestions = () => [
     { name: 'repoUrl', question: 'Repository URL:' },
     { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: utilities.createYesNoValue('n') },
     { name: 'moduleName', useAnswer: 'name', transform: (value) => utilities.dashToCap(value) + 'Module' },
-    { name: 'version', useAnswer: 'repoUrl', transform: () => '0.0.0' }
+    { name: 'version', question: 'Version:' }
 ];
 
 const checkNameFormat = (value) => {
