@@ -57,5 +57,7 @@ const removePath = (folder, file) => {
 exports.getTemplates = (rootDir, directory, filenames) => filenames.map((filename) => ({
     check: filename.check,
     destination: filename.destination || path.resolve(rootDir, filename.name),
-    template: filename.blank ? undefined : [directory, 'templates', filename.name].join(path.sep)
+    template: filename.blank ? undefined : [directory, 'templates', filename.name].join(path.sep),
+    update: filename.update,
+    overwrite: filename.overwrite
 }));

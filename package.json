@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/gonzofish/angular-library-set#readme",
   "dependencies": {
-    "erector-set": "^1.0.2-alpha"
-  }
+    "erector-set": "^1.0.0-alpha.1"
+  },
+  "devDependencies": {}
 }
