@@ -7,7 +7,7 @@ const path = require('path');
 const utilities = require('../utilities');
 
 module.exports = (rootDir) => {
-    erector.inquire(getQuestions()).then((answers) => {
+    erector.inquire(getQuestions(), true).then((answers) => {
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
             { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
