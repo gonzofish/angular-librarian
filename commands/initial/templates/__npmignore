@@ -11,3 +11,4 @@ typings
 typings.json
 vendor.ts
 webpack
+.vscode
