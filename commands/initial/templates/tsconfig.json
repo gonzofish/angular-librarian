@@ -19,6 +19,7 @@
         ]
     },
     "files": [
-        "./src/{{ name }}.module.ts"
+        "./src/{{ name }}.module.ts",
+        "./src/index.ts"
     ]
 }
