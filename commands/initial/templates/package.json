@@ -2,11 +2,11 @@
   "name": "{{ name }}",
   "version": "{{ version }}",
   "description": "{{ readmeTitle }}, an Angular library",
-  "main": "dist/index.js",
-  "jsnext:main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/{{ name }}.bundle.js",
+  "jsnext:main": "dist/{{ name }}.bundle.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
-    "build": "ngc",
+    "build": "webpack --config ./webpack/webpack.build.js",
     "prebuild": "rimraf dist",
     "g": "node ./node_modules/angular-library-set",
     "lint": "tslint ./src/**/*.ts",
@@ -64,7 +64,8 @@
     "url-loader": "^0.5.7",
     "webpack": "2.2.0-rc.3",
     "webpack-dev-server": "2.2.0-rc.0",
-    "webpack-merge": "^0.14.0"
+    "webpack-merge": "^0.14.0",
+    "webpack-node-externals": "^1.5.4"
   },
   "repository": {
     "url": "{{ repoUrl }}"

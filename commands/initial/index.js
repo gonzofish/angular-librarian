@@ -30,6 +30,7 @@ module.exports = (rootDir) => {
             { name: 'tslint.json', overwrite: true },
             { destination: path.resolve(srcDir, 'vendor.ts'), name: 'src/vendor.ts' },
             { name: 'tasks/test.js', overwrite: true },
+            { name: 'webpack/webpack.build.js', overwrite: true },
             { name: 'webpack/webpack.dev.js', overwrite: true },
             { name: 'webpack/webpack.test.js', overwrite: true }
         ];
