@@ -12,6 +12,7 @@
     "lint": "tslint ./src/**/*.ts",
     "start": "webpack-dev-server --config ./webpack/webpack.dev.js",
     "tagVersion": "np",
+    "pretagVersion": "npm run build",
     "test": "node ./tasks/test"
   },
   "keywords": [],

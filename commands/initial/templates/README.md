@@ -32,9 +32,9 @@ it will run the associated configuration, otherwise it will run the default conf
 
 Type | Testing TypeScript
 ---     | ---
-default | Run through Chrome & PhantomJS with files being watched & tests automatically re-run
+default | Run through PhantomJS one time with no file watching
+all     | Run through Chrome & PhantomJS with files being watched & tests automatically re-run
 headless| Run through PhantomJS with files being watched & tests automatically re-run
-single  | Run through PhantomJS one time with no file watching
 watch   | Run through Chrome with files being watched & tests automatically re-run
 
 Note that Chrome still requires a manual refresh on the Debug tab to see updated test results.
