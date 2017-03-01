@@ -22,7 +22,6 @@
         "./src/index.ts"
     ],
     "awesomeTypescriptLoaderOptions": {
-        "forkChecker": true,
-        "useWebpackText": true
-    }    
+        "forkChecker": true
+    }
 }
