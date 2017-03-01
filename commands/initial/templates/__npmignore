@@ -2,6 +2,7 @@
 .gitignore
 coverage
 debug.log
+dist/src
 karma.conf.js
 node_modules
 test.ts
