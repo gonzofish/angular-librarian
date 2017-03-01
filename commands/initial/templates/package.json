@@ -34,7 +34,7 @@
     "@types/node": "^6.0.42",
     "angular-library-set": "1.0.0-alpha.3",
     "angular2-template-loader": "0.6.0",
-    "awesome-typescript-loader": "^3.0.0-beta.18",
+    "awesome-typescript-loader": "^3.0.0",
     "codelyzer": "~2.0.0-beta.1",
     "css-loader": "^0.26.1",
     "file-loader": "^0.8.5",

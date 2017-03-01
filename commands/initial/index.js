@@ -10,6 +10,7 @@ module.exports = (rootDir) => {
     erector.inquire(getQuestions(), true).then((answers) => {
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
+            { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
             { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
             { blank: true, name: 'examples/example.component.html' },
             { blank: true, name: 'examples/example.component.scss' },
@@ -37,9 +38,6 @@ module.exports = (rootDir) => {
         const gitAnswer = answers.find((answer) => answer.name === 'git');
         let templates;
 
-        if (gitAnswer.answer) {
-            templateList.push({ destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' });
-        }
 
         templates = utilities.getTemplates(rootDir, __dirname, templateList);
         erector.construct(answers, templates);
