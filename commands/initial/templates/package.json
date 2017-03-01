@@ -4,9 +4,9 @@
   "description": "{{ readmeTitle }}, an Angular library",
   "main": "dist/{{ name }}.bundle.js",
   "jsnext:main": "dist/{{ name }}.bundle.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "webpack --config ./webpack/webpack.build.js",
+    "build": "ngc && webpack --config ./webpack/webpack.build.js",
     "prebuild": "rimraf dist",
     "g": "node ./node_modules/angular-library-set",
     "lint": "tslint ./src/**/*.ts",
