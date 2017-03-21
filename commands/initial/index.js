@@ -12,6 +12,7 @@ module.exports = (rootDir) => {
         let templateList = [
             { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
             { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
+            { name: 'DEVELOPMENT.md' },
             { blank: true, name: 'examples/example.component.html' },
             { blank: true, name: 'examples/example.component.scss' },
             { name: 'examples/example.component.ts' },
