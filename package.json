@@ -1,11 +1,14 @@
 {
   "name": "angular-library-set",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "An erector-set-powered scaffolding for Angular 2+ libraries",
   "main": "index.js",
   "scripts": {
     "start": "node .",
     "test": "test"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
