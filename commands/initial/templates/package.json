@@ -6,7 +6,7 @@
   "jsnext:main": "dist/{{ name }}.bundle.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "ngc && webpack --config ./webpack/webpack.build.js",
+    "build": "ngc && webpack --config ./webpack/webpack.build.js && node ./tasks/inline-resources",
     "prebuild": "rimraf dist",
     "g": "node ./node_modules/angular-library-set",
     "lint": "tslint ./src/**/*.ts",
