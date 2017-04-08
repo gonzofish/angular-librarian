@@ -10,7 +10,7 @@ const rootDir = process.cwd();
 
 module.exports = {
     devtool: 'source-map',
-    entry: path.resolve(rootDir, 'src', 'index.ts'),
+    entry: path.resolve(rootDir, 'build', 'index.ts'),
     externals: [nodeExternals()],
     module: {
         loaders: [
@@ -32,7 +32,10 @@ module.exports = {
             },
             {
                 exclude: /node_modules/,
-                loaders: ['awesome-typescript-loader', 'angular2-template-loader'],
+                loaders: [
+                    'awesome-typescript-loader?configFileName=' +  path.resolve(rootDir, 'tsconfig.build.json'),
+                    'angular2-template-loader'
+                ],
                 test: /\.ts$/
             },
             {

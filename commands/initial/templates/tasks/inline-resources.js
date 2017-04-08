@@ -4,6 +4,7 @@
 const fs = require('fs');
 const glob  = require('glob');
 const path = require('path');
+const sass = require('node-sass');
 
 const inlineResources = (globs, sourcePrefix) => {
     if (typeof globs === 'string') {
@@ -20,7 +21,7 @@ const replaceSource = (pattern, sourcePrefix) => {
     }
 
     const files = glob.sync(pattern, {})
-        .filter((name) => /\.js$/.test(name));
+        .filter((name) => /\.ts$/.test(name));
 
     files.forEach((filePath) => {
         fs.readFile(filePath, 'utf8', (error, content) => {
@@ -28,9 +29,17 @@ const replaceSource = (pattern, sourcePrefix) => {
                 throw error;
             }
 
-            const fileContents = inlineResourcesFromString(content, sourcePrefix, (url) =>
+            let fileContents = inlineResourcesFromString(content, sourcePrefix, (url) =>
                 path.join(path.dirname(filePath), url)
             );
+            //# sourceMappingURL=test.bundle.js.map
+            fileContents = fileContents.replace(/\/\/#\s*sourceMappingURL=(.+)(\r?\n)?/, (match, url) => {
+                const lastSlash = url.lastIndexOf('/');
+                const relativeUrl = url.substring(lastSlash + 1);
+
+                return match.replace(url, relativeUrl);
+            });
+
 
             fs.writeFile(filePath, fileContents);
         });
@@ -60,7 +69,13 @@ const inlineStyle = (content, sourcePrefix, callback) =>
 
 const getMiniContents = (url, sourcePrefix, callback) => {
     const file = callback(url);
-    const template = fs.readFileSync(file.replace(/^dist/, sourcePrefix), 'utf8');
+    let template = fs.readFileSync(file.replace(/^dist/, sourcePrefix), 'utf8');
+
+    if (file.match(/\.s(a|c)ss$/)) {
+        // convert SASS -> CSS
+        template = sass.renderSync({ data: template });
+        template = template.css.toString();
+    }
 
     return minifyText(template);
 };
@@ -75,5 +90,5 @@ const removeModuleId = (content) =>
 module.exports = inlineResources;
 
 if (!module.parent) {
-    inlineResources('./dist', 'src');
+    inlineResources('./build', 'src');
 }
