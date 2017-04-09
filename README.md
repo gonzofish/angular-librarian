@@ -4,13 +4,6 @@ An Angular 2+ scaffolding setup using
 [erector-set](https://github.com/gonzofish/erector-set). The intention was to
 keep creation of an Angular 2+ library as simple and concise as possible.
 
-## Important Note
-
-This library is currently under heavy development and you should use it with caution.
-To get the latest point your `package.json` to this repository using:
-
-`git://github.com/gonzofish/angular-library-set.git`**
-
 ## Usage
 
 Install this package to your project:
@@ -19,20 +12,10 @@ Install this package to your project:
 npm i -D angular-library-set
 ```
 
-Then add it as the "g" command in your `package.json`:
-
-```json
-{
-    "scripts": {
-        "g": "node ./node_modules/angular-library-set"
-    }
-}
-```
-
 Then initialize your project:
 
 ```shell
-> npm run g i
+> ngl i
 
 Library name: my-lib
 README Title: My Library
@@ -45,13 +28,26 @@ Node modules installed
 
 ## Commands
 
-All commands are run by doing:
+There are multiple ways to execute commands:
+
+```shell
+ngl <command_name> [<args>]
+```
+
+or
 
 ```shell
 npm run g <command_name> [<args>]
 ```
 
-Note that all arguments are optional.
+or
+
+```shell
+node ./node_modules/angular-library-set <command_name> [<args>]
+```
+
+The `ngl` command-line tool and `npm run g` are both aliases for calling
+`node ./node_modules/angular-library-set`. Note that all arguments are optional.
 
 Command     | Purpose
 ---         | ---
