@@ -1,15 +1,22 @@
-# angular-library-set
+# angular-librarian
 
-An Angular 2+ scaffolding setup using
-[erector-set](https://github.com/gonzofish/erector-set). The intention was to
-keep creation of an Angular 2+ library as simple and concise as possible.
+An Angular 2+ scaffolding setup. Generates AOT-compliant code using similar
+paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
 ## Usage
+
+Create a new folder and initialize an NPM project:
+
+```shell
+> mkdir my-lib
+> cd my-lib
+> npm init -f
+```
 
 Install this package to your project:
 
 ```shell
-npm i -D angular-library-set
+> npm i -D angular-librarian
 ```
 
 Then initialize your project:
@@ -28,6 +35,7 @@ Node modules installed
 
 ## Generative Commands
 
+Generative commands create files for different parts of your library.
 There are multiple ways to execute commands:
 
 ```shell
@@ -49,13 +57,13 @@ node ./node_modules/angular-library-set <command_name> [<args>]
 The `ngl` command-line tool and `npm run g` are both aliases for calling
 `node ./node_modules/angular-library-set`. Note that all arguments are optional.
 
-Command     | Purpose
----         | ---
-[initial](#init)     | Sets up the project
-[component](#component)   | Creates a component
-[directive](#directive)   | Creates a directive
-[pipe](#pipe)        | Creates a pipe
-[service](#service)     | Creates a service
+Command | Purpose
+--- | ---
+[initial](#init) | Sets up the project
+[component](#component) | Creates a component
+[directive](#directive) | Creates a directive
+[pipe](#pipe) | Creates a pipe
+[service](#service) | Creates a service
 
 ### <a name="init"></a>initialize (aliases: i, init)
 
@@ -319,14 +327,15 @@ npm run lint
 ### <a name="publish"></a>publish (alias: p)
 
 Create a tag and publish the library code using the
-[`np` library](https://github.com/sindresorhus/np).
+[`np` library](https://github.com/sindresorhus/np). Note that the `version`
+argument utilizes the `version` arguments of the `np` library.
 
 #### Call signatures
 
 ```shell
-ngl publish <type>
-ngl p <type>
-npm run tagVersion <type>
+ngl publish <version>
+ngl p <version>
+npm run tagVersion <version>
 ```
 
 ### <a name="serve"></a>serve (alias: v)
