@@ -1,7 +1,7 @@
 {
-  "name": "angular-library-set",
+  "name": "angular-librarian",
   "version": "1.0.0-alpha.6",
-  "description": "An erector-set-powered scaffolding for Angular 2+ libraries",
+  "description": "A scaffolding setup for Angular 2+ libraries",
   "main": "index.js",
   "bin": {
     "ngl": "bin/index.js"
