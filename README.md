@@ -1,38 +1,28 @@
-# angular-library-set
+# angular-librarian
 
-An Angular 2+ scaffolding setup using
-[erector-set](https://github.com/gonzofish/erector-set). The intention was to
-keep creation of an Angular 2+ library as simple and concise as possible.
-
-## Important Note
-
-This library is currently under heavy development and you should use it with caution.
-To get the latest point your `package.json` to this repository using:
-
-`git://github.com/gonzofish/angular-library-set.git`**
+An Angular 2+ scaffolding setup. Generates AOT-compliant code using similar
+paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
 ## Usage
+
+Create a new folder and initialize an NPM project:
+
+```shell
+> mkdir my-lib
+> cd my-lib
+> npm init -f
+```
 
 Install this package to your project:
 
 ```shell
-npm i -D angular-library-set
-```
-
-Then add it as the "g" command in your `package.json`:
-
-```json
-{
-    "scripts": {
-        "g": "node ./node_modules/angular-library-set"
-    }
-}
+> npm i -D angular-librarian
 ```
 
 Then initialize your project:
 
 ```shell
-> npm run g i
+> ngl i
 
 Library name: my-lib
 README Title: My Library
@@ -43,23 +33,37 @@ Installing Node modules
 Node modules installed
 ```
 
-## Commands
+## Generative Commands
 
-All commands are run by doing:
+Generative commands create files for different parts of your library.
+There are multiple ways to execute commands:
+
+```shell
+ngl <command_name> [<args>]
+```
+
+or
 
 ```shell
 npm run g <command_name> [<args>]
 ```
 
-Note that all arguments are optional.
+or
 
-Command     | Purpose
----         | ---
-[initial](#init)     | Sets up the project
-[component](#component)   | Creates a component
-[directive](#directive)   | Creates a directive
-[pipe](#pipe)        | Creates a pipe
-[service](#service)     | Creates a service
+```shell
+node ./node_modules/angular-library-set <command_name> [<args>]
+```
+
+The `ngl` command-line tool and `npm run g` are both aliases for calling
+`node ./node_modules/angular-library-set`. Note that all arguments are optional.
+
+Command | Purpose
+--- | ---
+[initial](#init) | Sets up the project
+[component](#component) | Creates a component
+[directive](#directive) | Creates a directive
+[pipe](#pipe) | Creates a pipe
+[service](#service) | Creates a service
 
 ### <a name="init"></a>initialize (aliases: i, init)
 
@@ -68,7 +72,12 @@ Sets up the project. Can also be run to update a project to the latest angular-l
 #### Call signature
 
 ```shell
+ngl i
+ngl init
+ngl initialize
 npm run g i
+npm run g init
+npm run g initialize
 ```
 
 #### Prompts
@@ -145,8 +154,10 @@ Generates a component
 #### Call signatures
 
 ```shell
+ngl c
+ngl component <selector>
 npm run g c
-npm run g c <selector>
+npm run g component <selector>
 ```
 
 #### Prompts
@@ -187,8 +198,10 @@ Generates a directive
 #### Call signatures
 
 ```shell
+ngl d
+ngl directive <directive-name>
 npm run g d
-npm run g d <directive-name>
+npm run g directive <directive-name>
 ```
 
 #### Prompts
@@ -217,8 +230,10 @@ Generates a service
 #### Call signatures
 
 ```shell
+ngl s
+ngl service <service-name>
 npm run g s
-npm run g s <service-name>
+npm run g service <service-name>
 ```
 
 #### Prompts
@@ -247,6 +262,8 @@ Generates a pipe
 #### Call signatures
 
 ```shell
+ngl p
+ngl p <pipe-name>
 npm run g p
 npm run g p <pipe-name>
 ```
@@ -276,13 +293,79 @@ There are commands provided out of the box, as NPM scripts. They are:
 
 Command     | Purpose
 ---         | ---
-build       | Runs code through build process via Angular compiler (ngc)
-g           | Generate code files (see above)
-lint        | Verify code matches linting rules
-start       | Run Webpack's dev-server on project
-test        | Execute tests in Chrome
-test:headless   | Execute tests in PhantomJS
-tagVersion  | Creates tag for new version and publishes
+[build](#build) | Runs code through build process via Angular compiler (ngc)
+[lint](#lint) | Verify code matches linting rules
+[publish](#publish) | Creates tag for new version and publishes
+[serve](#serve) | Run Webpack's dev-server on project
+[test](#unit) | Execute unit tests
+
+### <a name="build"></a>build (alias: b)
+
+Build the library's code. This will run the code through
+the `ngc` compiler and compile the code for distribution.
+
+#### Call signatures
+
+```shell
+ngl build
+ngl b
+npm run build
+```
+
+### <a name="lint"></a>lint (alias: l)
+
+Lint code through TSLint
+
+#### Call signatures
+
+```shell
+ngl lint
+ngl l
+npm run lint
+```
+
+### <a name="publish"></a>publish (alias: p)
+
+Create a tag and publish the library code using the
+[`np` library](https://github.com/sindresorhus/np). Note that the `version`
+argument utilizes the `version` arguments of the `np` library.
+
+#### Call signatures
+
+```shell
+ngl publish <version>
+ngl p <version>
+npm run tagVersion <version>
+```
+
+### <a name="serve"></a>serve (alias: v)
+
+Start the webpack dev server and run the library
+code through it.
+
+#### Call signatures
+
+```shell
+ngl serve
+ngl v
+npm start
+```
+
+We use `start` for direct `npm` commands to keep the command as
+concise as possible.
+
+### <a name="test"></a>test (alias: t)
+
+Run unit tests on code. For unit test types, see the
+[unit testing](#unit) section below.
+
+#### Call signatures
+
+```shell
+ngl test <type>
+ngl t <type>
+npm test <type>
+```
 
 ### <a name="unit"></a>Unit Testing
 
@@ -292,6 +375,8 @@ The provided testing commands will watch your files for changes.
 The two following command is provided by default:
 
 ```shell
+ngl test
+ngl t
 npm test
 ```
 
@@ -312,35 +397,37 @@ Note that Chrome still requires a manual refresh on the Debug tab to see updated
 
 ### <a name="pack"></a>Packaging
 
-Packaging is as simple as publishing to NPM by doing
-
-```shell
-npm run tagVersion
-```
-
-To test your packages output before publishing, you can run
+To test your packages output before publishing, you can run the specified publish
+commands above.
 
 ```shell
 npm pack
 ```
 
-Which will generate a compressed file containing your library as it will look when packaged up and
-published to NPM. The basic structure of a published library is:
+Which will generate a compressed file containing your library as it will look when packaged up and published to NPM. The basic structure of a published library is:
 
 ```
+|__dist/
+   |__index.d.ts
+   |__index.js
+   |__index.js.map
+   |__index.metadata.json
+   |__<library name>.bundle.js
+   |__<library name>.bundle.js.map
+   |__<library name>.module.d.ts
+   |__<library name>.module.js
+   |__<library name>.module.js.map
+   |__<library name>.module.metadata.json
 |__examples/
    |__example.component.html
    |__example.component.ts
    |__example.main.ts
    |__example.module.ts
    |__index.html
-|__src/
-   |__<library name>.module.ts
-   |__index.ts
-|__.npmignore
-|__index.ts
 |__package.json
 |__README.md
 ```
 
-As you can see, the packaging removes any files specific to developing your library.
+As you can see, the packaging removes any files specific to developing your
+library. It, more importantly, creates distribution files for usage with many
+different module systems.

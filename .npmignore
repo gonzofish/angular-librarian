@@ -1,3 +1,5 @@
+.npmignore
 *.tgz
 debug.log
 node_modules
+package

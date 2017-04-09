@@ -71,7 +71,7 @@ const getMiniContents = (url, sourcePrefix, callback) => {
     const file = callback(url);
     let template = fs.readFileSync(file.replace(/^dist/, sourcePrefix), 'utf8');
 
-    if (file.match(/\.s(a|c)ss$/)) {
+    if (file.match(/\.s(a|c)ss$/) && template) {
         // convert SASS -> CSS
         template = sass.renderSync({ data: template });
         template = template.css.toString();
