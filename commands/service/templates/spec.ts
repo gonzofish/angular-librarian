@@ -1,16 +1,19 @@
 /* tslint:disable:no-unused-vars */
-import { TestBed, inject } from '@angular/core/testing';
+import { getTestBed, TestBed } from '@angular/core/testing';
 
 import { {{ serviceName }} } from './{{ filename }}.service';
 
 describe('{{ serviceName }}', () => {
+    let service: {{ serviceName }};
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [{{ serviceName }}]
         });
+        service = getTestBed().get({{ serviceName }});
     });
 
-    it('', inject([{{ serviceName }}], (service: {{ serviceName }}) => {
+    it('', () => {
         expect(service).toBeTruthy();
-    }));
+    });
 });

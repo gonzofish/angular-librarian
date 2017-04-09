@@ -5,6 +5,7 @@ const webpack = require('webpack');
 
 const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
+const SourceMapDevToolPlugin = webpack.SourceMapDevToolPlugin;
 
 const rootDir = process.cwd();
 
@@ -49,9 +50,9 @@ module.exports = {
                 emitErrors: true
             }
         }),
-        new webpack.SourceMapDevToolPlugin({
+        new SourceMapDevToolPlugin({
             filename: null,
-            test: /\.(ts|js)$/
+            test: /\.ts$/
         })
     ],
     resolve: {

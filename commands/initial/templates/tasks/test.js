@@ -16,12 +16,12 @@ function getConfig(type) {
     switch (type) {
         case 'headless':
             return getHeadlessConfig();
-        case 'single':
-            return getSingleConfig();
+        case 'all':
+            return getAllConfig();
         case 'watch':
             return getWatchConfig();
         default:
-            return getDefaultConfig();
+            return getSingleConfig();
     }
 }
 
@@ -34,7 +34,7 @@ function getSingleConfig() {
 }
 
 function getHeadlessConfig() {
-    let config = getDefaultConfig();
+    let config = getAllConfig();
 
     config.browsers = ['PhantomJS'];
 
@@ -42,14 +42,14 @@ function getHeadlessConfig() {
 }
 
 function getWatchConfig() {
-    let config = getDefaultConfig();
+    let config = getAllConfig();
 
     config.browsers = ['Chrome'];
 
     return config;
 }
 
-function getDefaultConfig() {
+function getAllConfig() {
     return {
         configFile: path.resolve(process.cwd(), './karma.conf.js')
     };

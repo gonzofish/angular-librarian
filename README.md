@@ -63,7 +63,7 @@ Command     | Purpose
 
 ### <a name="init"></a>initialize (aliases: i, init)
 
-Sets up the project
+Sets up the project. Can also be run to update a project to the latest angular-library-set configuration.
 
 #### Call signature
 
