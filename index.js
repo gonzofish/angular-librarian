@@ -5,7 +5,7 @@ const inquire = require('erector-set').inquire;
 
 const main = (cliArgs) => {
     const command = getCommandName(cliArgs[0]);
-    const commandArgs = cliArgs.slice(1);
+    const commandArgs = cliArgs.slice(command === 'npm' ? 0 : 1);
     const rootDir = process.cwd();
 
     if (typeof commands[command] === 'function') {
@@ -19,6 +19,13 @@ const getCommandName = (command) => {
     command = command ? command.replace(/^\-+/, '') : command;
 
     switch (command) {
+        case 'b':
+        case 'build':
+        case 'l':
+        case 'lint':
+        case 't':
+        case 'test':
+            return 'npm';
         case 'c':
         case 'component':
             return 'component';
