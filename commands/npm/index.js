@@ -16,6 +16,12 @@ const getNpmCommand = (command, args) => {
         case 'l':
         case 'lint':
             return 'lint';
+        case 'p':
+        case 'publish':
+            return ['tagVersion'].concat(args);
+        case 'v':
+        case 'serve':
+            return 'start';
         case 't':
         case 'test':
             return ['test'].concat(args);

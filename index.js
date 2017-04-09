@@ -23,8 +23,12 @@ const getCommandName = (command) => {
         case 'build':
         case 'l':
         case 'lint':
+        case 'p':
+        case 'publish':
+        case 'serve':
         case 't':
         case 'test':
+        case 'v':
             return 'npm';
         case 'c':
         case 'component':
