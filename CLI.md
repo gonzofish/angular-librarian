@@ -24,7 +24,7 @@ Once created add the following:
 ```shell
 @echo off
 
-DOSKEY ngl=node_modules\.bin\ngl
+DOSKEY ngl=node_modules\.bin\ngl $*
 ```
 
 Think of `DOSKEY` as analogous to `alias` in *nix environments. The issue left

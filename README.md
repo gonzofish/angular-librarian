@@ -58,11 +58,11 @@ npm run g <command_name> [<args>]
 or
 
 ```shell
-node ./node_modules/angular-library-set <command_name> [<args>]
+node ./node_modules/angular-librarian <command_name> [<args>]
 ```
 
 The `ngl` command-line tool and `npm run g` are both aliases for calling
-`node ./node_modules/angular-library-set`. Note that all arguments are optional.
+`node ./node_modules/angular-librarian`. Note that all arguments are optional.
 
 Command | Purpose
 --- | ---
@@ -74,7 +74,7 @@ Command | Purpose
 
 ### <a name="init"></a>initialize (aliases: i, init)
 
-Sets up the project. Can also be run to update a project to the latest angular-library-set configuration.
+Sets up the project. Can also be run to update a project to the latest angular-librarian configuration.
 
 #### Call signature
 

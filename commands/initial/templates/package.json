@@ -10,7 +10,7 @@
     "build:aot": "ngc -p tsconfig.build.json",
     "build:copy": "node ./tasks/copy-build && node ./tasks/inline-resources",
     "build:pack": "webpack --config ./webpack/webpack.build.js",
-    "g": "node ./node_modules/angular-library-set",
+    "g": "node ./node_modules/angular-librarian",
     "lint": "tslint ./src/**/*.ts",
     "postbuild": "rimraf build",
     "prebuild": "rimraf dist",
