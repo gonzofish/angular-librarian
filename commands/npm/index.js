@@ -4,8 +4,9 @@ const spawn = require('child_process').spawn;
 
 module.exports = function (rootDir, type) {
     const args = Array.from(arguments).slice(2);
+    const cmd = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
-    spawn('npm', ['run'].concat(getNpmCommand(type, args)), { stdio: 'inherit' });
+    spawn(cmd, ['run'].concat(getNpmCommand(type, args)), { stdio: 'inherit' });
 };
 
 const getNpmCommand = (command, args) => {
