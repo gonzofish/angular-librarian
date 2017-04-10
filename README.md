@@ -3,6 +3,13 @@
 An Angular 2+ scaffolding setup. Generates AOT-compliant code using similar
 paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
+## To Use the ngl Command
+
+The `ngl` command does _not_ install globally by default. To get it working
+there are some additional steps. To learn how to install it on your system,
+take a look at `CLI.md`.
+
+
 ## Usage
 
 Create a new folder and initialize an NPM project:
