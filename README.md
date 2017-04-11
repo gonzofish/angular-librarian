@@ -7,7 +7,7 @@ paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
 The `ngl` command does _not_ install globally by default. To get it working
 there are some additional steps. To learn how to install it on your system,
-take a look at `CLI.md`.
+take a look at [`CLI.md`](https://github.com/gonzofish/angular-library-set/CLI.md).
 
 
 ## Usage
