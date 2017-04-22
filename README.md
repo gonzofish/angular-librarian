@@ -3,6 +3,9 @@
 An Angular 2+ scaffolding setup. Generates AOT-compliant code using similar
 paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
+The library is available as [angular-librarian](https://www.npmjs.com/package/angular-librarian)
+on NPM.
+
 ## To Use the ngl Command
 
 The `ngl` command does _not_ install globally by default. To get it working
