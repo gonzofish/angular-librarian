@@ -15,7 +15,7 @@
     "postbuild": "rimraf build",
     "prebuild": "rimraf dist",
     "pretagVersion": "npm run build",
-    "start": "webpack-dev-server --config ./webpack/webpack.dev.js",
+    "start": "webpack-dev-server --open --config ./webpack/webpack.dev.js",
     "tagVersion": "np",
     "test": "node ./tasks/test"
   },
