@@ -12,6 +12,10 @@ The `ngl` command does _not_ install globally by default. To get it working
 there are some additional steps. To learn how to install it on your system,
 take a look at [`CLI.md`](CLI.md).
 
+If you do _not_ want to use the `ngl` command, please see the commands in
+"[Generative Commands](#generative-commands)" and
+"[Project Commands](#project-commands)" for the alternative usage.
+
 
 ## Usage
 
@@ -28,6 +32,9 @@ Install this package to your project:
 ```shell
 > npm i -D angular-librarian
 ```
+
+The following command (`ngl`) is not available out of the box. To set it up, see
+"[To Use the ngl Command](#to-use-the-ngl-command)".
 
 Then initialize your project:
 
