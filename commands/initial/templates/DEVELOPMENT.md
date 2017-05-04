@@ -2,7 +2,8 @@
 
 ## Tasks
 
-The following commands are available through `npm run`:
+The following commands are available through `npm run` (or, if configured
+`ngl`):
 
 Command     | Purpose
 ---         | ---
@@ -13,7 +14,46 @@ start       | Run Webpack's dev-server on project (can be run as `npm start`)
 [test](#unit)        | Execute unit tests (can be run as `npm test <type>`)
 tagVersion  | Creates tag for new version and publishes
 
-### <a name="unit"></a>Unit Testing
+## Adding External Scripts
+
+To add an external script, add it with a `script-loader!` prefix to the
+`scripts` array of `entry` in `webpack/webpack.dev.js` (for the dev server)
+and add it to the files array of `karma.conf.js` (for testing).
+
+An example, adding the file at `node_modules/ext-dep/dist/dep.min.js`:
+
+```javascript
+/** webpack.dev.js **/
+module.exports = {
+    // other config
+    entry: {
+        app: [ path.resolve(rootDir, 'examples', 'example.main') ],
+        scripts: [
+            // this is the external script line
+            'script-loader!' + path.resolve(rootDir, 'node_modules/ext-dep/dep.min')
+        ],
+        vendor: [ path.resolve(rootDir, 'src', 'vendor')],
+        styles: [ path.resolve(rootDir, 'examples', 'styles.scss') ]
+    },
+    // rest of config
+};
+
+/** karma.conf.js **/
+module.exports = function (config) {
+    config.set({
+        basePath: '',
+        frameworks: ['jasmine'],
+        files: [
+            // this is the external script line
+            'node_modules/hammerjs/hammer.min.js',
+            { pattern: './src/test.js', watched: false }
+        ],
+        // rest of config
+    });
+};
+```
+
+## <a name="unit"></a>Unit Testing
 
 Unit testing is done using Karma and Webpack. The setup is all done during the `initialize` command.
 The provided testing commands will watch your files for changes.
@@ -39,7 +79,7 @@ watch   | Run through Chrome with files being watched & tests automatically re-r
 
 Note that Chrome still requires a manual refresh on the Debug tab to see updated test results.
 
-### <a name="pack"></a>Packaging
+## <a name="pack"></a>Packaging
 
 Packaging is as simple as publishing to NPM by doing
 

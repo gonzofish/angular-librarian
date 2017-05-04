@@ -7,6 +7,12 @@ const ChunkWebpack = webpack.optimize.CommonsChunkPlugin;
 const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 
+const entryPoints = [
+    'vendor',
+    'scripts',
+    'styles',
+    'app'
+];
 const rootDir = process.cwd();
 
 module.exports = {
@@ -17,6 +23,7 @@ module.exports = {
     devtool: 'source-map',
     entry: {
         app: [ path.resolve(rootDir, 'examples', 'example.main') ],
+        scripts: [],
         vendor: [ path.resolve(rootDir, 'src', 'vendor') ],
         styles: [ path.resolve(rootDir, 'examples', 'styles.scss') ]
     },
@@ -61,7 +68,7 @@ module.exports = {
             name: 'vendor'
         }),
         new ContextReplacementPlugin(
-            /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+            /angular(\\|\/)core(\\|\/)((esm(\\|\/)src|src)(\\|\/)linker|@angular)/,
             __dirname
         ),
         new LoaderOptionsPlugin({

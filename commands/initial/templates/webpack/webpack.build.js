@@ -53,7 +53,7 @@ module.exports = {
     performance: { hints: false },
     plugins: [
         new ContextReplacementPlugin(
-            /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+            /angular(\\|\/)core(\\|\/)((esm(\\|\/)src|src)(\\|\/)linker|@angular)/,
             __dirname
         ),
         new LoaderOptionsPlugin({
