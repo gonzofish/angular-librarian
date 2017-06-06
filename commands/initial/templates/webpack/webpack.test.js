@@ -21,7 +21,11 @@ module.exports = {
                     'angular2-template-loader?keepUrl=true'
                 ],
             },
-            { loader: 'raw-loader', test: /\.(s?css|html)$/ },
+            {
+                loaders: ['raw-loader', 'css-loader', 'sass-loader'],
+                test: /\.s?css$/
+            },
+            { loader: 'raw-loader', test: /\.html$/ },
             {
                 enforce: 'pre',
                 exclude: /node_modules/,
