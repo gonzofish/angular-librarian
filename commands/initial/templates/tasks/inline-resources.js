@@ -69,11 +69,24 @@ const inlineStyle = (content, sourcePrefix, callback) =>
 
 const getMiniContents = (url, sourcePrefix, callback) => {
     const file = callback(url);
-    let template = fs.readFileSync(file.replace(/^dist/, sourcePrefix), 'utf8');
+    const srcFile = file.replace(/^dist/, sourcePrefix)
+    const srcDir = srcFile.slice(0, srcFile.lastIndexOf(path.sep));
+    let template = fs.readFileSync(srcFile, 'utf8');
 
     if (file.match(/\.s(a|c)ss$/) && template) {
         // convert SASS -> CSS
-        template = sass.renderSync({ data: template });
+        template = sass.renderSync({
+            data: template,
+            importer: (url, prev, done) => {
+                if (/^~/.test(url)) {
+                    url = path.resolve('node_modules', url.slice(1));
+                } else {
+                    url = path.resolve(srcDir, url);
+                }
+
+                return { contents: fs.readFileSync(url, 'utf8') };
+            }
+        });
         template = template.css.toString();
     }
 

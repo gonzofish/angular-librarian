@@ -1,5 +1,6 @@
 'use strict';
 
+const ExtractText = require('extract-text-webpack-plugin');
 const HtmlWebpack = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
@@ -14,6 +15,8 @@ const entryPoints = [
     'app'
 ];
 const rootDir = process.cwd();
+const examples = path.resolve(rootDir, 'examples');
+const src = path.resolve(rootDir, 'src');
 
 module.exports = {
     devServer: {
@@ -22,28 +25,36 @@ module.exports = {
     },
     devtool: 'source-map',
     entry: {
-        app: [ path.resolve(rootDir, 'examples', 'example.main') ],
+        app: [ path.resolve(examples, 'example.main') ],
         scripts: [],
-        vendor: [ path.resolve(rootDir, 'src', 'vendor') ],
-        styles: [ path.resolve(rootDir, 'examples', 'styles.scss') ]
+        vendor: [ path.resolve(src, 'vendor') ],
+        styles: [ path.resolve(examples, 'styles.scss') ]
     },
     module: {
         loaders: [
             { loader: 'raw-loader', test: /\.html$/ },
             {
-                exclude: /node_modules/,
-                loaders: ['style-loader', 'css-loader'],
+                exclude: [src, examples],
+                loader: ExtractText.extract({
+                    fallbackLoader: 'style-loader',
+                    loader: 'css-loader?sourceMap'
+                }),
                 test: /\.css$/
             },
             {
-                exclude: /node_modules/,
-                loaders: ['raw-loader', 'sass-loader'],
-                test: /component\.scss$/
+                exclude: [path.resolve(examples, 'styles.scss'), /node_modules/],
+                loaders: ['css-to-string-loader', 'css-loader', 'sass-loader'],
+                test: /\.scss$/
+            },
+            {
+                include: examples,
+                loaders: ['style-loader', 'css-loader', 'sass-loader'],
+                test: /styles\.scss$/
             },
             {
                 exclude: /node_modules/,
-                loaders: ['style-loader', 'css-loader', 'sass-loader'],
-                test: /styles\.scss$/
+                loaders: ['css-to-string-loader', 'css-loader'],
+                test: /\.css$/
             },
             {
                 exclude: /node_modules/,
@@ -52,7 +63,7 @@ module.exports = {
             },
             {
                 loaders: ['url-loader?limit=10000'],
-                test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|gif|png)(\?v=\d+\.\d+\.\d+)?$/
+                test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|json|gif|png)(\?v=\d+\.\d+\.\d+)?$/
             }
         ]
     },
