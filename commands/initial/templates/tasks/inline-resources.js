@@ -68,30 +68,104 @@ const inlineStyle = (content, sourcePrefix, callback) =>
     });
 
 const getMiniContents = (url, sourcePrefix, callback) => {
-    const file = callback(url);
-    const srcFile = file.replace(/^dist/, sourcePrefix)
-    const srcDir = srcFile.slice(0, srcFile.lastIndexOf(path.sep));
-    let template = fs.readFileSync(srcFile, 'utf8');
+    const srcFile = callback(url);
+    const file = srcFile.replace(/^dist/, sourcePrefix)
+    const srcDir = file.slice(0, file.lastIndexOf(path.sep));
 
-    if (file.match(/\.s(a|c)ss$/) && template) {
+    if (file.match(/\.s(a|c)ss$/)) {
         // convert SASS -> CSS
         template = sass.renderSync({
-            data: template,
-            importer: (url, prev, done) => {
-                if (/^~/.test(url)) {
-                    url = path.resolve('node_modules', url.slice(1));
-                } else {
-                    url = path.resolve(srcDir, url);
-                }
-
-                return { contents: fs.readFileSync(url, 'utf8') };
-            }
+            file,
+            importer: (url) => handleSassImport(url, srcDir)
         });
         template = template.css.toString();
     }
 
     return minifyText(template);
 };
+
+const handleSassImport = (url, srcDir) => {
+    const fullUrl = getFullSassUrl(url, srcDir);
+    let isPartial = false;
+    let validUrls = getSassUrls(fullUrl);
+
+    // if we can't find the file, try to
+    // see find it as a partial (underscore-prefixed)
+    if (validUrls.length === 0) {
+        validUrls = getSassUrls(fullUrl, true);
+        isPartial = true;
+    }
+
+    const file = getSassImportUrl(validUrls);
+
+    // CSS files don't get compiled in
+    return /\.css$/.test(file) ?
+        { contents: fs.readFileSync(file, 'utf8') } :
+        { file };
+};
+
+const getSassUrls = (url, partial) => {
+    let extensions = ['sass', 'scss'];
+
+    if (!partial) {
+        extensions = extensions.concat('', 'css');
+    } else {
+        const lastSlash = url.lastIndexOf(path.sep);
+        const urlDir = url.slice(0, lastSlash);
+        const fileName = url.slice(lastSlash + 1);
+
+        if (fileName[0] !== '_') {
+            url = urlDir + path.sep + '_' + fileName;
+        }
+    }
+
+    return extensions.reduce((valid, extension) => {
+        const extensionUrl = verifyUrl(url, extension);
+
+        if (extensionUrl) {
+            valid = valid.concat(extensionUrl);
+        }
+
+        return valid;
+    }, []);
+};
+
+const verifyUrl = (url, extension) => {
+    if (extension) {
+        url = url + `.${ extension }`;
+    }
+
+    if (!fs.existsSync(url)) {
+        url = null;
+    }
+
+    return url;
+}
+
+// convert ~-prefixed filenames to node_modules-prefixed
+// make all others relative to srcDir
+const getFullSassUrl = (url, srcDir) =>
+    /^~/.test(url) ?
+        path.resolve('node_modules', url.slice(1)) :
+        path.resolve(srcDir, url);
+
+const getSassImportUrl = (validUrls) => {
+    if (validUrls.length !== 1) {
+        let error = 'Cannot determine Sass/CSS file to process. ';
+
+        if (validUrls.length === 0) {
+            error = error + `\n There are no files matching ${ url }`;
+        } else {
+            error = error + 'Candidates:\n ' + validUrls.join('\n ')
+                + '\nPlease delete or rename all but one of these files or specify the extension to use.';
+        }
+
+        throw new Error(error);
+    }
+
+    return validUrls[0];
+};
+
 
 const minifyText = (text) => text
     .replace(/([\n\r]\s*)+/gm, ' ')
