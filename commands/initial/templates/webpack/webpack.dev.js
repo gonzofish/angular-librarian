@@ -89,6 +89,20 @@ module.exports = {
             }
         }),
         new HtmlWebpack({
+            // shameless/shamefully stolen from Angular CLI
+            chunksSortMode: function(left, right) {
+                const leftIndex = entryPoints.indexOf(left.names[0]);
+                const rightIndex = entryPoints.indexOf(right.names[0]);
+                let direction = 0;
+
+                if (leftIndex > rightIndex) {
+                    direction = 1;
+                } else if (leftIndex < rightIndex) {
+                    direction = -1;
+                }
+
+                return direction;
+            },
             filename: 'index.html',
             inject: 'body',
             template: path.resolve(rootDir, 'examples', 'index.html')
