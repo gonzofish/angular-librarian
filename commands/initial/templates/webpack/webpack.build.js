@@ -20,8 +20,8 @@ module.exports = {
             {
                 exclude: src,
                 loader: ExtractText.extract({
-                    fallbackLoader: 'style-loader',
-                    loader: 'css-loader?sourceMap'
+                    fallback: 'style-loader',
+                    use: 'css-loader?sourceMap'
                 }),
                 test: /\.css$/
             },
@@ -37,7 +37,10 @@ module.exports = {
             },
             {
                 exclude: /node_modules/,
-                loaders: ['awesome-typescript-loader', 'angular2-template-loader?keepUrl=true'],
+                loaders: [
+                    'awesome-typescript-loader?configFileName=' + path.resolve(rootDir, 'tsconfig.build.json'),
+                    'angular2-template-loader?keepUrl=true'
+                ],
                 test: /\.ts$/
             },
             {
@@ -47,10 +50,10 @@ module.exports = {
         ]
     },
     output: {
-        filename: 'asrc-report-form.bundle.js',
+        filename: '{{ name }}.bundle.js',
         path: path.resolve(rootDir, 'dist'),
         libraryTarget: 'umd',
-        library: 'asrc-report-form'
+        library: '{{ name }}'
     },
     performance: { hints: false },
     plugins: [
