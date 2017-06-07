@@ -71,6 +71,7 @@ const getMiniContents = (url, sourcePrefix, callback) => {
     const srcFile = callback(url);
     const file = srcFile.replace(/^dist/, sourcePrefix)
     const srcDir = file.slice(0, file.lastIndexOf(path.sep));
+    let template = '';
 
     if (file.match(/\.s(a|c)ss$/)) {
         // convert SASS -> CSS
