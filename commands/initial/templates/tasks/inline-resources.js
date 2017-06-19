@@ -80,6 +80,8 @@ const getMiniContents = (url, sourcePrefix, callback) => {
             importer: (url) => handleSassImport(url, srcDir)
         });
         template = template.css.toString();
+    } else {
+        template = fs.readFileSync(file, 'utf8');
     }
 
     return minifyText(template);
