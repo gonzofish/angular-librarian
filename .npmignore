@@ -1,3 +1,5 @@
+.editorconfig
+.gitattributes
 .npmignore
 *.tgz
 debug.log

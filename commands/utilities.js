@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const erectorUtils = require('erector-set/src/utils');
 
 exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
 
@@ -27,6 +28,16 @@ exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, ans
     }
 
     return result;
+};
+
+exports.convertYesNoValue = (value) => {
+    if (erectorUtils.checkIsType(value, 'boolean')) {
+        value = value ? 'Y' : 'N';
+    } else if (!value) {
+        value = 'N';
+    }
+
+    return value;
 };
 
 const dashToCamel = (value) =>

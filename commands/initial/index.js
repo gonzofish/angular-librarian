@@ -7,7 +7,7 @@ const path = require('path');
 const utilities = require('../utilities');
 
 module.exports = (rootDir) => {
-    erector.inquire(getQuestions(), true).then((answers) => {
+    erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
             { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
@@ -77,6 +77,10 @@ const checkNameFormat = (value) => {
 
     return value;
 }
+
+const getPreviousTransforms = () => ({
+    git: utilities.convertYesNoValue
+});
 
 const initGit = (rootDir) => {
     console.info('Removing existing Git project');
