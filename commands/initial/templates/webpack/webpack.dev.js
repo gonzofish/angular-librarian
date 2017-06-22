@@ -8,12 +8,6 @@ const ChunkWebpack = webpack.optimize.CommonsChunkPlugin;
 const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 
-const entryPoints = [
-    'vendor',
-    'scripts',
-    'styles',
-    'app'
-];
 const rootDir = process.cwd();
 const examples = path.resolve(rootDir, 'examples');
 const src = path.resolve(rootDir, 'src');
