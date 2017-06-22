@@ -23,7 +23,7 @@ module.exports = {
         contentBase: path.resolve(rootDir, 'dist'),
         port: 9000
     },
-    devtool: 'source-map',
+    devtool: 'cheap-module-eval-source-map',
     entry: {
         app: [ path.resolve(examples, 'example.main') ],
         scripts: [],
