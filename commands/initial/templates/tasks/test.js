@@ -42,16 +42,17 @@ function getHeadlessConfig() {
 }
 
 function getWatchConfig() {
-    let config = getAllConfig();
+    let config = getAllConfig(true);
 
     config.browsers = ['Chrome'];
 
     return config;
 }
 
-function getAllConfig() {
+function getAllConfig(watch) {
     return {
-        configFile: path.resolve(process.cwd(), './karma.conf.js')
+        configFile: path.resolve(process.cwd(), './karma.conf.js'),
+        webpack: require('./webpack/webpack.test.js')(watch),
     };
 }
 
