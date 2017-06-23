@@ -351,7 +351,7 @@ argument utilizes the `version` arguments of the `np` library.
 
 ```shell
 ngl publish <version>
-ngl p <version>
+ngl pub <version>
 npm run tagVersion <version>
 ```
 

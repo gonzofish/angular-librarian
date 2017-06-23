@@ -31,7 +31,6 @@ module.exports = function (config) {
         autoWatch: true,
         browsers: ['Chrome', 'PhantomJS'],
         singleRun: false,
-        webpack: require('./webpack/webpack.test.js'),
         webpackServer: { noInfo: true }
     });
 };

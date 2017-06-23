@@ -3,12 +3,11 @@
     "compilerOptions": {
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "inlineSourceMap": true,
         "lib": ["es6", "dom"],
         "module": "commonjs",
         "moduleResolution": "node",
         "removeComments": false,
-        "sourceMap": false,
+        "sourceMap": true,
         "target": "es5",
         "typeRoots": [
             "./node_modules/@types"
