@@ -1,13 +1,9 @@
 'use strict';
 
-const path = require('path');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 
-const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
-const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 const SourceMapDevToolPlugin = webpack.SourceMapDevToolPlugin;
-
 const webpackCommon = require('./webpack.common');
 const webpackUtils = require('./webpack.utils');
 

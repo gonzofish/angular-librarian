@@ -14,11 +14,11 @@ module.exports = (type) => {
             rules: [
                 {
                     exclude: /node_modules/,
-                    loaders: [
+                    test: /\.ts$/,
+                    use: [
                         'awesome-typescript-loader?configFileName=' + webpackUtils.rootPath(`tsconfig${ tsconfigType }.json`),
                         'angular2-template-loader?keepUrl=true'
-                    ],
-                    use: /\.ts$/
+                    ]
                 },
                 { test: /\.html$/, use: 'raw-loader' },
                 {

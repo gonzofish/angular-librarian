@@ -1,12 +1,12 @@
 'use strict';
 
-const ExtractText = require('extract-text-webpack-plugin');
 const HtmlWebpack = require('html-webpack-plugin');
-const path = require('path');
 const webpack = require('webpack');
+const webpackMerge = require('webpack-merge');
+
 const ChunkWebpack = webpack.optimize.CommonsChunkPlugin;
-const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
-const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
+const webpackCommon = require('./webpack.common');
+const webpackUtils = require('./webpack.utils');
 
 const entryPoints = [
     'vendor',
@@ -14,80 +14,45 @@ const entryPoints = [
     'styles',
     'app'
 ];
+const examplePath = function examples() {
+    return webpackUtils.relayArguments(
+        webpackUtils.rootPath,
+        'examples',
+        arguments
+    );
+};
 
-const rootDir = process.cwd();
-const examples = path.resolve(rootDir, 'examples');
-const src = path.resolve(rootDir, 'src');
-
-module.exports = {
+module.exports = webpackMerge(webpackCommon(), {
     devServer: {
-        contentBase: path.resolve(rootDir, 'dist'),
+        contentBase: webpackUtils.rootPath('dist'),
         port: 9000
     },
     devtool: 'cheap-module-eval-source-map',
     entry: {
-        app: [ path.resolve(examples, 'example.main') ],
+        app: [ examplePath('example.main') ],
         scripts: [],
-        vendor: [ path.resolve(src, 'vendor') ],
-        styles: [ path.resolve(examples, 'styles.scss') ]
+        vendor: [ webpackUtils.srcPath('vendor') ],
+        styles: [ examplePath('styles.scss') ]
     },
     module: {
-        rules: [
-            { test: /\.html$/, use: 'raw-loader' },
-            {
-                exclude: [src, examples],
-                test: /\.css$/,
-                use: ExtractText.extract({
-                    fallbackLoader: 'style-loader',
-                    loader: 'css-loader?sourceMap'
-                })
-            },
-            {
-                exclude: [path.resolve(examples, 'styles.scss'), /node_modules/],
-                test: /\.scss$/,
-                use: ['css-to-string-loader', 'css-loader', 'sass-loader']
-            },
-            {
-                include: examples,
-                test: /styles\.scss$/,
-                use: ['style-loader', 'css-loader', 'sass-loader']
-            },
-            {
-                exclude: /node_modules/,
-                test: /\.css$/,
-                use: ['css-to-string-loader', 'css-loader']
-            },
-            {
-                exclude: /node_modules/,
-                test: /\.ts$/,
-                use: ['awesome-typescript-loader', 'angular2-template-loader?keepUrl=true']
-            },
-            {
-                test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|json|gif|png)(\?v=\d+\.\d+\.\d+)?$/,
-                use: ['url-loader?limit=10000']
-            }
-        ]
+        rules: webpackUtils.buildRules({
+            cssExtract: examplePath(),
+            sassLoader: examplePath('styles.scss')
+        }, {
+            include: examplePath(),
+            test: /styles\.scss$/,
+            use: ['style-loader', 'css-loader', 'sass-loader']
+        })
     },
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(rootDir, 'dist')
+        path: webpackUtils.rootPath('dist')
     },
-    performance: { hints: false },
     plugins: [
         new ChunkWebpack({
             filename: 'vendor.bundle.js',
             minChunks: Infinity,
             name: 'vendor'
-        }),
-        new ContextReplacementPlugin(
-            /angular(\\|\/)core(\\|\/)@angular/,
-            __dirname
-        ),
-        new LoaderOptionsPlugin({
-            debug: true,
-            options: {
-                emitErrors: true
-            }
         }),
         new HtmlWebpack({
             // shameless/shamefully stolen from Angular CLI
@@ -106,11 +71,8 @@ module.exports = {
             },
             filename: 'index.html',
             inject: 'body',
-            template: path.resolve(rootDir, 'examples', 'index.html')
+            template: examplePath('index.html')
         })
-    ],
-    resolve: {
-        extensions: [ '.js', '.ts' ],
-        modules: [path.resolve(rootDir, 'node_modules')]
-    }
-};
+    ]
+});
+

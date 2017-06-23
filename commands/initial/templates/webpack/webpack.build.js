@@ -1,6 +1,5 @@
 'use strict';
 
-const ExtractText = require('extract-text-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 const nodeExternals = require('webpack-node-externals');
 
@@ -12,26 +11,7 @@ module.exports = webpackMerge(webpackCommon('build'), {
     entry: webpackUtils.rootPath('build', 'index.ts'),
     externals: [nodeExternals()],
     module: {
-        rules: [
-            {
-                exclude: webpackUtils.srcPath(),
-                use: ExtractText.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader?sourceMap'
-                }),
-                test: /\.css$/
-            },
-            {
-                exclude: /node_modules/,
-                use: ['css-to-string-loader', 'css-loader', 'sass-loader'],
-                test: /\.scss$/
-            },
-            {
-                exclude: /node_modules/,
-                use: ['css-to-string-loader', 'css-loader'],
-                test: /\.css$/
-            }
-        ]
+        rules: webpackUtils.buildRules()
     },
     output: {
         filename: '{{ name }}.bundle.js',
