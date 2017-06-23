@@ -1,24 +1,20 @@
 'use strict';
 
 const ExtractText = require('extract-text-webpack-plugin');
-const path = require('path');
-const webpack = require('webpack');
-const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
-const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
+const webpackMerge = require('webpack-merge');
 const nodeExternals = require('webpack-node-externals');
 
-const rootDir = process.cwd();
-const src = path.resolve(rootDir, 'src');
+const webpackCommon = require('./webpack.common');
+const webpackUtils = require('./webpack.utils');
 
-module.exports = {
+module.exports = webpackMerge(webpackCommon('build'), {
     devtool: 'source-map',
-    entry: path.resolve(rootDir, 'build', 'index.ts'),
+    entry: webpackUtils.rootPath('build', 'index.ts'),
     externals: [nodeExternals()],
     module: {
         rules: [
-            { use: 'raw-loader', test: /\.html$/ },
             {
-                exclude: src,
+                exclude: webpackUtils.srcPath(),
                 use: ExtractText.extract({
                     fallback: 'style-loader',
                     use: 'css-loader?sourceMap'
@@ -34,42 +30,13 @@ module.exports = {
                 exclude: /node_modules/,
                 use: ['css-to-string-loader', 'css-loader'],
                 test: /\.css$/
-            },
-            {
-                exclude: /node_modules/,
-                use: [
-                    'awesome-typescript-loader?configFileName=' + path.resolve(rootDir, 'tsconfig.build.json'),
-                    'angular2-template-loader?keepUrl=true'
-                ],
-                test: /\.ts$/
-            },
-            {
-                use: ['url-loader?limit=10000'],
-                test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|json|gif|png)(\?v=\d+\.\d+\.\d+)?$/
             }
         ]
     },
     output: {
         filename: '{{ name }}.bundle.js',
-        path: path.resolve(rootDir, 'dist'),
+        path: webpackUtils.rootPath('dist'),
         libraryTarget: 'umd',
         library: '{{ name }}'
-    },
-    performance: { hints: false },
-    plugins: [
-        new ContextReplacementPlugin(
-            /angular(\\|\/)core(\\|\/)@angular/,
-            __dirname
-        ),
-        new LoaderOptionsPlugin({
-            debug: true,
-            options: {
-                emitErrors: true
-            }
-        })
-    ],
-    resolve: {
-        extensions: [ '.js', '.ts' ],
-        modules: [path.resolve(rootDir, 'node_modules')]
     }
-};
+});

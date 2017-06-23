@@ -2,31 +2,24 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const webpackMerge = require('webpack-merge');
 
 const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 const SourceMapDevToolPlugin = webpack.SourceMapDevToolPlugin;
 
-const rootDir = process.cwd();
+const webpackCommon = require('./webpack.common');
+const webpackUtils = require('./webpack.utils');
 
 module.exports = (watch) => {
-    return {
+    return webpackMerge(webpackCommon('test'), {
         devtool: watch ? 'inline-source-map' : 'cheap-module-eval-source-map',
         module: {
             rules: [
                 {
-                    exclude: /node_modules/,
-                    loaders: [
-                        'awesome-typescript-loader?configFileName=' + path.resolve(rootDir, 'tsconfig.test.json'),
-                        'angular2-template-loader?keepUrl=true'
-                    ],
-                    use: /\.ts$/
-                },
-                {
                     test: /\.s?css$/,
                     use: ['raw-loader', 'css-loader', 'sass-loader']
                 },
-                { test: /\.html$/, use: 'raw-loader' },
                 {
                     enforce: 'pre',
                     exclude: /node_modules/,
@@ -44,26 +37,15 @@ module.exports = (watch) => {
                 }
             ]
         },
-        performance: { hints: false },
         plugins: [
-            new ContextReplacementPlugin(
-                /angular(\\|\/)core(\\|\/)@angular/,
-                __dirname
-            ),
-            new LoaderOptionsPlugin({
-                options: {
-                    emitErrors: true
-                }
-            }),
             new SourceMapDevToolPlugin({
                 filename: null,
                 test: /\.ts$/
             })
         ],
         resolve: {
-            extensions: ['.js', '.ts'],
-            modules: [path.resolve('.', 'src'), path.resolve(rootDir, 'node_modules')],
+            modules: [ webpackUtils.srcPath() ],
             moduleExtensions: ['-loader']
         }
-    };
+    });
 };
