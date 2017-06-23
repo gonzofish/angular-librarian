@@ -1,13 +1,16 @@
 'use strict';
 
+const fs = require('fs');
 const webpack = require('webpack');
-    const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
+const webpackMerge = require('webpack-merge');
+
+const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 
 const webpackUtils = require('./webpack.utils');
 
-module.exports = (type) => {
-    const tsconfigType = type ? `.${ type }` : '';
+const getCommonConfig = (type) => {
+    const tsconfigType = type !== 'dev' ? `.${ type }` : '';
 
     return {
         module: {
@@ -45,4 +48,21 @@ module.exports = (type) => {
             modules: [ webpackUtils.rootPath('node_modules') ]
         }
     };
+};
+
+module.exports = (type, typeConfig) => {
+    const configs = [getCommonConfig(type), typeConfig];
+    const userConfigPath = webpackUtils.rootPath('configs', `webpack.${ type }.js`);
+
+    if (fs.existsSync(userConfigPath)) {
+        let userConfig = require(userConfigPath);
+
+        if (Object.prototype.toString.call(userConfig) === '[object Function]') {
+            userConfig = userConfig();
+        }
+
+        configs.push(userConfig);
+    }
+
+    return webpackMerge.apply(null, configs);
 };

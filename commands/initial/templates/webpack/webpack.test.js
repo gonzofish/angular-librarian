@@ -1,14 +1,13 @@
 'use strict';
 
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
 
 const SourceMapDevToolPlugin = webpack.SourceMapDevToolPlugin;
 const webpackCommon = require('./webpack.common');
 const webpackUtils = require('./webpack.utils');
 
 module.exports = (watch) => {
-    return webpackMerge(webpackCommon('test'), {
+    return webpackCommon('test', {
         devtool: watch ? 'inline-source-map' : 'cheap-module-eval-source-map',
         module: {
             rules: [

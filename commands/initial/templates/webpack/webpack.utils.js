@@ -15,11 +15,11 @@ function srcPath() {
 exports.srcPath = srcPath;
 
 function relayArguments(method, prefix, args) {
-    const pathParts = [prefix].concat(
+    const fullArguments = [prefix].concat(
         Array.prototype.slice.apply(args)
     );
 
-    return method.apply(null, pathParts);
+    return method.apply(null, fullArguments);
 }
 exports.relayArguments = relayArguments;
 

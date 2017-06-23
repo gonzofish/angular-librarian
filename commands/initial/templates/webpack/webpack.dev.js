@@ -2,7 +2,6 @@
 
 const HtmlWebpack = require('html-webpack-plugin');
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
 
 const ChunkWebpack = webpack.optimize.CommonsChunkPlugin;
 const webpackCommon = require('./webpack.common');
@@ -22,7 +21,7 @@ const examplePath = function examples() {
     );
 };
 
-module.exports = webpackMerge(webpackCommon(), {
+module.exports = webpackCommon('dev', {
     devServer: {
         contentBase: webpackUtils.rootPath('dist'),
         port: 9000
