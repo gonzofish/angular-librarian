@@ -31,39 +31,39 @@ module.exports = {
         styles: [ path.resolve(examples, 'styles.scss') ]
     },
     module: {
-        loaders: [
-            { loader: 'raw-loader', test: /\.html$/ },
+        rules: [
+            { test: /\.html$/, use: 'raw-loader' },
             {
                 exclude: [src, examples],
-                loader: ExtractText.extract({
+                test: /\.css$/,
+                use: ExtractText.extract({
                     fallbackLoader: 'style-loader',
                     loader: 'css-loader?sourceMap'
-                }),
-                test: /\.css$/
+                })
             },
             {
                 exclude: [path.resolve(examples, 'styles.scss'), /node_modules/],
-                loaders: ['css-to-string-loader', 'css-loader', 'sass-loader'],
-                test: /\.scss$/
+                test: /\.scss$/,
+                use: ['css-to-string-loader', 'css-loader', 'sass-loader']
             },
             {
                 include: examples,
-                loaders: ['style-loader', 'css-loader', 'sass-loader'],
-                test: /styles\.scss$/
+                test: /styles\.scss$/,
+                use: ['style-loader', 'css-loader', 'sass-loader']
             },
             {
                 exclude: /node_modules/,
-                loaders: ['css-to-string-loader', 'css-loader'],
-                test: /\.css$/
+                test: /\.css$/,
+                use: ['css-to-string-loader', 'css-loader']
             },
             {
                 exclude: /node_modules/,
-                loaders: ['awesome-typescript-loader', 'angular2-template-loader?keepUrl=true'],
-                test: /\.ts$/
+                test: /\.ts$/,
+                use: ['awesome-typescript-loader', 'angular2-template-loader?keepUrl=true']
             },
             {
-                loaders: ['url-loader?limit=10000'],
-                test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|json|gif|png)(\?v=\d+\.\d+\.\d+)?$/
+                test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|json|gif|png)(\?v=\d+\.\d+\.\d+)?$/,
+                use: ['url-loader?limit=10000']
             }
         ]
     },
@@ -79,7 +79,7 @@ module.exports = {
             name: 'vendor'
         }),
         new ContextReplacementPlugin(
-            /angular(\\|\/)core(\\|\/)((esm(\\|\/)src|src)(\\|\/)linker|@angular)/,
+            /angular(\\|\/)core(\\|\/)@angular/,
             __dirname
         ),
         new LoaderOptionsPlugin({

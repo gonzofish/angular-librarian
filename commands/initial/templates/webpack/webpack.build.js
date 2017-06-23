@@ -15,11 +15,11 @@ module.exports = {
     entry: path.resolve(rootDir, 'build', 'index.ts'),
     externals: [nodeExternals()],
     module: {
-        loaders: [
-            { loader: 'raw-loader', test: /\.html$/ },
+        rules: [
+            { use: 'raw-loader', test: /\.html$/ },
             {
                 exclude: src,
-                loader: ExtractText.extract({
+                use: ExtractText.extract({
                     fallback: 'style-loader',
                     use: 'css-loader?sourceMap'
                 }),
@@ -27,24 +27,24 @@ module.exports = {
             },
             {
                 exclude: /node_modules/,
-                loaders: ['css-to-string-loader', 'css-loader', 'sass-loader'],
+                use: ['css-to-string-loader', 'css-loader', 'sass-loader'],
                 test: /\.scss$/
             },
             {
                 exclude: /node_modules/,
-                loaders: ['css-to-string-loader', 'css-loader'],
+                use: ['css-to-string-loader', 'css-loader'],
                 test: /\.css$/
             },
             {
                 exclude: /node_modules/,
-                loaders: [
+                use: [
                     'awesome-typescript-loader?configFileName=' + path.resolve(rootDir, 'tsconfig.build.json'),
                     'angular2-template-loader?keepUrl=true'
                 ],
                 test: /\.ts$/
             },
             {
-                loaders: ['url-loader?limit=10000'],
+                use: ['url-loader?limit=10000'],
                 test: /\.(woff2?|ttf|eot|svg|jpg|jpeg|json|gif|png)(\?v=\d+\.\d+\.\d+)?$/
             }
         ]
@@ -58,7 +58,7 @@ module.exports = {
     performance: { hints: false },
     plugins: [
         new ContextReplacementPlugin(
-            /angular(\\|\/)core(\\|\/)((esm(\\|\/)src|src)(\\|\/)linker|@angular)/,
+            /angular(\\|\/)core(\\|\/)@angular/,
             __dirname
         ),
         new LoaderOptionsPlugin({
