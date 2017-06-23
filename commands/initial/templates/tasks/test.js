@@ -52,7 +52,7 @@ function getWatchConfig() {
 function getAllConfig(watch) {
     return {
         configFile: path.resolve(process.cwd(), './karma.conf.js'),
-        webpack: require('./webpack/webpack.test.js')(watch),
+        webpack: require('../webpack/webpack.test.js')(watch),
     };
 }
 
