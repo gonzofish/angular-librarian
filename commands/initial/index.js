@@ -35,10 +35,11 @@ module.exports = (rootDir) => {
             { name: 'tasks/copy-build.js', overwrite: true },
             { name: 'tasks/inline-resources.js', overwrite: true },
             { name: 'tasks/test.js', overwrite: true },
-            { name: 'tasks/update-sourcemaps.js', overwrite: true },
             { name: 'webpack/webpack.build.js', overwrite: true },
+            { name: 'webpack/webpack.common.js', overwrite: true },
             { name: 'webpack/webpack.dev.js', overwrite: true },
-            { name: 'webpack/webpack.test.js', overwrite: true }
+            { name: 'webpack/webpack.test.js', overwrite: true },
+            { name: 'webpack/webpack.utils.js', overwrite: true }
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
         let templates;
