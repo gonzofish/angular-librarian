@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const Server = require('karma').Server;
 
@@ -49,12 +50,10 @@ function getWatchConfig() {
     return config;
 }
 
-function getAllConfig(watch) {
-    return {
-        configFile: path.resolve(process.cwd(), './karma.conf.js'),
-        webpack: require('../webpack/webpack.test.js')(watch),
-    };
-}
+const getAllConfig = (watch) => ({
+    configFile: path.resolve(process.cwd(), './karma.conf.js'),
+    webpack: require('../webpack/webpack.test.js')(watch),
+});
 
 module.exports = run;
 
