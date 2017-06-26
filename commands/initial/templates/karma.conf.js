@@ -67,8 +67,14 @@ const mergeConfigs = (base, custom, karmaConfig) => {
     }
 
     if (custom) {
-        mergedConfig = mergeConfigArrays(base, custom);
-        mergedConfig = mergeConfigObjects(mergedConfig, custom);
+        const arrays = mergeConfigArrays(base, custom);
+        const objects = mergeConfigObjects(base, custom);
+        const primitives = mergeConfigPrimitives(base, custom);
+        const customAttributes = Object.assign({}, arrays, objects, primitives);
+
+        mergedConfig = Object.assign(
+            {}, base, customAttributes
+        );
     }
 
     return mergedConfig;
@@ -76,7 +82,7 @@ const mergeConfigs = (base, custom, karmaConfig) => {
 
 const mergeConfigArrays = (base, custom) => {
     const attributes = ['browsers', 'files', 'plugins', 'reporters'];
-    return mergeConfigAttributes(base, custom, attributes, (baseAttribute, customAtt) =>
+    return mergeConfigAttributes(base, custom, attributes, (baseAttribute, customAttribute) =>
         erectorUtils.mergeDeep(baseAttribute, customAttribute)
     );
 };
@@ -97,18 +103,11 @@ const mergeConfigPrimitives = (base, custom) => {
 };
 
 const mergeConfigAttributes = (base, custom, attributes, callback) => {
-    const customAttributes = attributes.reduce((config, attribute) => {
+    return attributes.reduce((config, attribute) => {
         if (attribute in custom) {
             config[attribute] = callback(base[attribute], custom[attribute]);
         }
 
         return config;
     }, {});
-    let mergedConfig = base;
-
-    if (Object.keys(customAttributes).length > 0) {
-        mergedConfig = erectorUtils.mergeDeep(base, customAttributes);
-    }
-
-    return mergedConfig;
 };
