@@ -52,16 +52,16 @@ const getCommonConfig = (type) => {
 
 module.exports = (type, typeConfig) => {
     const configs = [getCommonConfig(type), typeConfig];
-    const userConfigPath = webpackUtils.rootPath('configs', `webpack.${ type }.js`);
+    const customConfigPath = webpackUtils.rootPath('configs', `webpack.${ type }.js`);
 
-    if (fs.existsSync(userConfigPath)) {
-        let userConfig = require(userConfigPath);
+    if (fs.existsSync(customConfigPath)) {
+        let customConfig = require(customConfigPath);
 
-        if (Object.prototype.toString.call(userConfig) === '[object Function]') {
-            userConfig = userConfig();
+        if (Object.prototype.toString.call(customConfig) === '[object Function]') {
+            customConfig = customConfig();
         }
 
-        configs.push(userConfig);
+        configs.push(customConfig);
     }
 
     return webpackMerge.apply(null, configs);
