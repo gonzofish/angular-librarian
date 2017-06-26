@@ -46,6 +46,10 @@ const getCommandName = (command) => {
         case 's':
         case 'service':
             return 'service';
+        case 'u':
+        case 'up':
+        case 'upgrade':
+            return 'upgrade';
         default:
             return '';
     }

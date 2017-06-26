@@ -42,13 +42,10 @@ module.exports = (rootDir) => {
             { name: 'webpack/webpack.utils.js', overwrite: true }
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
-        let templates;
-
-
-        templates = utilities.getTemplates(rootDir, __dirname, templateList);
-        erector.construct(answers, templates);
-
         const startingDir = __dirname;
+        const templates = utilities.getTemplates(rootDir, __dirname, templateList);
+
+        erector.construct(answers, templates);
 
         process.chdir(rootDir);
         if (gitAnswer.answer) {

@@ -4,5 +4,6 @@ module.exports = {
     initial: require('./initial'),
     npm: require('./npm'),
     pipe: require('./pipe'),
-    service: require('./service')
+    service: require('./service'),
+    upgrade: require('./upgrade')
 };
