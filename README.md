@@ -469,4 +469,4 @@ different module systems.
 ## <a name="contribute"></a>Contributing
 
 If you'd like to contribute to `angular-librarian`, please see the
-[contributing guide](CONTRIBUTING.md)!
+[contributing guide](.github/CONTRIBUTING.md)!
