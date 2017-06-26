@@ -3,10 +3,27 @@
 An Angular 2+ scaffolding setup. Generates AOT-compliant code using similar
 paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
-The library is available as [angular-librarian](https://www.npmjs.com/package/angular-librarian)
-on NPM.
+- [To Use the `ngl` Command](#ngl-command)
+- [Usage](#usage)
+- [Generative Commands](#generative-commands)
+    - [initialize](#init)
+    - [component](#component)
+    - [directive](#directive)
+    - [pipe](#pipe)
+    - [service](#service)
+- [Project Commands](#project-commands)
+    - [build](#build)
+    - [lint](#lint)
+    - [publish](#publish)
+    - [server](#serve)
+    - [test](#test)
+- [Unit Testing](#unit)
+- [Packaging](#pack)
+- [Contributing](#contribute)
 
-## To Use the ngl Command
+
+
+## <a name="ngl-command"></a>To Use the ngl Command
 
 The `ngl` command does _not_ install globally by default. To get it working
 there are some additional steps. To learn how to install it on your system,
@@ -304,7 +321,7 @@ for a service--a `pipe.ts` and `pipe.spec.ts` file.
       |__<pipe-name>.pipe.ts
 ```
 
-## Project Commands
+## <a name="project-commands"></a>Project Commands
 
 There are commands provided out of the box, as NPM scripts. They are:
 
@@ -314,7 +331,7 @@ Command     | Purpose
 [lint](#lint) | Verify code matches linting rules
 [publish](#publish) | Creates tag for new version and publishes
 [serve](#serve) | Run Webpack's dev-server on project
-[test](#unit) | Execute unit tests
+[test](#test) | Execute unit tests
 
 ### <a name="build"></a>build (alias: b)
 
@@ -448,3 +465,8 @@ Which will generate a compressed file containing your library as it will look wh
 As you can see, the packaging removes any files specific to developing your
 library. It, more importantly, creates distribution files for usage with many
 different module systems.
+
+## <a name="contribute"></a>Contributing
+
+If you'd like to contribute to `angular-librarian`, please see the
+[contributing guide](CONTRIBUTING.md)!
