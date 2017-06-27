@@ -33,7 +33,7 @@
     "@angular/compiler-cli": "^4.0.0",
     "@types/jasmine": "2.5.38",
     "@types/node": "^6.0.42",
-    "angular-librarian": "1.0.0-beta.1",
+    "angular-librarian": "1.0.0-beta.2",
     "angular2-template-loader": "0.6.0",
     "awesome-typescript-loader": "^3.0.0",
     "codelyzer": "~2.0.0-beta.1",

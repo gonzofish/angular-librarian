@@ -44,7 +44,8 @@ const checkLibrarianVersion = (npm) => {
 
 const parseInstalledVersion = (installed) => {
     const lines = installed.split(/\r?\n/);
-    const version = lines[1].replace('`-- ', '').replace('angular-librarian@', '').trim();
+    const version = lines.find((line) => line.indexOf('angular-librarian@') !== -1)
+        .replace('`-- ', '').replace('angular-librarian@', '').trim();
 
     if (!version || version === '(empty)') {
         throw new Error('Angular Librarian is not installed. Not sure how that\'s possible!\n\n\tRun `npm i -D angular-librarian` to install');
