@@ -439,13 +439,13 @@ Some configurations can be extended with custom properties. These
 configurations should be placed in a `configs` directory under the project's
 root directory with the corresponding name:
 
-- [Karma configuration](#karma-config) (`karma.conf.js`) [_coming soon_]
+- [Karma configuration](#karma-config) (`karma.conf.js`)
 - [Rollup configuration](#rollup-config) (`rollup.config.js`)
-- [Webpack configurations](#webpack-configs) [_coming soon_]
+- [Webpack configurations](#webpack-configs)
     - `webpack.dev.js`
     - `webpack.test.js`
 
-### <a name="karma-config"></a>Karma Configuration [_coming soon_]
+### <a name="karma-config"></a>Karma Configuration
 
 A custom Karma configuration should be a Node module that exports a function.
 The exported function will be relay the Karma `config` variable. If provided,
@@ -479,7 +479,7 @@ _Note_: there is no file provided named `rollup.config.js` like other
 configuration files--instead the configuration is maintained in
 `tasks/rollup.js`.
 
-### <a name="webpack-configs"></a>Webpack Configurations [_coming soon_]
+### <a name="webpack-configs"></a>Webpack Configurations
 
 Either of the Webpack configurations can be extended by providing a file with a
 matching name in `configs`. The configuration is applied using the
