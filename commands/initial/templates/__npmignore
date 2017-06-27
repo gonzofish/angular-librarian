@@ -4,13 +4,15 @@
 .gitignore
 .npmignore
 .vscode
+build
 coverage
 debug.log
 DEVELOPMENT.md
-dist/src
+dist
 index.ts
 karma.conf.js
 node_modules
+out-tsc
 src
 tasks
 test.ts

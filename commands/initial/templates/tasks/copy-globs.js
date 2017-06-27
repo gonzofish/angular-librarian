@@ -21,9 +21,10 @@ const copyGlob = (fileGlob, from, to) => new Promise((resolve, reject) => {
 
         files.forEach((file) => {
             const origin = path.resolve(from, file);
-            const destination = path.join(to, file);
+            const destination = path.resolve(to, file);
             const contents = fs.readFileSync(origin, 'utf8');
 
+            fs.ensureDirSync(path.dirname(destination));
             fs.writeFileSync(destination, contents);
         });
 

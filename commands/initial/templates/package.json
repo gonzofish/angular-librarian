@@ -2,9 +2,9 @@
   "name": "{{ name }}",
   "version": "{{ version }}",
   "description": "{{ readmeTitle }}, an Angular library",
-  "main": "dist/{{ name }}.bundle.js",
-  "jsnext:main": "dist/{{ name }}.module.js",
-  "types": "dist/index.d.ts",
+  "main": "./{{ name }}.bundle.js",
+  "jsnext:main": "./{{ name }}.module.js",
+  "types": "./index.d.ts",
   "scripts": {
     "build": "node ./tasks/build",
     "g": "node ./node_modules/angular-librarian",

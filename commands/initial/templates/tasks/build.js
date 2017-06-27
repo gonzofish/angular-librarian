@@ -57,7 +57,8 @@ const doInlining = () => inlineResources(buildDir, 'src');
 const rollupBundles = () => rollup(libName, {
     dist: distDir,
     es2015: es2015Dir,
-    es5: es5Dir
+    es5: es5Dir,
+    root: rootDir
 });
 
 return Promise.resolve()
