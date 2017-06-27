@@ -11,7 +11,9 @@ const inlineResources = (globs, sourcePrefix) => {
         globs = [globs];
     }
 
-    globs.forEach((pattern) => replaceSource(pattern, sourcePrefix));
+    return Promise.all(
+        globs.map((pattern) => replaceSource(pattern, sourcePrefix))
+    );
 };
 
 const replaceSource = (pattern, sourcePrefix) => {
@@ -20,28 +22,33 @@ const replaceSource = (pattern, sourcePrefix) => {
         pattern = path.join(pattern, '**', '*');
     }
 
-    const files = glob.sync(pattern, {})
-        .filter((name) => /\.ts$/.test(name));
+    return new Promise((resolve, reject) => {
+        glob(pattern, {}, (error, files) => {
+            if (error) reject(Error);
 
-    files.forEach((filePath) => {
-        fs.readFile(filePath, 'utf8', (error, content) => {
-            if (error) {
-                throw error;
-            }
+            files.filter((name) => /\.ts$/.test(name)).forEach((filePath) => {
+                fs.readFileSync(filePath, 'utf8', (error, content) => {
+                    if (error) {
+                        throw error;
+                    }
 
-            let fileContents = inlineResourcesFromString(content, sourcePrefix, (url) =>
-                path.join(path.dirname(filePath), url)
-            );
-            //# sourceMappingURL=test.bundle.js.map
-            fileContents = fileContents.replace(/\/\/#\s*sourceMappingURL=(.+)(\r?\n)?/, (match, url) => {
-                const lastSlash = url.lastIndexOf('/');
-                const relativeUrl = url.substring(lastSlash + 1);
+                    let fileContents = inlineResourcesFromString(content, sourcePrefix, (url) =>
+                        path.join(path.dirname(filePath), url)
+                    );
+                    //# sourceMappingURL=test.bundle.js.map
+                    fileContents = fileContents.replace(/\/\/#\s*sourceMappingURL=(.+)(\r?\n)?/, (match, url) => {
+                        const lastSlash = url.lastIndexOf('/');
+                        const relativeUrl = url.substring(lastSlash + 1);
 
-                return match.replace(url, relativeUrl);
+                        return match.replace(url, relativeUrl);
+                    });
+
+
+                    fs.writeFileSync(filePath, fileContents);
+                });
             });
 
-
-            fs.writeFile(filePath, fileContents);
+            resolve();
         });
     });
 };

@@ -1,37 +1,25 @@
 'use strict';
 
-const path = require('path');
 const webpack = require('webpack');
 
-const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
-const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 const SourceMapDevToolPlugin = webpack.SourceMapDevToolPlugin;
-
-const rootDir = process.cwd();
+const webpackCommon = require('./webpack.common');
+const webpackUtils = require('./webpack.utils');
 
 module.exports = (watch) => {
-    return {
+    return webpackCommon('test', {
         devtool: watch ? 'inline-source-map' : 'cheap-module-eval-source-map',
         module: {
-            loaders: [
+            rules: [
                 {
-                    exclude: /node_modules/,
-                    test: /\.ts$/,
-                    loaders: [
-                        'awesome-typescript-loader?configFileName=' + path.resolve(rootDir, 'tsconfig.test.json'),
-                        'angular2-template-loader?keepUrl=true'
-                    ],
+                    test: /\.s?css$/,
+                    use: ['raw-loader', 'css-loader', 'sass-loader']
                 },
-                {
-                    loaders: ['raw-loader', 'css-loader', 'sass-loader'],
-                    test: /\.s?css$/
-                },
-                { loader: 'raw-loader', test: /\.html$/ },
                 {
                     enforce: 'pre',
                     exclude: /node_modules/,
-                    loader: 'tslint-loader',
-                    test: /\.ts$/
+                    test: /\.ts$/,
+                    use: 'tslint-loader'
                 },
                 {
                     enforce: 'post',
@@ -39,31 +27,20 @@ module.exports = (watch) => {
                         /node_modules/,
                         /\.(e2e|spec\.)ts$/
                     ],
-                    loader: 'istanbul-instrumenter-loader?esModules=true',
-                    test: /\.ts$/
+                    test: /\.ts$/,
+                    use: 'istanbul-instrumenter-loader?esModules=true'
                 }
             ]
         },
-        performance: { hints: false },
         plugins: [
-            new ContextReplacementPlugin(
-                /angular(\\|\/)core(\\|\/)((esm(\\|\/)src|src)(\\|\/)linker|@angular)/,
-                __dirname
-            ),
-            new LoaderOptionsPlugin({
-                options: {
-                    emitErrors: true
-                }
-            }),
             new SourceMapDevToolPlugin({
                 filename: null,
                 test: /\.ts$/
             })
         ],
         resolve: {
-            extensions: ['.js', '.ts'],
-            modules: [path.resolve('.', 'src'), path.resolve(rootDir, 'node_modules')],
+            modules: [ webpackUtils.srcPath() ],
             moduleExtensions: ['-loader']
         }
-    }
+    });
 };

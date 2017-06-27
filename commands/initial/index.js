@@ -28,26 +28,27 @@ module.exports = (rootDir) => {
             { destination: path.resolve(srcDir, 'index.ts'), name: 'src/index.ts' },
             { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js', overwrite: true },
             { name: 'tsconfig.json', overwrite: true },
-            { name: 'tsconfig.build.json', overwrite: true },
+            { name: 'tsconfig.es2015.json', overwrite: true },
+            { name: 'tsconfig.es5.json', overwrite: true },
             { name: 'tsconfig.test.json', overwrite: true },
             { name: 'tslint.json', overwrite: true },
             { destination: path.resolve(srcDir, 'vendor.ts'), name: 'src/vendor.ts' },
+            { name: 'tasks/build.js', overwrite: true },
             { name: 'tasks/copy-build.js', overwrite: true },
+            { name: 'tasks/copy-globs.js', overwrite: true },
             { name: 'tasks/inline-resources.js', overwrite: true },
+            { name: 'tasks/rollup.js', overwrite: true },
             { name: 'tasks/test.js', overwrite: true },
-            { name: 'tasks/update-sourcemaps.js', overwrite: true },
-            { name: 'webpack/webpack.build.js', overwrite: true },
+            { name: 'webpack/webpack.common.js', overwrite: true },
             { name: 'webpack/webpack.dev.js', overwrite: true },
-            { name: 'webpack/webpack.test.js', overwrite: true }
+            { name: 'webpack/webpack.test.js', overwrite: true },
+            { name: 'webpack/webpack.utils.js', overwrite: true }
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
-        let templates;
-
-
-        templates = utilities.getTemplates(rootDir, __dirname, templateList);
-        erector.construct(answers, templates);
-
         const startingDir = __dirname;
+        const templates = utilities.getTemplates(rootDir, __dirname, templateList);
+
+        erector.construct(answers, templates);
 
         process.chdir(rootDir);
         if (gitAnswer.answer) {

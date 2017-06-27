@@ -1,5 +1,9 @@
 {
     "angularCompilerOptions": {
+        "annotateForClosureCompiler": true,
+        "flatModuleId": "librarian-test",
+        "flatModuleOutFile": "librarian-test.js",
+        "genDir": "./out-tsc/lib-gen-dir/",
         "strictMetadataEmit": true,
         "skipTemplateCodegen": true
     },
@@ -11,9 +15,12 @@
         "lib": ["es2015", "dom"],
         "module": "es2015",
         "moduleResolution": "node",
-        "outDir": "./dist",
+        "outDir": "./out-tsc/lib-es2015/",
+        "skipLibCheck": true,
         "sourceMap": true,
-        "target": "es5",
+        "stripInternal": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "target": "es2015",
         "typeRoots": [
             "./node_modules/@types"
         ]
