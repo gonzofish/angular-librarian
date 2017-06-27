@@ -13,21 +13,23 @@ module.exports = (rootDir) => {
     const latestVersion = checkLibrarianVersion(npmCommand);
 
     if (latestVersion) {
-        erector.inquire([
-            {
-                allowBlank: true,
-                name: 'proceed',
-                question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
-                transform: utilities.createYesNoValue('n', [])
-            }
-        ]).then((answers) => {
-            if (answers[0].answer) {
-                updateLibrarian(npmCommand, latestVersion, rootDir);
-            } else {
-                console.info('    Upgrade cancelled');
-            }
-        });
+        installLibrarian(npmCommand, latestVersion);
     }
+
+    erector.inquire([
+        {
+            allowBlank: true,
+            name: 'proceed',
+            question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
+            transform: utilities.createYesNoValue('n', [])
+        }
+    ]).then((answers) => {
+        if (answers[0].answer) {
+            updateFiles(rootDir);
+        } else {
+            console.info('    Upgrade cancelled');
+        }
+    });
 };
 
 const checkLibrarianVersion = (npm) => {
@@ -52,11 +54,6 @@ const parseInstalledVersion = (installed) => {
     }
 
     return version;
-};
-
-const updateLibrarian = (npm, version, rootDir) => {
-    installLibrarian(npm, version);
-    updateFiles(rootDir);
 };
 
 const installLibrarian = (npm, version) => {
