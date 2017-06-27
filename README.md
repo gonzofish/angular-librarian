@@ -479,7 +479,11 @@ _Note_: there is no file provided named `rollup.config.js` like other
 configuration files--instead the configuration is maintained in
 `tasks/rollup.js`.
 
+<<<<<<< HEAD
 ### <a name="webpack-configs"></a>Webpack Configurations
+=======
+### <a name="webpack-configs"></a>Webpack Configurations [_coming soon_]
+>>>>>>> baa61c5587ae3991e8e961f3697d16cb7fcf0410
 
 Either of the Webpack configurations can be extended by providing a file with a
 matching name in `configs`. The configuration is applied using the
