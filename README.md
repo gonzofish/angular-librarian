@@ -18,6 +18,10 @@ paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
     - [server](#serve)
     - [test](#test)
 - [Unit Testing](#unit)
+- [Custom Configurations](#custom-config)
+    - [Karma Configuration](#karma-config)
+    - [Rollup Configuration](#rollup-config)
+    - [Webpack Configurations](#webpack-configs)
 - [Packaging](#pack)
 - [Contributing](#contribute)
 
@@ -401,7 +405,7 @@ ngl t <type>
 npm test <type>
 ```
 
-### <a name="unit"></a>Unit Testing
+## <a name="unit"></a>Unit Testing
 
 Unit testing is done using Karma and Webpack. The setup is all done during the `initialize` command.
 The provided testing commands will watch your files for changes.
@@ -429,7 +433,59 @@ watch   | Run through Chrome with files being watched & tests automatically re-r
 
 Note that Chrome still requires a manual refresh on the Debug tab to see updated test results.
 
-### <a name="pack"></a>Packaging
+## <a name="custom-config"></a>Custom Configurations
+
+Some configurations can be extended with custom properties. These
+configurations should be placed in a `configs` directory under the project's
+root directory with the corresponding name:
+
+- [Karma configuration](#karma-config) (`karma.conf.js`) [_coming soon_]
+- [Rollup configuration](#rollup-config) (`rollup.config.js`)
+- [Webpack configurations](#webpack-configs) [_coming soon_]
+    - `webpack.dev.js`
+    - `webpack.test.js`
+
+### <a name="karma-config"></a>Karma Configuration [_coming soon_]
+
+A custom Karma configuration should be a Node module that exports a function.
+The exported function will be relay the Karma `config` variable. If provided,
+any supported attributes provided will be merged.
+
+Those attributes and their merge strategies are:
+
+- Array attributes will create an array of unique values for that attribute and
+    append the existing attribute; these fields are:
+    - `browsers`
+    - `files`
+    - `plugins`
+    - `reporters`
+- Objects will append new keys, but keep any existing ones--making it so values
+    provided by Angular Librarian can _not_ be overridden:
+    - `preprocessors`
+- Primitive values will be replaced:
+    - `color`
+    - `logLevel`
+    - `port`
+
+### <a name="rollup-config"></a>Rollup Configuration
+
+The rollup configuration will append the provided attributes to create a new
+attribute of unique values. The attributes supported:
+
+- `external`: creates a new array of unique values
+- `globals`: adds new attributes to the object
+
+_Note_: there is no file provided named `rollup.config.js` like other
+configuration files--instead the configuration is maintained in
+`tasks/rollup.js`.
+
+### <a name="webpack-configs"></a>Webpack Configurations [_coming soon_]
+
+Either of the Webpack configurations can be extended by providing a file with a
+matching name in `configs`. The configuration is applied using the
+`webpack-merge` library.
+
+## <a name="pack"></a>Packaging
 
 To test your packages output before publishing, you can run the specified publish
 commands above.

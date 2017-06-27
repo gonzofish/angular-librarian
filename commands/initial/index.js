@@ -39,7 +39,6 @@ module.exports = (rootDir) => {
             { name: 'tasks/inline-resources.js', overwrite: true },
             { name: 'tasks/rollup.js', overwrite: true },
             { name: 'tasks/test.js', overwrite: true },
-            { name: 'webpack/webpack.build.js', overwrite: true },
             { name: 'webpack/webpack.common.js', overwrite: true },
             { name: 'webpack/webpack.dev.js', overwrite: true },
             { name: 'webpack/webpack.test.js', overwrite: true },

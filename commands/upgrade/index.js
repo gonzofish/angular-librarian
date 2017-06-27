@@ -84,7 +84,8 @@ const updateFiles = (rootDir, tempDir) => {
             on JSON duplicates values so ['es6', 'dom'] merged
             from two files would be ['es6', 'dom', 'es6', 'dom']
         */
-        { name: 'tsconfig.build.json', overwrite: true },
+        { name: 'tsconfig.es5.json', overwrite: true },
+        { name: 'tsconfig.es2015.json', overwrite: true },
         { name: 'tsconfig.json', overwrite: true },
         { name: 'tsconfig.test.json', overwrite: true },
         { name: 'tslint.json', overwrite: true },
@@ -92,7 +93,6 @@ const updateFiles = (rootDir, tempDir) => {
         { name: 'tasks/copy-build.js', overwrite: true },
         { name: 'tasks/inline-resources.js', overwrite: true },
         { name: 'tasks/test.js', overwrite: true },
-        { name: 'webpack/webpack.build.js', overwrite: true },
         { name: 'webpack/webpack.common.js', overwrite: true },
         { name: 'webpack/webpack.dev.js', overwrite: true },
         { name: 'webpack/webpack.test.js', overwrite: true },
