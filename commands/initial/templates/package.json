@@ -2,8 +2,8 @@
   "name": "{{ name }}",
   "version": "{{ version }}",
   "description": "{{ readmeTitle }}, an Angular library",
-  "main": "./{{ name }}.bundle.js",
-  "jsnext:main": "./{{ name }}.module.js",
+  "main": "./bundles/{{ name }}.umd.js",
+  "jsnext:main": "./{{ name }}.js",
   "types": "./index.d.ts",
   "scripts": {
     "build": "node ./tasks/build",
