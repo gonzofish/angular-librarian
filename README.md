@@ -17,6 +17,7 @@ paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
     - [publish](#publish)
     - [server](#serve)
     - [test](#test)
+    - [upgrade](#upgrade)
 - [Unit Testing](#unit)
 - [Custom Configurations](#custom-config)
     - [Karma Configuration](#karma-config)
@@ -403,6 +404,39 @@ Run unit tests on code. For unit test types, see the
 ngl test <type>
 ngl t <type>
 npm test <type>
+
+
+```
+
+### <a name="upgrade"></a>upgrade (alias: u, up)
+
+Upgrades the current project to the latest Angular Librarian (if necessary) and
+update managed files to the latest versions.
+
+Managed files are:
+
+- `.gitignore`*
+- `.npmignore`*
+- karma.conf.js
+- `package.json`*
+- `tsconfig.es2015.json`
+- `tsconfig.es5.json`
+- `tsconfig.json`
+- `tsconfig.test.json`
+- `tslint`
+- `src/test.js`
+- `tasks/`
+- `webpack/`
+
+Any files with a asterisk (*) next to their name have a merge strategy associated with them:
+- `.gitignore` and `.npmignore` will take any custom lines (case-sensitive) and add them to the new file
+- `package.json` will ensure any dependencies you've added are kept in the `dependencies` and `devDependencies` attributes, as necessary.
+
+#### Call signatures
+
+```shell
+ngl upgrade
+ngl u
 ```
 
 ## <a name="unit"></a>Unit Testing
@@ -410,15 +444,10 @@ npm test <type>
 Unit testing is done using Karma and Webpack. The setup is all done during the `initialize` command.
 The provided testing commands will watch your files for changes.
 
-The two following command is provided by default:
+The following commands are described in the [`test` command](#test) section.
 
-```shell
-ngl test
-ngl t
-npm test
-```
 
-This command calls the script at `tasks/test.js` and runs the Karma test runner to execute the tests.
+These commands call the script at `tasks/test.js` and runs the Karma test runner to execute the tests.
 Prior to running Karma, the `test` command looks for a command line argument, if the argument is known,
 it will run the associated configuration, otherwise it will run the default configuration.
 
@@ -479,11 +508,7 @@ _Note_: there is no file provided named `rollup.config.js` like other
 configuration files--instead the configuration is maintained in
 `tasks/rollup.js`.
 
-<<<<<<< HEAD
 ### <a name="webpack-configs"></a>Webpack Configurations
-=======
-### <a name="webpack-configs"></a>Webpack Configurations [_coming soon_]
->>>>>>> baa61c5587ae3991e8e961f3697d16cb7fcf0410
 
 Either of the Webpack configurations can be extended by providing a file with a
 matching name in `configs`. The configuration is applied using the
