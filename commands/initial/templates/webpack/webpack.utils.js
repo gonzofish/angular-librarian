@@ -4,7 +4,7 @@ const ExtractText = require('extract-text-webpack-plugin');
 const path = require('path');
 
 function rootPath() {
-    const rootDir = process.cwd();
+    const rootDir = path.resolve(__dirname, '..');
     return relayArguments(path.resolve, rootDir, arguments);
 }
 exports.rootPath = rootPath;
