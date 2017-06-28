@@ -337,6 +337,7 @@ Command     | Purpose
 [publish](#publish) | Creates tag for new version and publishes
 [serve](#serve) | Run Webpack's dev-server on project
 [test](#test) | Execute unit tests
+[upgrade](#upgrade) | Upgrade current project to latest Angular Librarian
 
 ### <a name="build"></a>build (alias: b)
 
