@@ -3,7 +3,6 @@
 const erector = require('erector-set');
 const fs = require('fs');
 const path = require('path');
-const semver = require('semver');
 const spawn = require('child_process').spawnSync;
 
 const utilities = require('../utilities');
@@ -37,7 +36,7 @@ const checkLibrarianVersion = (npm) => {
     const available = execute(npm, ['show', 'angular-librarian', 'version']);
     console.info('Identifying the *installed* angular-librarian version');
     const installed = parseInstalledVersion(execute(npm, ['list', '--depth=0', 'angular-librarian']));
-    const update = semver.gt(available, installed);
+    const update = require('semver').gt(available, installed);
 
     console.info(`\tUpdate of angular-librarian is ${ update ? '' : 'NOT ' }required.`);
 
@@ -46,8 +45,13 @@ const checkLibrarianVersion = (npm) => {
 
 const parseInstalledVersion = (installed) => {
     const lines = installed.split(/\r?\n/);
-    const version = lines.find((line) => line.indexOf('angular-librarian@') !== -1)
-        .replace('`-- ', '').replace('angular-librarian@', '').trim();
+    const librarianLine = lines.find((line) => line.indexOf('angular-librarian@') !== -1);
+    let version;
+
+    if (librarianLine) {
+        version = librarianLine.match(/\bangular-librarian@[^\s]+\s/) || [''];
+        version = version[0].trim().replace('angular-librarian@', '');
+    }
 
     if (!version || version === '(empty)') {
         throw new Error('Angular Librarian is not installed. Not sure how that\'s possible!\n\n\tRun `npm i -D angular-librarian` to install');
@@ -88,8 +92,11 @@ const updateFiles = (rootDir, tempDir) => {
         { name: 'tsconfig.test.json', overwrite: true },
         { name: 'tslint.json', overwrite: true },
         { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js', overwrite: true },
+        { name: 'tasks/build.js', overwrite: true },
         { name: 'tasks/copy-build.js', overwrite: true },
+        { name: 'tasks/copy-globs.js', overwrite: true },
         { name: 'tasks/inline-resources.js', overwrite: true },
+        { name: 'tasks/rollup.js', overwrite: true },
         { name: 'tasks/test.js', overwrite: true },
         { name: 'webpack/webpack.common.js', overwrite: true },
         { name: 'webpack/webpack.dev.js', overwrite: true },

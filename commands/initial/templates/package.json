@@ -13,7 +13,7 @@
     "prebuild": "rimraf dist out-tsc",
     "pretagVersion": "npm run build",
     "start": "webpack-dev-server --open --config ./webpack/webpack.dev.js",
-    "tagVersion": "cd dist && npm run np",
+    "tagVersion": "cd dist && np",
     "test": "node ./tasks/test"
   },
   "keywords": [],

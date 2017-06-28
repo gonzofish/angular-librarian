@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs-extra');
 const ngc = require('@angular/compiler-cli/src/main').main;
 const path = require('path');
 
@@ -51,7 +52,12 @@ const compileCode = () => Promise.all([2015, 5].map((type) =>
 const copyMetadata = () =>
     copyGlobs(['**/*.d.ts', '**/*.metadata.json'], es2015Dir, distDir);
 const copyPackageFiles = () =>
-    copyGlobs(['package.json', 'README.md'], rootDir, distDir);
+    copyGlobs(['package.json', 'README.md'], rootDir, distDir)
+        .then(() => {
+            const contents = fs.readFileSync(path.resolve(distDir, 'package.json'), 'utf8');
+
+            return fs.writeFileSync(path.resolve(distDir, 'package.json'),  contents.replace('node ./tasks/test', 'node ../tasks/test'));
+        });
 const copySource = () => copyGlobs('**/*', srcDir, buildDir);
 const doInlining = () => inlineResources(buildDir, 'src');
 const rollupBundles = () => rollup(libName, {

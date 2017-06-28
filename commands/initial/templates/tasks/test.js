@@ -51,8 +51,8 @@ function getWatchConfig() {
 }
 
 const getAllConfig = (watch) => ({
-    configFile: path.resolve(process.cwd(), './karma.conf.js'),
-    webpack: require('../webpack/webpack.test.js')(watch),
+    configFile: path.resolve(__dirname, '..', 'karma.conf.js'),
+    webpack: require(path.resolve(__dirname, '..', 'webpack', 'webpack.test.js'))(watch),
 });
 
 module.exports = run;

@@ -46,7 +46,7 @@ module.exports = function (config) {
 
 const mergeCustomConfig = (base, karmaConfig) => {
     const customConfigPath = path.resolve(
-        process.cwd(),
+        __dirname,
         'configs',
         'karma.conf.js'
     );
