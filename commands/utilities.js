@@ -40,12 +40,16 @@ exports.convertYesNoValue = (value) => {
     return value;
 };
 
-const dashToCamel = (value) =>
-    value.replace(/(-.)/g, (match) => match.replace('-', '').toUpperCase());
+const dashToCamel = (value, replaceChar = '') =>
+    value.replace(/(-.)/g, (match) => match.replace('-', replaceChar).toUpperCase());
 exports.dashToCamel = dashToCamel;
 
-exports.dashToCap = (value) =>
-    value[0].toUpperCase() + dashToCamel(value.slice(1))
+const dashToCap = (value, replaceChar = '') =>
+    value[0].toUpperCase() + dashToCamel(value.slice(1), replaceChar);
+exports.dashToCap = dashToCap;
+
+exports.dashToWords = (value) =>
+    dashToCap(value, ' ');
 
 const deleteFolder = (folder) => {
     if (fs.existsSync(folder)) {

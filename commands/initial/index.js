@@ -62,17 +62,23 @@ module.exports = (rootDir) => {
     });
 };
 
-const getQuestions = () => [
-    { name: 'name', question: 'Library name:', transform: checkNameFormat },
-    { name: 'readmeTitle', question: 'README Title:' },
-    { name: 'repoUrl', question: 'Repository URL:' },
-    { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: utilities.createYesNoValue('n') },
-    { name: 'moduleName', useAnswer: 'name', transform: (value) => utilities.dashToCap(value) + 'Module' },
-    { name: 'version', question: 'Version:' }
-];
+const getQuestions = () => {
+    const defaultName = require(path.resolve(process.cwd(), 'package.json')).name;
+
+    return [
+        { defaultAnswer: defaultName, name: 'name', question: `Library name:`, transform: checkNameFormat },
+        { defaultAnswer: (answers) => utilities.dashToWords(answers[0].answer), name: 'readmeTitle', question: 'README Title:' },
+        { name: 'repoUrl', question: 'Repository URL:' },
+        { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: utilities.createYesNoValue('n') },
+        { name: 'moduleName', useAnswer: 'name', transform: (value) => utilities.dashToCap(value) + 'Module' },
+        { name: 'version', question: 'Version:' }
+    ];
+};
 
 const checkNameFormat = (value) => {
-    if (!utilities.checkIsDashFormat(value)) {
+    if (!value) {
+        value = '';
+    } else if (!utilities.checkIsDashFormat(value)) {
         value = null;
     }
 
