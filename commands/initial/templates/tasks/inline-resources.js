@@ -28,24 +28,7 @@ const replaceSource = (pattern, sourcePrefix) => {
 
             files.filter((name) => /\.ts$/.test(name)).forEach((filePath) => {
                 try {
-                    const content = fs.readFileSync(filePath, 'utf8');
-
-                    let fileContents = inlineResourcesFromString(content, sourcePrefix, (url) =>
-                        path.join(path.dirname(filePath), url)
-                    );
-                    //# sourceMappingURL=test.bundle.js.map
-                    fileContents = fileContents.replace(/\/\/#\s*sourceMappingURL=(.+)(\r?\n)?/, (match, url) => {
-                        const lastSlash = url.lastIndexOf('/');
-                        const relativeUrl = url.substring(lastSlash + 1);
-
-                        return match.replace(url, relativeUrl);
-                    });
-
-                    try {
-                        fs.writeFileSync(filePath, fileContents);
-                    } catch (writeError) {
-                        reject(writeError);
-                    }
+                    inlineFileResources(filePath, sourcePrefix);
                 } catch (readError) {
                     reject(readError);
                 }
@@ -54,6 +37,15 @@ const replaceSource = (pattern, sourcePrefix) => {
             resolve();
         });
     });
+};
+
+const inlineFileResources = (filePath, sourcePrefix) => {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const inlineContents = inlineResourcesFromString(content, sourcePrefix, (url) =>
+        path.join(path.dirname(filePath), url)
+    );
+
+    fs.writeFileSync(filePath, inlineContents);
 };
 
 const inlineResourcesFromString = (content, sourcePrefix, callback) => [
