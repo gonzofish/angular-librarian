@@ -52,7 +52,7 @@ const compileCode = () => Promise.all([2015, 5].map((type) =>
 const copyMetadata = () =>
     copyGlobs(['**/*.d.ts', '**/*.metadata.json'], es2015Dir, distDir);
 const copyPackageFiles = () =>
-    copyGlobs(['package.json', 'README.md'], rootDir, distDir)
+    copyGlobs(['.npmignore', 'package.json', 'README.md'], rootDir, distDir)
         .then(() => {
             const contents = fs.readFileSync(path.resolve(distDir, 'package.json'), 'utf8');
 
