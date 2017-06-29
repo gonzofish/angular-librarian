@@ -3,7 +3,8 @@
   "version": "{{ version }}",
   "description": "{{ readmeTitle }}, an Angular library",
   "main": "./bundles/{{ name }}.umd.js",
-  "jsnext:main": "./{{ name }}.js",
+  "module": "./{{ name }}.es5.js",
+  "es2015": "./{{ name }}.js",
   "types": "./index.d.ts",
   "scripts": {
     "build": "node ./tasks/build",
