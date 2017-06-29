@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gonzofish/angular-library-set.git"
+    "url": "git+https://github.com/gonzofish/angular-librarian.git"
   },
   "keywords": [
     "erector",
@@ -27,9 +27,9 @@
   "author": "Matt Fehskens <matt.fehskens@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gonzofish/angular-library-set/issues"
+    "url": "https://github.com/gonzofish/angular-librarian/issues"
   },
-  "homepage": "https://github.com/gonzofish/angular-library-set#readme",
+  "homepage": "https://github.com/gonzofish/angular-librarian#readme",
   "dependencies": {
     "erector-set": "^1.0.0-alpha.4"
   }
