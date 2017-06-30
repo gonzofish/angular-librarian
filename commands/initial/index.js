@@ -6,7 +6,6 @@ const fs = require('fs');
 const path = require('path');
 const utilities = require('../utilities');
 
-
 const joinApply = (method, prefix, args) =>
     method.apply(null, [prefix].concat(Array.prototype.slice.apply(args)));
 
@@ -24,6 +23,9 @@ module.exports = (rootDir, ...args) => {
         const libDir = function() {
             return joinApply(srcDir, '{{ name }}', arguments);
         };
+        const options = utilities.parseOptions(args, [
+            'no-input'
+        ]);
 
         let templateList = [
             { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
@@ -71,7 +73,7 @@ module.exports = (rootDir, ...args) => {
             initGit(rootDir);
         }
 
-        if (args.indexOf('--no-install')) {
+        if (['ni', 'no-input'].indexOf(Object.keys(options)) === -1) {
             console.info('Installing Node modules');
             execute('npm i');
             console.info('Node modules installed');
