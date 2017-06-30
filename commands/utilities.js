@@ -3,14 +3,61 @@
 const fs = require('fs');
 const path = require('path');
 const erectorUtils = require('erector-set/src/utils');
+let rootDir = process.cwd();
 
 exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
+
+const getPackageSelector = (selector = '') => {
+    const selectorParts = selector.split('/');
+    let pkg;
+
+    if (selectorParts.length > 1) {
+        pkg = selectorParts[0];
+        selector = selectorParts[1];
+    }
+
+    if (!pkg || !checkPackageValidity(pkg)) {
+        const packages = getPackages();
+
+        if (packages.length === 1) {
+            pkg = packages[0];
+        } else {
+            pkg = '';
+        }
+    }
+
+    return {
+        pkg,
+        selector
+    }
+};
+exports.getPackageSelector = getPackageSelector;
+
+const checkPackageValidity = (pkg) => {
+    let valid = checkIsDashFormat(pkg);
+
+    if (valid) {
+        valid = getPackages().indexOf(pkg) !== -1;
+    }
+
+    return valid;
+};
+exports.checkPackageValidity = checkPackageValidity;
 
 const checkIsDashFormat = (value) =>
     !!value && typeof value === 'string' &&
     value.length > 0 &&
     value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*$/i);
 exports.checkIsDashFormat = checkIsDashFormat;
+
+const getPackages = () => getDirectories(src()).filter((directory) => directory !== 'demo');
+exports.getPackages = getPackages;
+
+const getDirectories = (parentDir) =>
+    fs.readdirSync(parentDir).filter((child) =>
+        fs.lstatSync(path.resolve(parentDir, child)).isDirectory()
+    );
+exports.getDirectories;
 
 exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, answers) => {
     const lookup = { n: false, y: true };
@@ -38,6 +85,28 @@ exports.convertYesNoValue = (value) => {
     }
 
     return value;
+};
+
+const root = function() {
+    return joinApply(path.resolve, rootDir, arguments);
+};
+const src = function() {
+    return joinApply(root, 'src', arguments);
+};
+const demo = function() {
+    return joinApply(src, 'demo', arguments);
+};
+const lib = function() {
+    return joinApply(src, '{{ name }}', arguments);
+};
+const joinApply = (method, prefix, args) =>
+    method.apply(null, [prefix].concat(Array.prototype.slice.apply(args)));
+exports.dirs = {
+    demo,
+    joinApply,
+    lib,
+    src,
+    root
 };
 
 const dashToCamel = (value, replaceChar = '') =>

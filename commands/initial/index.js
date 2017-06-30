@@ -5,31 +5,18 @@ const erector = require('erector-set');
 const fs = require('fs');
 const path = require('path');
 const utilities = require('../utilities');
-
-const joinApply = (method, prefix, args) =>
-    method.apply(null, [prefix].concat(Array.prototype.slice.apply(args)));
+const { lib, root } = utilities.dirs;
 
 module.exports = (rootDir, ...args) => {
     erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
-        const root = function() {
-            return joinApply(path.resolve, rootDir, arguments);
-        };
-        const srcDir = function() {
-            return joinApply(root, 'src', arguments);
-        };
-        const demoDir = function() {
-            return joinApply(srcDir, 'demo', arguments);
-        };
-        const libDir = function() {
-            return joinApply(srcDir, '{{ name }}', arguments);
-        };
         const options = utilities.parseOptions(args, [
+            'ni',
             'no-input'
         ]);
 
         let templateList = [
-            { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
-            { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
+            { destination: root('.gitignore'), name: '__gitignore' },
+            { destination: root('.npmignore'), name: '__npmignore' },
             { name: 'DEVELOPMENT.md' },
             { blank: true, name: 'src/demo/app/app.component.html' },
             { name: 'src/demo/app/app.component.ts' },
@@ -39,8 +26,8 @@ module.exports = (rootDir, ...args) => {
             { blank: true, name: 'src/demo/styles.scss' },
             { name: 'src/demo/tsconfig.json' },
             { name: 'src/demo/vendor.ts' },
-            { destination: libDir('index.ts'), name: 'src/lib/index.ts' },
-            { destination: libDir('src', '{{ name }}.module.ts'), name: 'src/lib/src/module.ts' },
+            { destination: lib('index.ts'), name: 'src/lib/index.ts' },
+            { destination: lib('src', '{{ name }}.module.ts'), name: 'src/lib/src/module.ts' },
             { name: 'karma.conf.js', overwrite: true },
             { name: 'package.json', update: 'json' },
             { name: 'README.md' },
@@ -48,9 +35,9 @@ module.exports = (rootDir, ...args) => {
             { name: 'tslint.json', overwrite: true },
             { destination: root('tsconfig.json'), name: 'tsconfig/tsconfig.json', overwrite: true },
             { destination: root('tsconfig.build.json'), name: 'tsconfig/tsconfig.build.json', overwrite: true },
-            { destination: libDir('tsconfig.es2105.json'), name: 'tsconfig/tsconfig.es2015.json', overwrite: true },
-            { destination: libDir('tsconfig.es5.json'), name: 'tsconfig/tsconfig.es5.json', overwrite: true },
-            { destination: libDir('tsconfig.test.json'), name: 'tsconfig/tsconfig.test.json', overwrite: true },
+            { destination: lib('tsconfig.es2105.json'), name: 'tsconfig/tsconfig.es2015.json', overwrite: true },
+            { destination: lib('tsconfig.es5.json'), name: 'tsconfig/tsconfig.es5.json', overwrite: true },
+            { destination: lib('tsconfig.test.json'), name: 'tsconfig/tsconfig.test.json', overwrite: true },
             { name: 'tasks/build.js', overwrite: true },
             { name: 'tasks/copy-build.js', overwrite: true },
             { name: 'tasks/copy-globs.js', overwrite: true },
