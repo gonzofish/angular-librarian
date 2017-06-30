@@ -5,9 +5,9 @@ const path = require('path');
 const utilities = require('../utilities');
 const { joinApply, src } = utilities.dirs;
 
-module.exports = function createComponent(rootDir, selector) {
+module.exports = function createComponent(rootDir, selector, ...args) {
     const templates = getTemplates(rootDir);
-    const options = utilities.parseOptions(Array.from(arguments).slice(2), [
+    const options = utilities.parseOptions(args, [
         'd',
         'defaults',
         'hooks',

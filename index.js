@@ -40,6 +40,10 @@ const getCommandName = (command) => {
         case 'init':
         case 'initial':
             return 'initial';
+        case 'li':
+        case 'lib':
+        case 'library':
+            return 'library';
         case 'p':
         case 'pipe':
             return 'pipe';

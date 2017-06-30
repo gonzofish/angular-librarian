@@ -8,7 +8,7 @@ const utilities = require('../utilities');
 module.exports = (rootDir, name) => {
     const templates = getTemplates(rootDir);
 
-    if (checkHasName(name)) {
+    if (utilities.checkIsDashFormat(name)) {
         generateWithKnownName(name, templates);
     } else {
         erector.build(getAllQuestions(), templates);
