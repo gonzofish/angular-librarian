@@ -60,7 +60,7 @@ const getKnownSelector = (providedSelector = '') => {
             { answer: pkg, name: 'package' }
         ];
     } else {
-        questions = [getPackageQuestion];
+        questions = [utilities.getPackageQuestion];
     }
 
     if (utilities.checkIsDashFormat(selector)) {
@@ -82,13 +82,6 @@ const getSelectorQuestions = () => [
     { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => utilities.checkIsDashFormat(value) ? value : null },
     { name: 'componentName', transform: (value) => utilities.dashToCap(value) + 'Component', useAnswer: 'selector' }
 ];
-
-const getPackageQuestion = () =>
-    ({
-        name: 'package',
-        question: 'Which package should this component be added to?',
-        transform: (value) => utilities.checkPackageValidity(value) ? value : null
-    });
 
 const getKnownStyle = (options) => {
     const keys = Object.keys(options);

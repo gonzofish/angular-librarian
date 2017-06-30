@@ -7,6 +7,14 @@ let rootDir = process.cwd();
 
 exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
 
+const getPackageQuestion = () =>
+    ({
+        name: 'package',
+        question: 'Which package should this component be added to?',
+        transform: (value) => checkPackageValidity(value) ? value : null
+    });
+exports.getPackageQuestion = getPackageQuestion;
+
 const getPackageSelector = (selector = '') => {
     const selectorParts = selector.split('/');
     let pkg;
