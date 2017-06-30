@@ -3,16 +3,28 @@
 const ExtractText = require('extract-text-webpack-plugin');
 const path = require('path');
 
-function rootPath() {
-    const rootDir = path.resolve(__dirname, '..');
-    return relayArguments(path.resolve, rootDir, arguments);
+function tsconfigPath(type) {
+    return type === 'demo' ?
+        demoPath('tsconfig.json') :
+        rootPath(`tsconfig${ type }.config`);
 }
-exports.rootPath = rootPath;
+exports.tsconfigPath = tsconfigPath;
+
+function demoPath() {
+    return relayArguments(srcPath, 'demo', arguments);
+}
+exports.demoPath = demoPath;
 
 function srcPath() {
     return relayArguments(rootPath, 'src', arguments);
 };
 exports.srcPath = srcPath;
+
+function rootPath() {
+    const rootDir = path.resolve(__dirname, '..');
+    return relayArguments(path.resolve, rootDir, arguments);
+}
+exports.rootPath = rootPath;
 
 function relayArguments(method, prefix, args) {
     const fullArguments = [prefix].concat(

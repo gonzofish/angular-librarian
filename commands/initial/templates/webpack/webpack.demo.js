@@ -13,39 +13,33 @@ const entryPoints = [
     'styles',
     'app'
 ];
-const examplePath = function examples() {
-    return webpackUtils.relayArguments(
-        webpackUtils.rootPath,
-        'examples',
-        arguments
-    );
-};
+const demoPath = webpackUtils.demoPath;
 
-module.exports = webpackCommon('dev', {
+module.exports = webpackCommon('demo', {
     devServer: {
-        contentBase: webpackUtils.rootPath('dist'),
+        contentBase: demoPath('dist'),
         port: 9000
     },
     devtool: 'cheap-module-eval-source-map',
     entry: {
-        app: [ examplePath('example.main') ],
+        app: [ demoPath('example.main') ],
         scripts: [],
-        vendor: [ webpackUtils.srcPath('vendor') ],
-        styles: [ examplePath('styles.scss') ]
+        vendor: [ demoPath('vendor') ],
+        styles: [ demoPath('styles.scss') ]
     },
     module: {
         rules: webpackUtils.buildRules({
-            cssExtract: examplePath(),
-            sassLoader: examplePath('styles.scss')
+            cssExtract: demoPath(),
+            sassLoader: demoPath('styles.scss')
         }, {
-            include: examplePath(),
+            include: demoPath(),
             test: /styles\.scss$/,
             use: ['style-loader', 'css-loader', 'sass-loader']
         })
     },
     output: {
         filename: '[name].bundle.js',
-        path: webpackUtils.rootPath('dist')
+        path: demoPath('dist')
     },
     plugins: [
         new ChunkWebpack({
@@ -70,7 +64,7 @@ module.exports = webpackCommon('dev', {
             },
             filename: 'index.html',
             inject: 'body',
-            template: examplePath('index.html')
+            template: demoPath('index.html')
         })
     ]
 });

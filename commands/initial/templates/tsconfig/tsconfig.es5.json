@@ -1,0 +1,6 @@
+{
+    "compilerOptions": {
+        "outDir": "./out-tsc/lib-es5/"
+    },
+    "extends": "../../tsconfig.build.json"
+}

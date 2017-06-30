@@ -1,0 +1,14 @@
+{
+    "angularCompilerOptions": {
+        "annotateForClosureCompiler": true,
+        "flatModuleId": "{{ name }}",
+        "flatModuleOutFile": "{{ name }}.js",
+        "genDir": "../out-tsc/lib-gen-dir/",
+        "strictMetadataEmit": true,
+        "skipTemplateCodegen": true
+    },
+    "extends": "./tsconfig.json",
+    "files": [
+        "./build/index.ts"
+    ]
+}

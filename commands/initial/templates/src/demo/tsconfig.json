@@ -1,0 +1,12 @@
+{
+    "compilerOptions":{
+        "baseUrl": ".",
+        "declaration": false,
+        "module": "commonjs",
+        "paths": {
+            "{{ name }}": [ "../{{ name }}" ]
+        }
+    },
+    "exclude": [],
+    "extends": "../../tsconfig.json"
+}

@@ -8,9 +8,25 @@ const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 
 const webpackUtils = require('./webpack.utils');
+const getAlias = (tsconfigPath) => {
+    const tsconfig = require(tsconfigPath);
+    const paths = tsconfig.compilerOptions.paths;
+    let alias;
+
+    if (paths) {
+        alias = Object.keys(paths).reduce((aliases, name) => {
+            aliases[name] = webpackUtils.demoPath(paths[name][0]);
+
+            return aliases;
+        }, {});
+    }
+
+    return alias;
+};
 
 const getCommonConfig = (type) => {
-    const tsconfigType = type !== 'dev' ? `.${ type }` : '';
+    const configFileName = webpackUtils.tsconfigPath(type);
+    const alias = getAlias(configFileName);
 
     return {
         module: {
@@ -19,8 +35,18 @@ const getCommonConfig = (type) => {
                     exclude: /node_modules/,
                     test: /\.ts$/,
                     use: [
-                        'awesome-typescript-loader?configFileName=' + webpackUtils.rootPath(`tsconfig${ tsconfigType }.json`),
-                        'angular2-template-loader?keepUrl=true'
+                        {
+                            loader: 'awesome-typescript-loader',
+                            query: {
+                                configFileName
+                            }
+                        },
+                        {
+                            loader: 'angular2-template-loader',
+                            query: {
+                                keepUrl: true
+                            }
+                        }
                     ]
                 },
                 { test: /\.html$/, use: 'raw-loader' },

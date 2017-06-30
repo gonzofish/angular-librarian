@@ -6,33 +6,49 @@ const fs = require('fs');
 const path = require('path');
 const utilities = require('../utilities');
 
-module.exports = (rootDir) => {
+
+const joinApply = (method, prefix, args) =>
+    method.apply(null, [prefix].concat(Array.prototype.slice.apply(args)));
+
+module.exports = (rootDir, ...args) => {
     erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
-        const srcDir = path.resolve(rootDir, 'src');
+        const root = function() {
+            return joinApply(path.resolve, rootDir, arguments);
+        };
+        const srcDir = function() {
+            return joinApply(root, 'src', arguments);
+        };
+        const demoDir = function() {
+            return joinApply(srcDir, 'demo', arguments);
+        };
+        const libDir = function() {
+            return joinApply(srcDir, '{{ name }}', arguments);
+        };
+
         let templateList = [
             { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
             { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
             { name: 'DEVELOPMENT.md' },
-            { blank: true, name: 'examples/example.component.html' },
-            { blank: true, name: 'examples/example.component.scss' },
-            { name: 'examples/example.component.ts' },
-            { name: 'examples/example.main.ts' },
-            { name: 'examples/example.module.ts' },
-            { name: 'examples/index.html' },
-            { blank: true, name: 'examples/styles.scss' },
-            { name: 'index.ts' },
+            { blank: true, name: 'src/demo/app/app.component.html' },
+            { name: 'src/demo/app/app.component.ts' },
+            { name: 'src/demo/app/app.module.ts' },
+            { name: 'src/demo/index.html' },
+            { name: 'src/demo/main.ts' },
+            { blank: true, name: 'src/demo/styles.scss' },
+            { name: 'src/demo/tsconfig.json' },
+            { name: 'src/demo/vendor.ts' },
+            { destination: libDir('index.ts'), name: 'src/lib/index.ts' },
+            { destination: libDir('src', '{{ name }}.module.ts'), name: 'src/lib/src/module.ts' },
             { name: 'karma.conf.js', overwrite: true },
-            { destination: path.resolve(srcDir, '{{ name }}.module.ts'), name: 'src/module.ts' },
             { name: 'package.json', update: 'json' },
             { name: 'README.md' },
-            { destination: path.resolve(srcDir, 'index.ts'), name: 'src/index.ts' },
-            { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js', overwrite: true },
-            { name: 'tsconfig.json', overwrite: true },
-            { name: 'tsconfig.es2015.json', overwrite: true },
-            { name: 'tsconfig.es5.json', overwrite: true },
-            { name: 'tsconfig.test.json', overwrite: true },
+            { name: 'test.js', overwrite: true },
             { name: 'tslint.json', overwrite: true },
-            { destination: path.resolve(srcDir, 'vendor.ts'), name: 'src/vendor.ts' },
+            { destination: root('tsconfig.json'), name: 'tsconfig/tsconfig.json', overwrite: true },
+            { destination: root('tsconfig.build.json'), name: 'tsconfig/tsconfig.build.json', overwrite: true },
+            { destination: libDir('tsconfig.es2105.json'), name: 'tsconfig/tsconfig.es2015.json', overwrite: true },
+            { destination: libDir('tsconfig.es5.json'), name: 'tsconfig/tsconfig.es5.json', overwrite: true },
+            { destination: libDir('tsconfig.test.json'), name: 'tsconfig/tsconfig.test.json', overwrite: true },
             { name: 'tasks/build.js', overwrite: true },
             { name: 'tasks/copy-build.js', overwrite: true },
             { name: 'tasks/copy-globs.js', overwrite: true },
@@ -40,7 +56,7 @@ module.exports = (rootDir) => {
             { name: 'tasks/rollup.js', overwrite: true },
             { name: 'tasks/test.js', overwrite: true },
             { name: 'webpack/webpack.common.js', overwrite: true },
-            { name: 'webpack/webpack.dev.js', overwrite: true },
+            { name: 'webpack/webpack.demo.js', overwrite: true },
             { name: 'webpack/webpack.test.js', overwrite: true },
             { name: 'webpack/webpack.utils.js', overwrite: true }
         ];
@@ -55,9 +71,11 @@ module.exports = (rootDir) => {
             initGit(rootDir);
         }
 
-        console.info('Installing Node modules');
-        execute('npm i');
-        console.info('Node modules installed');
+        if (args.indexOf('--no-install')) {
+            console.info('Installing Node modules');
+            execute('npm i');
+            console.info('Node modules installed');
+        }
         process.chdir(startingDir);
     });
 };
