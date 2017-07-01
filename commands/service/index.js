@@ -4,7 +4,7 @@ const erector = require('erector-set');
 const path = require('path');
 
 const utilities = require('../utilities');
-const { joinApply, src } = utilities.dirs;
+const { src } = utilities.dirs;
 
 module.exports = (rootDir, name) => {
     const templates = getTemplates(rootDir);
@@ -37,7 +37,6 @@ const getTemplates = (rootDir) => {
 };
 
 const getRemainingQuestions = (providedName) => {
-    // pkg, name
     const { pkg, selector } = utilities.getPackageSelector(providedName);
     let answers = [];
     let questions = [];
