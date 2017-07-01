@@ -4,46 +4,65 @@ const erector = require('erector-set');
 const path = require('path');
 
 const utilities = require('../utilities');
+const { joinApply, src } = utilities.dirs;
 
 module.exports = (rootDir, name) => {
     const templates = getTemplates(rootDir);
+    const remaining = getRemainingQuestions(name);
+    const questions = remaining.questions.reduce(
+        (all, method) => all.concat(method(remaining.answers)), []
+    );
 
-    if (utilities.checkIsDashFormat(name)) {
-        generateWithKnownName(name, templates);
-    } else {
-        erector.build(getAllQuestions(), templates);
-    }
+    erector.inquire(questions).then((answers) => {
+        const allAnswers = remaining.answers.concat(answers);
+
+        erector.construct(allAnswers, templates);
+        notifyUser(allAnswers);
+    });
 };
 
-const checkHasName = (name) =>
-    name && name.trim().length > 0;
-
 const getTemplates = (rootDir) => {
-    const servicesDir = path.resolve(rootDir, 'src', 'services');
+    const servicesDir = (file) => src('{{ package }}', 'src', 'services', file);
 
     return utilities.getTemplates(rootDir, __dirname, [
         {
-            destination: path.resolve(servicesDir, '{{ filename }}.service.ts'),
+            destination: servicesDir('{{ filename }}.service.ts'),
             name: 'app.ts'
         },
         {
-            destination: path.resolve(servicesDir, '{{ filename }}.service.spec.ts'),
+            destination: servicesDir('{{ filename }}.service.spec.ts'),
             name: 'spec.ts'
         }
     ]);
 };
 
-const generateWithKnownName = (name, templates) => {
-    const knownAnswers = [
-        { name: 'filename', answer: name},
-        { name: 'serviceName', answer: utilities.dashToCap(name) + 'Service' }
-    ];
+const getRemainingQuestions = (providedName) => {
+    // pkg, name
+    const { pkg, selector } = utilities.getPackageSelector(providedName);
+    let answers = [];
+    let questions = [];
 
-    erector.construct(knownAnswers, templates, true);
-    notifyUser(knownAnswers);
-}
+    if (pkg) {
+        answers = [
+            { answer: pkg, name: 'package' }
+        ]
+    } else {
+        questions = [ utilities.getPackageQuestion ];
+    }
 
-const getAllQuestions = () => [
+    if (utilities.checkIsDashFormat(selector)) {
+        answers = answers.concat([
+            { name: 'filename', answer: selector },
+            { name: 'serviceName', answer: utilities.dashToCap(selector) + 'Service' }
+        ]);
+    } else {
+        questions = questions.concat(getNameQuestions);
+    }
+
+    return { answers, questions };
+};
+
+const getNameQuestions = () => [
     {
         name: 'filename',
         question: 'Service name (in dash-case):',
@@ -57,10 +76,11 @@ const getAllQuestions = () => [
 ];
 
 const notifyUser = (answers) => {
-    const serviceName = answers.find((answer) => answer.name === 'serviceName');
-    const filename = answers.find((answer) => answer.name === 'filename');
+    const pkg = answers.find((answer) => answer.name === 'package').answer;
+    const serviceName = answers.find((answer) => answer.name === 'serviceName').answer;
+    const filename = answers.find((answer) => answer.name === 'filename').answer;
 
-    console.info(`Don't forget to add the following to the module.ts file:`);
-    console.info(`    import { ${serviceName.answer} } from './services/${filename.answer}.service';`);
-    console.info(`And to add ${serviceName.answer} to the NgModule providers list or add as a provider to one or more components`);
+    console.info(`Don't forget to add the following to the ${ pkg }/src/${ pkg }.module.ts file:`);
+    console.info(`    import { ${serviceName} } from './services/${filename}.service';`);
+    console.info(`And to add ${serviceName} to the NgModule providers list or add as a provider to one or more components`);
 };
