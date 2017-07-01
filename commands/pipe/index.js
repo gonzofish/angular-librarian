@@ -4,57 +4,76 @@ const erector = require('erector-set');
 const path = require('path');
 
 const utilities = require('../utilities');
+const { src } = utilities.dirs;
 
 module.exports = (rootDir, name) => {
     const templates = getTemplates(rootDir);
+    const remaining = getRemainingQuestions(name);
+    const questions = remaining.questions.reduce(
+        (all, method) => all.concat(method(remaining.answers)), []
+    );
 
-    if (checkHasName(name)) {
-        generateWithKnownPipeName(name, templates);
-    } else {
-        erector.build(getAllQuestions(), templates).then(notifyUser);
-    }
+    erector.inquire(questions).then((answers) => {
+        const allAnswers = remaining.answers.concat(answers);
+
+        erector.construct(allAnswers, templates);
+        notifyUser(allAnswers);
+    });
 };
 
-const checkHasName = (name) =>
-    name && name.trim().length > 0;
-
 const getTemplates = (rootDir) => {
-    const pipesDir = path.resolve(rootDir, 'src', 'pipes');
+    const pipesDir =  (file) => src('{{ package }}', 'src', 'pipes', file);
 
     return utilities.getTemplates(rootDir, __dirname, [
         {
-            destination: path.resolve(pipesDir, '{{ filename }}.pipe.ts'),
+            destination: pipesDir('{{ filename }}.pipe.ts'),
             name: 'app.ts'
         },
         {
-            destination: path.resolve(pipesDir, '{{ filename }}.pipe.spec.ts'),
+            destination: pipesDir('{{ filename }}.pipe.spec.ts'),
             name: 'spec.ts'
         }
     ]);
 };
 
-const generateWithKnownPipeName = (name, templates) => {
-    const knownAnswers = [
-        { name: 'filename', answer: name},
-        { name: 'pipeName', answer: utilities.dashToCamel(name) },
-        { name: 'className', answer: utilities.dashToCap(name) + 'Pipe'}
-    ];
+const getRemainingQuestions = (providedName) => {
+    const { pkg, selector } = utilities.getPackageSelector(providedName);
+    let answers = [];
+    let questions = [];
 
-    erector.construct(knownAnswers, templates, true);
-    notifyUser(knownAnswers);
+    if (pkg) {
+        answers = [
+            { answer: pkg, name: 'package' }
+        ]
+    } else {
+        questions = [ utilities.getPackageQuestion ];
+    }
+
+    if (utilities.checkIsDashFormat(selector)) {
+        answers = answers.concat([
+            { name: 'filename', answer: selector },
+            { name: 'className', answer: utilities.dashToCap(selector) + 'Pipe' },
+            { name: 'pipeName', answer: utilities.dashToCamel(selector) }
+        ]);
+    } else {
+        questions = questions.concat(getNameQuestions);
+    }
+
+    return { answers, questions };
 };
 
-const getAllQuestions = () => [
+const getNameQuestions = () => [
     { name: 'filename', question: 'Pipe name (in dash-case):', transform: (value) => utilities.checkIsDashFormat(value) ? value : null },
-    { name: 'pipeName', transform: utilities.dashToCamel, useAnswer: 'filename' },
-    { name: 'className', tranform: (value) => utilities.dashToCap(value) + 'Pipe', useAnswer: 'filename' }
+    { name: 'className', transform: (value) => utilities.dashToCap(value) + 'Pipe', useAnswer: 'filename' },
+    { name: 'pipeName', transform: utilities.dashToCamel, useAnswer: 'filename' }
 ];
 
 const notifyUser = (answers) => {
-    const className = answers.find((answer) => answer.name === 'className');
-    const filename = answers.find((answer) => answer.name === 'filename');
+    const pkg = answers.find((answer) => answer.name === 'package').answer;
+    const className = answers.find((answer) => answer.name === 'className').answer;
+    const filename = answers.find((answer) => answer.name === 'filename').answer;
 
-    console.info(`Don't forget to add the following to the module.ts file:`);
-    console.info(`    import { ${className.answer} } from './pipes/${filename.answer}.pipe';`);
-    console.info(`And to add ${className.answer} to the NgModule declarations list`);
+    console.info(`Don't forget to add the following to the ${ pkg }/src/${ pkg }.module.ts file:`);
+    console.info(`    import { ${ className } } from './pipes/${ filename }.pipe';`);
+    console.info(`And to add ${ className } to the NgModule declarations list`);
 };
