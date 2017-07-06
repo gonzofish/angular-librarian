@@ -11,6 +11,12 @@ require('zone.js/dist/jasmine-patch');
 const browserTesting = require('@angular/platform-browser-dynamic/testing');
 const coreTesting = require('@angular/core/testing');
 const context = require.context('./', true, /\.spec\.ts$/);
+var locationRegex = '\\.spec\\.ts$';
+if (ngl && ngl.libs) {
+    const libsRegex = window.ngl.libs.join('|');
+    locationRegex = '(' + libsRegex + ').*' + locationRegex ;
+}
+const contextRegex = new RegExp(locationRegex);
 
 Error.stackTraceLimit = Infinity;
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 2000;
@@ -21,4 +27,8 @@ coreTesting.TestBed.initTestEnvironment(
     browserTesting.platformBrowserDynamicTesting()
 );
 
-context.keys().forEach(context);
+context.keys().forEach(function(key) {
+    if (contextRegex.test(key)) {
+        context(key);
+    }
+});

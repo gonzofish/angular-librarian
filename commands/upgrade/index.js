@@ -7,6 +7,8 @@ const spawn = require('child_process').spawnSync;
 
 const utilities = require('../utilities');
 
+// loop through packages and upgrade
+
 module.exports = (rootDir) => {
     const npmCommand = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
     const latestVersion = checkLibrarianVersion(npmCommand);

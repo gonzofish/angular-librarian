@@ -9,7 +9,8 @@ module.exports = function (config) {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            { pattern: './src/test.js', watched: false }
+            { pattern: './ngl.helpers.js', watched: false },
+            { pattern: './test.js', watched: false }
         ],
         mime: {
             'text/x-typescript': ['ts','tsx']

@@ -1,17 +1,42 @@
 'use strict';
 
 const fs = require('fs');
+const nglUtils = require('angular-librarian/commands/utilities');
 const path = require('path');
 const Server = require('karma').Server;
 
-function run(type) {
+const run = (...libs) => {
+    const type = libs[0];;
     const config = getConfig(type);
+    let args;
+
+    if (checkValidType(type)) {
+        libs = libs.slice(1);
+    }
+
+    libs = getValidLibs(libs);
+
+    fs.unlinkSync('./ngl.helpers.js');
+    fs.writeFileSync('./ngl.helpers.js', 'window.ngl=' + JSON.stringify({ libs }));
     const server = new Server(config, function(exitCode) {
         process.exit(exitCode);
     });
-
     server.start();
-}
+};
+
+const checkValidType = (type) =>
+    ['headless', 'all', 'watch'].indexOf(type) !== -1
+
+const getValidLibs = (provided) => {
+    const packages = nglUtils.getPackages();
+    let valid = packages.filter((pkg) => provided.indexOf(pkg) !== -1);
+
+    if (valid.length === 0) {
+        valid = [''];
+    }
+
+    return valid;
+};
 
 function getConfig(type) {
     switch (type) {
@@ -58,5 +83,5 @@ const getAllConfig = (watch) => ({
 module.exports = run;
 
 if (!module.parent) {
-    run(process.argv[2]);
+    run.apply(null, process.argv.slice(2));
 }
