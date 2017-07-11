@@ -4,6 +4,7 @@ const fs = require('fs');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const ContextReplacementPlugin = webpack.ContextReplacementPlugin;
 const LoaderOptionsPlugin = webpack.LoaderOptionsPlugin;
 
@@ -41,7 +42,8 @@ const getCommonConfig = (type) => {
                 options: {
                     emitErrors: true
                 }
-            })
+            }),
+            new ExtractTextPlugin("*.css")
         ],
         resolve: {
             extensions: [ '.js', '.ts' ],
