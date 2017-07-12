@@ -39,7 +39,7 @@ const colorize = (text, color) => {
     return `\x1b[${ color }m${ text }\x1b[${ colorMap.reset }m`;
 };
 
-const complete = (depth = 2) => {
+const complete = (depth = 0) => {
     const spaces = ' '.repeat(depth);
     console.info(colorize(`${ spaces }> Complete`, 'green'));
 };
