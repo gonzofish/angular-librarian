@@ -56,7 +56,7 @@ const copyPackageFiles = () =>
         .then(() => {
             const contents = fs.readFileSync(path.resolve(distDir, 'package.json'), 'utf8');
 
-            return fs.writeFileSync(path.resolve(distDir, 'package.json'),  contents.replace('node ./tasks/test', 'node ../tasks/test'));
+            return fs.writeFileSync(path.resolve(distDir, 'package.json'),  contents.replace('"dependencies":', '"peerDependencies":'));
         });
 const copySource = () => copyGlobs('**/*', srcDir, buildDir);
 const doInlining = () => inlineResources(buildDir, 'src');
