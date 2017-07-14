@@ -49,7 +49,7 @@ const parseInstalledVersion = (installed) => {
     let version;
 
     if (librarianLine) {
-        version = librarianLine.match(/\bangular-librarian@[^\s]+\s/) || [''];
+        version = librarianLine.match(/\bangular-librarian@[^\s]+\s?/) || [''];
         version = version[0].trim().replace('angular-librarian@', '');
     }
 
