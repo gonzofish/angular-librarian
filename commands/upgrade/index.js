@@ -80,7 +80,7 @@ const updateFiles = (rootDir, tempDir) => {
         { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore', update: updateFlatFile },
         { name: 'DEVELOPMENT.md' },
         { name: 'karma.conf.js', overwrite: true },
-        { name: 'package.json', update: 'json' },
+        { name: 'package.json', update: updatePackageJson },
         /*
             the TypeScript files should be 'json', but array merging
             on JSON duplicates values so ['es6', 'dom'] merged
@@ -106,6 +106,27 @@ const updateFiles = (rootDir, tempDir) => {
     const templates = utilities.getTemplates(rootDir, path.resolve(__dirname, '..', 'initial'), files);
 
     erector.construct(answers, templates);
+};
+
+const updatePackageJson = (existing, replacement) => {
+    const merged = JSON.parse(erector.updaters.json(existing, replacement));
+    const exist = JSON.parse(existing);
+
+    // attributes handled by ngl that
+    // the user may have modified
+    merged.author = exist.author;
+    merged.description = exist.description;
+    merged.es2015 = exist.es2015;
+    merged.keywords = exist.keywords;
+    merged.license = exist.license;
+    merged.main = exist.main;
+    merged.module = exist.module;
+    merged.name = exist.name;
+    merged.repository = exist.repository;
+    merged.typings = exist.typings;
+    merged.version = exist.version;
+
+    return JSON.stringify(merged, null, 2);
 };
 
 const updateFlatFile = (existing, replacement) => {
