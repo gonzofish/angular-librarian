@@ -65,8 +65,8 @@ const getAllQuestions = () => [
 ];
 
 const notifyUser = (answers, forExamples) => {
-    const serviceName = answers.find((answer) => answer.name === 'serviceName');
     const moduleLocation = forExamples ? 'examples/example' : 'src/*';
+    const serviceName = answers.find((answer) => answer.name === 'serviceName');
     const filename = answers.find((answer) => answer.name === 'filename');
 
     console.info(`Don't forget to add the following to the ${ moduleLocation }.module.ts file:`);
