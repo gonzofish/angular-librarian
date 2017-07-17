@@ -18,7 +18,7 @@ module.exports = function createComponent(rootDir, selector) {
         'it',
         'x'
     ]);
-    const forExamples = checkIsForExamples(options);
+    const forExamples = utilities.checkIsForExamples(options);
     const templates = getTemplates(rootDir, forExamples);
     const remaining = getRemainingQuestions(selector, options);
     const knownAnswers = remaining.answers;
@@ -27,13 +27,10 @@ module.exports = function createComponent(rootDir, selector) {
     erector.inquire(questions).then((answers) => {
         const allAnswers = knownAnswers.concat(answers);
 
-        erector.construct(allAnswers, templates, true);
+        erector.construct(allAnswers, templates);
         notifyUser(allAnswers, forExamples);
     });
 };
-
-const checkIsForExamples = (options) =>
-    'example' in options || 'examples' in options || 'x' in options;
 
 const getRemainingQuestions = (selectorName, options) => {
     const all = [

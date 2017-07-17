@@ -5,21 +5,29 @@ const path = require('path');
 
 const utilities = require('../utilities');
 
-module.exports = (rootDir, name) => {
-    const templates = getTemplates(rootDir);
+module.exports = function(rootDir, name) {
+    const providedOptions = Array.from(arguments).slice(name && name[0] !== '-' ? 2 : 1);
+    const options = utilities.parseOptions(providedOptions, [
+        'example',
+        'examples',
+        'x'
+    ]);
+    const forExamples = utilities.checkIsForExamples(options);
+    const templates = getTemplates(rootDir, forExamples);
 
-    if (checkHasName(name)) {
-        generateWithKnownName(name, templates);
+    if (utilities.checkIsDashFormat(name)) {
+        generateWithKnownName(name, templates, forExamples);
     } else {
-        erector.build(getAllQuestions(), templates);
+        erector.inquire(getAllQuestions()).then((answers) => {
+            erector.construct(answers, templates);
+            notifyUser(answers, forExamples);
+        });
     }
 };
 
-const checkHasName = (name) =>
-    name && name.trim().length > 0;
-
-const getTemplates = (rootDir) => {
-    const servicesDir = path.resolve(rootDir, 'src', 'services');
+const getTemplates = (rootDir, forExamples) => {
+    const codeDir = forExamples ? 'examples' : 'src';
+    const servicesDir = path.resolve(rootDir, codeDir, 'services');
 
     return utilities.getTemplates(rootDir, __dirname, [
         {
@@ -33,14 +41,14 @@ const getTemplates = (rootDir) => {
     ]);
 };
 
-const generateWithKnownName = (name, templates) => {
+const generateWithKnownName = (name, templates, forExamples) => {
     const knownAnswers = [
         { name: 'filename', answer: name},
         { name: 'serviceName', answer: utilities.dashToCap(name) + 'Service' }
     ];
 
     erector.construct(knownAnswers, templates, true);
-    notifyUser(knownAnswers);
+    notifyUser(knownAnswers, forExamples);
 }
 
 const getAllQuestions = () => [
@@ -56,11 +64,12 @@ const getAllQuestions = () => [
     }
 ];
 
-const notifyUser = (answers) => {
+const notifyUser = (answers, forExamples) => {
     const serviceName = answers.find((answer) => answer.name === 'serviceName');
+    const moduleLocation = forExamples ? 'examples/example' : 'src/*';
     const filename = answers.find((answer) => answer.name === 'filename');
 
-    console.info(`Don't forget to add the following to the module.ts file:`);
+    console.info(`Don't forget to add the following to the ${ moduleLocation }.module.ts file:`);
     console.info(`    import { ${serviceName.answer} } from './services/${filename.answer}.service';`);
     console.info(`And to add ${serviceName.answer} to the NgModule providers list or add as a provider to one or more components`);
 };

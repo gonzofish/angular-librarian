@@ -12,6 +12,9 @@ const checkIsDashFormat = (value) =>
     value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*$/i);
 exports.checkIsDashFormat = checkIsDashFormat;
 
+exports.checkIsForExamples = (options) =>
+    'example' in options || 'examples' in options || 'x' in options;
+
 exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, answers) => {
     const lookup = { n: false, y: true };
     let result;
