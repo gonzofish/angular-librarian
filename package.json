@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/gonzofish/angular-librarian#readme",
   "dependencies": {
-    "erector-set": "^1.0.0-alpha.4"
+    "erector-set": "1.0.0-beta.1"
   }
 }

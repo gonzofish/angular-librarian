@@ -26,12 +26,6 @@ module.exports = function createComponent(rootDir, selector) {
         erector.construct(allAnswers, templates, true);
         notifyUser(allAnswers);
     });
-
-    // if (utilities.checkIsDashFormat(selector)) {
-        // createWithKnownSelector(selector, templates, options);
-    // } else {
-        // createWithMissingSelector(templates, options);
-    // }
 };
 
 const getRemainingQuestions = (selectorName, options) => {
