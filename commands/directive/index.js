@@ -4,18 +4,29 @@ const erector = require('erector-set');
 const path = require('path');
 const utilities = require('../utilities');
 
-module.exports = (rootDir, name) => {
-    const templates = getTemplates(rootDir);
+module.exports = function createDirective(rootDir, name) {
+    const providedOptions = Array.from(arguments).slice(name && name[0] !== '-' ? 2 : 1);
+    const options = utilities.parseOptions(providedOptions, [
+        'example',
+        'examples',
+        'x'
+    ]);
+    const forExamples = utilities.checkIsForExamples(options);
+    const templates = getTemplates(rootDir, forExamples);
 
     if (utilities.checkIsDashFormat(name)) {
-        generateWithKnownName(name, templates);
+        generateWithKnownName(name, templates, forExamples);
     } else {
-        erector.build(getAllQuestions(), templates).then(notifyUser);
+        erector.inquire(getAllQuestions()).then((answers) => {
+            erector.construct(answers, templates);
+            notifyUser(answers, forExamples);
+        });
     }
 };
 
-const getTemplates = (rootDir) => {
-    const directiveDir = path.resolve(rootDir, 'src', 'directives');
+const getTemplates = (rootDir, forExamples) => {
+    const codeDir = forExamples ? 'examples' : 'src';
+    const directiveDir = path.resolve(rootDir, codeDir, 'directives');
 
     return utilities.getTemplates(rootDir, __dirname, [
         {
@@ -29,7 +40,7 @@ const getTemplates = (rootDir) => {
     ]);
 };
 
-const generateWithKnownName = (name, templates) => {
+const generateWithKnownName = (name, templates, forExamples) => {
     const knownAnswers = [
         { name: 'name', answer: name },
         { name: 'className', answer: utilities.dashToCap(name) + 'Directive' },
@@ -37,7 +48,7 @@ const generateWithKnownName = (name, templates) => {
     ];
 
     erector.construct(knownAnswers, templates, true);
-    notifyUser(knownAnswers);
+    notifyUser(knownAnswers, forExamples);
 };
 
 const getAllQuestions = () => [
@@ -46,11 +57,12 @@ const getAllQuestions = () => [
     { name: 'className', transform: (value) => utilities.dashToCap(value) + 'Directive', useAnswer: 'name' }
 ];
 
-const notifyUser = (answers) => {
+const notifyUser = (answers, forExamples) => {
     const className = answers.find((answer) => answer.name === 'className');
+    const moduleLocation = forExamples ? 'examples/example' : 'src/*';
     const name = answers.find((answer) => answer.name === 'name');
 
-    console.info(`Don't forget to add the following to the module.ts file:`);
+    console.info(`Don't forget to add the following to the ${ moduleLocation }.module.ts file:`);
     console.info(`    import { ${className.answer} } from './directives/${name.answer}.directive';`);
     console.info(`And to add ${className.answer} to the NgModule declarations list`);
 };

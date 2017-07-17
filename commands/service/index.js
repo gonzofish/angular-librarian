@@ -5,7 +5,7 @@ const path = require('path');
 
 const utilities = require('../utilities');
 
-module.exports = function(rootDir, name) {
+module.exports = function createService(rootDir, name) {
     const providedOptions = Array.from(arguments).slice(name && name[0] !== '-' ? 2 : 1);
     const options = utilities.parseOptions(providedOptions, [
         'example',
