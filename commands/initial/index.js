@@ -2,12 +2,15 @@
 
 const childProcess = require('child_process');
 const erector = require('erector-set');
-const fs = require('fs');
 const path = require('path');
+
+const logging = require('../logging');
 const utilities = require('../utilities');
 
 module.exports = (rootDir) => {
-    erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
+    const logger = logging.create('Initial');
+
+    return erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
             { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
@@ -55,11 +58,11 @@ module.exports = (rootDir) => {
             initGit(rootDir);
         }
 
-        console.info('Installing Node modules');
+        log('Installing Node modules');
         execute('npm i');
-        console.info('Node modules installed');
+        log('Node modules installed');
         process.chdir(startingDir);
-    });
+    }).catch((error) => logger.error(error.message));
 };
 
 const getQuestions = () => {
