@@ -1,1 +1,1 @@
-export * from './{{ name }}.module';
+export * from './{{ packageName }}.module';

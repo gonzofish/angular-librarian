@@ -15,6 +15,6 @@
     },
     "compileOnSave": false,
     "files": [
-        "./src/{{ name }}.module.ts"
+        "./src/{{ packageName }}.module.ts"
     ]
 }
