@@ -2,10 +2,10 @@
   "name": "{{ name }}",
   "version": "{{ version }}",
   "description": "{{ readmeTitle }}, an Angular library",
-  "main": "./bundles/{{ name }}.umd.js",
+  "main": "./bundles/{{ packageName }}.umd.js",
   "module": "./{{ name }}.es5.js",
   "es2015": "./{{ name }}.js",
-  "typings": "./{{ name }}.d.ts",
+  "typings": "./{{ packageName }}.d.ts",
   "scripts": {
     "build": "node ./tasks/build",
     "g": "node ./node_modules/angular-librarian",

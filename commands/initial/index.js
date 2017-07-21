@@ -6,8 +6,13 @@ const fs = require('fs');
 const path = require('path');
 const utilities = require('../utilities');
 
-module.exports = (rootDir) => {
+module.exports = (rootDir, ...args) => {
     erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
+        const options = utilities.parseOptions(args, [
+            'ni',
+            'no-input'
+        ]);
+
         const srcDir = path.resolve(rootDir, 'src');
         let templateList = [
             { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
@@ -22,7 +27,7 @@ module.exports = (rootDir) => {
             { blank: true, name: 'examples/styles.scss' },
             { name: 'index.ts' },
             { name: 'karma.conf.js', overwrite: true },
-            { destination: path.resolve(srcDir, '{{ name }}.module.ts'), name: 'src/module.ts' },
+            { destination: path.resolve(srcDir, '{{ packageName }}.module.ts'), name: 'src/module.ts' },
             { name: 'package.json', update: 'json' },
             { name: 'README.md' },
             { destination: path.resolve(srcDir, 'index.ts'), name: 'src/index.ts' },
@@ -55,9 +60,12 @@ module.exports = (rootDir) => {
             initGit(rootDir);
         }
 
-        console.info('Installing Node modules');
-        execute('npm i');
-        console.info('Node modules installed');
+        if (!('ni' in options || 'no-input' in options)) {
+            console.info('Installing Node modules');
+            execute('npm i');
+            console.info('Node modules installed');
+        }
+
         process.chdir(startingDir);
     });
 };
@@ -67,10 +75,11 @@ const getQuestions = () => {
 
     return [
         { defaultAnswer: defaultName, name: 'name', question: `Library name:`, transform: checkNameFormat },
-        { defaultAnswer: (answers) => utilities.dashToWords(answers[0].answer), name: 'readmeTitle', question: 'README Title:' },
+        { name: 'packageName', useAnswer: 'name', transform: extractPackageName },
+        { defaultAnswer: (answers) => utilities.dashToWords(answers[1].answer), name: 'readmeTitle', question: 'README Title:' },
         { name: 'repoUrl', question: 'Repository URL:' },
         { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: utilities.createYesNoValue('n') },
-        { name: 'moduleName', useAnswer: 'name', transform: (value) => generateModuleName(value) },
+        { name: 'moduleName', useAnswer: 'packageName', transform: (name) => utilities.dashToCap(name) + 'Module' },
         { name: 'version', question: 'Version:' }
     ];
 };
@@ -79,6 +88,13 @@ const checkNameFormat = (name) => {
     if (!name) {
         name = '';
     } else if (!checkPackageName(name)) {
+        const message =
+        '    Package name must have no capitals or special\n' +
+        '    characters and be one of the below formats:\n' +
+        '        @scope/package-name\n' +
+        '        package-name';
+
+        console.error(utilities.colorize(message, 'red'));
         name = null;
     }
 
@@ -86,30 +102,25 @@ const checkNameFormat = (name) => {
 };
 
 const checkPackageName = (name) =>
-    (checkIsScopedName(name) && !checkScopedName(name)) ||
-        utilities.checkIsDashFormat(name);
-
-const checkIsScopedName = (name) =>
+    name &&
     typeof name === 'string' &&
-    name[0] === '@' &&
-    name.split('/').length === 2;
-
-const checkScopedName = (name) => {
-    const parts = name.split('/');
-
-    return checkScopeFormat(parts[0]) && utilities.checkIsDashFormat(parts[1]);
-};
+    name.length > 0 &&
+    name.length <= 214 &&
+    name.trim() === name &&
+    name.toLowerCase() === name &&
+    /^[^._-]/.test(name) &&
+    /[^._-]$/.test(name) &&
+    /^(?:@[^/]+[/])?[^/]+$/.test(name) &&
+    /^[a-z0-9]*$/.test(name.replace(/(^@|[-/])/g, ''));
 
 const checkScopeFormat = (scope) => /^@[a-z][a-zA-Z0-9]*$/.test(scope);
 
-const generateModuleName = (value) => {
-    if (checkIsScopedName(value)) {
-        moduleName = utilities.dashToCap(value.split('/')[1]);
-    } else {
-        moduleName = utilities.dashToCap(value);
+const extractPackageName = (name) => {
+    if (utilities.checkIsScopedName(name)) {
+        name = name.split('/')[1];
     }
 
-    return `${ moduleName }Module`;
+    return name;
 };
 
 const getPreviousTransforms = () => ({

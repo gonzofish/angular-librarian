@@ -4,6 +4,22 @@ const fs = require('fs');
 const path = require('path');
 const erectorUtils = require('erector-set/src/utils');
 
+const colorize = (text, color) => {
+    const colorMap = {
+        blue: 34,
+        cyan: 36,
+        green: 32,
+        red: 31,
+        reset: 0,
+        yellow: 33
+    };
+
+    color = color in colorMap ? colorMap[color] : colorMap.reset;
+
+    return `\x1b[${ color }m${ text }\x1b[${ colorMap.reset }m`;
+};
+exports.colorize = colorize;
+
 exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
 
 const checkIsDashFormat = (value) =>
@@ -11,6 +27,13 @@ const checkIsDashFormat = (value) =>
     value.length > 0 &&
     value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*$/i);
 exports.checkIsDashFormat = checkIsDashFormat;
+
+exports.checkIsScopedName = (name) =>
+    // @
+    // followed by 1+ non-/
+    // followed by /
+    // folloer by 1+ non-/
+    /^@[^/]+[/][^/]+$/.test(name);
 
 exports.checkIsForExamples = (options) =>
     'example' in options || 'examples' in options || 'x' in options;

@@ -9,8 +9,10 @@ const rollupSourcemaps = require('rollup-plugin-sourcemaps');
 const rollupUglify = require('rollup-plugin-uglify');
 
 const doRollup = (libName, dirs) => {
-    const es5Entry = path.resolve(dirs.es5, `${ libName }.js`);
-    const es2015Entry = path.resolve(dirs.es2015, `${ libName }.js`);
+    const nameParts = extractName(libName);
+    const es5Entry = path.resolve(dirs.es5, `${ nameParts.package }.js`);
+    const es2015Entry = path.resolve(dirs.es2015, `${ nameParts.package }.js`);
+    const destinations = generateDestinations(dirs.dist, nameParts);
     const baseConfig = generateConfig({
         entry: es5Entry,
         external: [
@@ -21,33 +23,33 @@ const doRollup = (libName, dirs) => {
             '@angular/common': 'ng.common',
             '@angular/core': 'ng.core'
         },
-        moduleName: librarianUtils.dashToCamel(libName),
+        moduleName: librarianUtils.dashToCamel(nameParts.package),
         plugins: [ rollupSourcemaps() ],
         sourceMap: true
     }, dirs.root);
     const fesm2015Config = Object.assign({}, baseConfig, {
         entry: es2015Entry,
-        dest: path.join(dirs.dist, `${ libName }.js`),
+        dest: destinations.fesm2015,
         format: 'es'
     });
     const fesm5Config = Object.assign({}, baseConfig, {
-        dest: path.join(dirs.dist, `${ libName }.es5.js`),
+        dest: destinations.fesm5,
         format: 'es'
     });
-    const miniUmdConfig = Object.assign({}, baseConfig, {
-        dest: path.join(dirs.dist, 'bundles', `${ libName }.umd.min.js`),
+    const minUmdConfig = Object.assign({}, baseConfig, {
+        dest: destinations.minUmd,
         format: 'umd',
         plugins: baseConfig.plugins.concat([rollupUglify({})])
     });
     const umdConfig = Object.assign({}, baseConfig, {
-        dest: path.join(dirs.dist, 'bundles', `${ libName }.umd.js`),
+        dest: destinations.umd,
         format: 'umd'
     });
 
     const bundles = [
         fesm2015Config,
         fesm5Config,
-        miniUmdConfig,
+        minUmdConfig,
         umdConfig
     ].map((config) =>
         rollup.rollup(config).then((bundle) =>
@@ -57,6 +59,41 @@ const doRollup = (libName, dirs) => {
 
     return Promise.all(bundles);
 };
+
+const extractName = (libName) => {
+    const isScoped = librarianUtils.checkIsScopedName(libName);
+    const nameParts = {
+        package: libName,
+        scope: undefined
+    };
+
+    if (isScoped) {
+        const parts = libName.split('/', 2);
+
+        nameParts.package = parts[1];
+        nameParts.scope = parts[0];
+    }
+
+    return nameParts;
+};
+
+const generateDestinations = (dist, nameParts) => {
+    const bundleDest = path.resolve(dist, 'bundles');
+    let fesmDest = path.resolve(dist);
+
+    if (nameParts.scope) {
+        fesmDest = path.resolve(fesmDest, nameParts.scope);
+        fs.ensureDirSync(fesmDest);
+    }
+
+    return Object.freeze({
+        fesm2015: path.resolve(fesmDest,`${ nameParts.package }.js`),
+        fesm5: path.resolve(fesmDest,`${ nameParts.package }.es5.js`),
+        minUmd: path.resolve(bundleDest, `${ nameParts.package }.umd.min.js`),
+        umd: path.resolve(bundleDest, `${ nameParts.package }.umd.js`)
+    });
+};
+
 const generateConfig = (base, rootDir) => {
     const customLocation = path.resolve(rootDir, 'configs', 'rollup.config.js');
 
