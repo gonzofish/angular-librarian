@@ -45,6 +45,8 @@ tap.test('initial', (suite) => {
 
         initial('./').then(() => {
             test.ok(mockErector.inquire.called);
+            // test.equal(mockErector.inquire.lastCall.args[1], [
+            // ]);
             test.ok(mockLog.calledWith('Error'));
 
             test.end();

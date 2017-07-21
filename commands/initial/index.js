@@ -11,7 +11,8 @@ module.exports = (rootDir) => {
     const logger = logging.create('Initial');
 
     return erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
-        const srcDir = path.resolve(rootDir, 'src');
+        const srcDir = utilities.paths.create('src');
+
         let templateList = [
             { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
             { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },

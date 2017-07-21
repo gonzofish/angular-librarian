@@ -4,6 +4,25 @@ const fs = require('fs');
 const path = require('path');
 const erectorUtils = require('erector-set/src/utils');
 
+const resolvePath = (prefix, args) => {
+    const argsList = Array.prototype.slice.call(args);
+
+    return path.resolve.apply(path.resolve, [prefix].concat(argsList));
+};
+
+exports.paths = {
+    create() {
+        const base = resolvePath(this.root(), arguments);
+
+        return function() {
+            return resolvePath(base, arguments);
+        };
+    },
+    root() {
+        return resolvePath(process.cwd(), arguments);
+    }
+};
+
 exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
 
 const checkIsDashFormat = (value) =>
