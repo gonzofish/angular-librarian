@@ -70,20 +70,47 @@ const getQuestions = () => {
         { defaultAnswer: (answers) => utilities.dashToWords(answers[0].answer), name: 'readmeTitle', question: 'README Title:' },
         { name: 'repoUrl', question: 'Repository URL:' },
         { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: utilities.createYesNoValue('n') },
-        { name: 'moduleName', useAnswer: 'name', transform: (value) => utilities.dashToCap(value) + 'Module' },
+        { name: 'moduleName', useAnswer: 'name', transform: (value) => generateModuleName(value) },
         { name: 'version', question: 'Version:' }
     ];
 };
 
-const checkNameFormat = (value) => {
-    if (!value) {
-        value = '';
-    } else if (!utilities.checkIsDashFormat(value)) {
-        value = null;
+const checkNameFormat = (name) => {
+    if (!name) {
+        name = '';
+    } else if (!checkPackageName(name)) {
+        name = null;
     }
 
-    return value;
-}
+    return name;
+};
+
+const checkPackageName = (name) =>
+    (checkIsScopedName(name) && !checkScopedName(name)) ||
+        utilities.checkIsDashFormat(name);
+
+const checkIsScopedName = (name) =>
+    typeof name === 'string' &&
+    name[0] === '@' &&
+    name.split('/').length === 2;
+
+const checkScopedName = (name) => {
+    const parts = name.split('/');
+
+    return checkScopeFormat(parts[0]) && utilities.checkIsDashFormat(parts[1]);
+};
+
+const checkScopeFormat = (scope) => /^@[a-z][a-zA-Z0-9]*$/.test(scope);
+
+const generateModuleName = (value) => {
+    if (checkIsScopedName(value)) {
+        moduleName = utilities.dashToCap(value.split('/')[1]);
+    } else {
+        moduleName = utilities.dashToCap(value);
+    }
+
+    return `${ moduleName }Module`;
+};
 
 const getPreviousTransforms = () => ({
     git: utilities.convertYesNoValue
