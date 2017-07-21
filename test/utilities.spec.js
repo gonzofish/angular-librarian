@@ -52,7 +52,7 @@ tap.test('.paths', (suite) => {
     suite.end();
 });
 
-tap.test('.checkIsDashFormat', (suite) => {
+tap.test('#checkIsDashFormat', (suite) => {
     const check = utilities.checkIsDashFormat;
 
     suite.test('should return false if no value is provided', (test) => {
@@ -79,7 +79,7 @@ tap.test('.checkIsDashFormat', (suite) => {
     suite.test('should return false if the string has no characters', (test) => {
         test.plan(1);
 
-        test.notOk('');
+        test.notOk(check(''));
 
         test.end();
     });
@@ -100,6 +100,40 @@ tap.test('.checkIsDashFormat', (suite) => {
 
         test.ok(check('this-is-good'));
         test.ok(check('numbers-12-3-4-work'));
+
+        test.end();
+    });
+
+    suite.end();
+});
+
+tap.test('#testIsDashFormat', (suite) => {
+    const check = utilities.testIsDashFormat;
+
+    suite.test('should return the value if it is dash format', (test) => {
+        test.plan(2);
+
+        test.equal(check('this-is-good'), 'this-is-good');
+        test.equal(check('this-15-good'), 'this-15-good');
+
+        test.end();
+    });
+
+    suite.test('should return null if the value is not dash format', (test) => {
+        test.plan(12);
+
+        test.equal(check(), null);
+        test.equal(check(null), null);
+        test.equal(check(0), null);
+        test.equal(check(false), null);
+        test.equal(check(1), null);
+        test.equal(check(true), null);
+        test.equal(check(function() {}), null);
+        test.equal(check(''), null);
+        test.equal(check('        '), null);
+        test.equal(check('cant-end-in-a-'), null);
+        test.equal(check('no-!?$-chars'), null);
+        test.equal(check('123-cant-start-with-number'), null);
 
         test.end();
     });
