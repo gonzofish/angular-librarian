@@ -10,7 +10,7 @@ const utilities = require('../utilities');
 module.exports = (rootDir, ...args) => {
     const logger = logging.create('Initial');
 
-    erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
+    return erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
         const options = utilities.parseOptions(args, [
             'ni',
             'no-input'
