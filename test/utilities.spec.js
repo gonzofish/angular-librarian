@@ -51,3 +51,58 @@ tap.test('.paths', (suite) => {
 
     suite.end();
 });
+
+tap.test('.checkIsDashFormat', (suite) => {
+    const check = utilities.checkIsDashFormat;
+
+    suite.test('should return false if no value is provided', (test) => {
+        test.plan(4);
+
+        test.notOk(check());
+        test.notOk(check(null));
+        test.notOk(check(0));
+        test.notOk(check(false));
+
+        test.end();
+    });
+
+    suite.test('should return false if the value is not a string', (test) => {
+        test.plan(3);
+
+        test.notOk(check(1));
+        test.notOk(check(true));
+        test.notOk(check(function() {}));
+
+        test.end();
+    });
+
+    suite.test('should return false if the string has no characters', (test) => {
+        test.plan(1);
+
+        test.notOk('');
+
+        test.end();
+    });
+
+    suite.test('should return false if it is not dash format (no special characters)', (test) => {
+        test.plan(4);
+
+        test.notOk(check('        '));
+        test.notOk(check('cant-end-in-a-'));
+        test.notOk(check('no-!?$-chars'));
+        test.notOk(check('123-cant-start-with-number'));
+
+        test.end();
+    });
+
+    suite.test('should return true if it is dash format', (test) => {
+        test.plan(2);
+
+        test.ok(check('this-is-good'));
+        test.ok(check('numbers-12-3-4-work'));
+
+        test.end();
+    });
+
+    suite.end();
+});

@@ -28,7 +28,7 @@ exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
 const checkIsDashFormat = (value) =>
     !!value && typeof value === 'string' &&
     value.length > 0 &&
-    value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*$/i);
+    value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*[a-z0-9]$/i);
 exports.checkIsDashFormat = checkIsDashFormat;
 
 exports.checkIsForExamples = (options) =>
