@@ -22,6 +22,26 @@ exports.paths = {
         return resolvePath(process.cwd(), arguments);
     }
 };
+
+exports.testIsDashFormat = (value) =>
+    checkIsDashFormat(value) ? value : null;
+
+const checkIsDashFormat = (value) =>
+    !!value && typeof value === 'string' &&
+    value.length > 0 &&
+    value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*[a-z0-9]$/i);
+exports.checkIsDashFormat = checkIsDashFormat;
+
+exports.checkIsForExamples = (options) =>
+    'example' in options || 'examples' in options || 'x' in options;
+
+exports.checkIsScopedName = (name) =>
+    // @
+    // followed by 1+ non-/
+    // followed by /
+    // folloer by 1+ non-/
+    /^@[^/]+[/][^/]+$/.test(name);
+
 const colorize = (text, color) => {
     const colorMap = {
         blue: 34,
@@ -34,27 +54,9 @@ const colorize = (text, color) => {
 
     color = color in colorMap ? colorMap[color] : colorMap.reset;
 
-    return `\x1b[${ color }m${ text }\x1b[${ colorMap.reset }m`;
+    return `\x1b[${ color }m${ text }\x1b[0m`;
 };
 exports.colorize = colorize;
-
-exports.testIsDashFormat = (value) => checkIsDashFormat(value) ? value : null;
-
-const checkIsDashFormat = (value) =>
-    !!value && typeof value === 'string' &&
-    value.length > 0 &&
-    value.match(/^[a-z][a-z0-9]*(\-[a-z0-9]+)*[a-z0-9]$/i);
-exports.checkIsDashFormat = checkIsDashFormat;
-
-exports.checkIsScopedName = (name) =>
-    // @
-    // followed by 1+ non-/
-    // followed by /
-    // folloer by 1+ non-/
-    /^@[^/]+[/][^/]+$/.test(name);
-
-exports.checkIsForExamples = (options) =>
-    'example' in options || 'examples' in options || 'x' in options;
 
 exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, answers) => {
     const lookup = { n: false, y: true };
