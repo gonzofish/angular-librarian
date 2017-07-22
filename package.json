@@ -7,9 +7,9 @@
     "ngl": "bin/index.js"
   },
   "scripts": {
-    "coverage": "tap test/{,*/}*.spec.js --cov --coverage-report=lcov",
+    "coverage": "tap \"test/**/*.spec.js\" --cov --coverage-report=lcov",
     "start": "node .",
-    "test": "tap test/{,*/}*.spec.js",
+    "test": "tap \"test/**/*.spec.js\"",
     "watch": "nodemon -q -x \"npm test\""
   },
   "publishConfig": {
