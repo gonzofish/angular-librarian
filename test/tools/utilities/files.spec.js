@@ -21,7 +21,8 @@ tap.test('#deleteFolder', (suite) => {
     suite.beforeEach((done) => {
         exists = sinon.stub(fs, 'existsSync');
         lstat = sinon.stub(fs, 'lstatSync');
-        readdir = sinon.stub(fs, 'readdir');
+        mockResolve = sinon.stub(path, 'resolve');
+        readdir = sinon.stub(fs, 'readdirSync');
         rmdir = sinon.stub(fs, 'rmdirSync');
         unlink = sinon.stub(fs, 'unlinkSync');
 
@@ -31,6 +32,7 @@ tap.test('#deleteFolder', (suite) => {
     suite.afterEach((done) => {
         exists.restore();
         lstat.restore();
+        mockResolve.restore();
         readdir.restore();
         rmdir.restore();
         unlink.restore();
@@ -49,6 +51,79 @@ tap.test('#deleteFolder', (suite) => {
         test.end();
     });
 
+    suite.test('should read the directory\'s contents', (test) => {
+        test.plan(1);
+
+        exists.returns(true);
+        readdir.returns([]);
+        del('pizza/party');
+
+        test.ok(readdir.calledWith('pizza/party'));
+
+        test.end();
+    });
+
+    suite.test('should remove the directory', (test) => {
+        test.plan(1);
+
+        exists.returns(true);
+        readdir.returns([]);
+        del('pizza/party');
+
+        test.ok(rmdir.calledWith('pizza/party'));
+
+        test.end();
+    });
+
+    suite.test('should check if each file is a directory', (test) => {
+        test.plan(3);
+
+        exists.returns(true);
+        readdir.returns([
+            '12345',
+            '67890'
+        ]);
+        lstat.returns({
+            isDirectory() { return false; }
+        });
+        mockResolve.callsFake((prefix, suffix) => prefix + '/' + suffix);
+        del('pizza/party');
+
+        test.ok(lstat.calledTwice);
+        test.ok(lstat.calledWith('pizza/party/12345'));
+        test.ok(unlink.calledWith('pizza/party/12345'));
+
+        test.end();
+    });
+
+    suite.test('should delete any child files & folders', (test) => {
+        test.plan(2);
+
+        exists.callsFake((dir) => dir === 'pizza/party');
+        readdir.returns([
+            '12345',
+            '67890'
+        ]);
+        lstat.callsFake((dir) => ({
+            isDirectory() { return dir === 'pizza/party/67890'; }
+        }));
+        mockResolve.callsFake((prefix, suffix) => prefix + '/' + suffix);
+
+        del('pizza/party');
+
+        test.ok(unlink.calledWith('pizza/party/12345'));
+        test.ok(exists.calledWith('pizza/party/67890'));
+
+        test.end();
+    });
+
+    suite.end();
+});
+
+tap.test('#getTemplates', (suite) => {
+    // return a list erector template objects
+    // use .destination if provided
+    // set template to blank if .blank is true
     suite.end();
 });
 
