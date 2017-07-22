@@ -97,19 +97,24 @@ Which will generate a compressed file containing your library as it will look wh
 published to NPM. The basic structure of a published library is:
 
 ```
-|__examples/
-   |__example.component.html
-   |__example.component.ts
-   |__example.main.ts
-   |__example.module.ts
-   |__index.html
-|__src/
-   |__{{ name }}.module.ts
-   |__index.ts
-|__.npmignore
-|__index.ts
+|__bundles/
+   |__<library name>.umd.js
+   |__<library name>.umd.js.map
+   |__<library name>.umd.min.js
+   |__<library name>.bundle.min.js.map
+|__index.d.ts
 |__package.json
 |__README.md
+|__*.d.ts
+|__{{ name }}.d.ts
+|__{{ name }}.module.d.ts
+|__{{ name }}.es5.js
+|__{{ name }}.es5.js.map
+|__{{ name }}.js
+|__{{ name }}.js.map
+|__{{ name }}.metadata.json
 ```
 
-As you can see, the packaging removes any files specific to developing your library.
+As you can see, the packaging removes any files specific to developing your
+library. It, more importantly, creates distribution files for usage with many
+different module systems.
