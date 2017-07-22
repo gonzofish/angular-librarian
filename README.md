@@ -524,28 +524,27 @@ commands above.
 npm pack
 ```
 
-Which will generate a compressed file containing your library as it will look when packaged up and published to NPM. The basic structure of a published library is:
+Which will generate a compressed file containing your library as it will look
+when packaged up and published to NPM. The basic structure of a published
+library is:
 
 ```
-|__dist/
-   |__index.d.ts
-   |__index.js
-   |__index.js.map
-   |__index.metadata.json
-   |__<library name>.bundle.js
-   |__<library name>.bundle.js.map
-   |__<library name>.module.d.ts
-   |__<library name>.module.js
-   |__<library name>.module.js.map
-   |__<library name>.module.metadata.json
-|__examples/
-   |__example.component.html
-   |__example.component.ts
-   |__example.main.ts
-   |__example.module.ts
-   |__index.html
+|__bundles/
+   |__<library name>.umd.js
+   |__<library name>.umd.js.map
+   |__<library name>.umd.min.js
+   |__<library name>.bundle.min.js.map
+|__index.d.ts
 |__package.json
 |__README.md
+|__*.d.ts
+|__<library name>.d.ts
+|__<library name>.module.d.ts
+|__<library name>.es5.js
+|__<library name>.es5.js.map
+|__<library name>.js
+|__<library name>.js.map
+|__<library name>.metadata.json
 ```
 
 As you can see, the packaging removes any files specific to developing your
