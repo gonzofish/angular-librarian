@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const sinon = require('sinon');
 const tap = require('tap');
@@ -8,6 +9,48 @@ const files = require('../../resolver')(__filename);
 
 let mockCwd;
 let mockResolve;
+
+tap.test('#deleteFolder', (suite) => {
+    const del = files.deleteFolder;
+    let exists;
+    let lstat;
+    let readdir;
+    let rmdir;
+    let unlink;
+
+    suite.beforeEach((done) => {
+        exists = sinon.stub(fs, 'existsSync');
+        lstat = sinon.stub(fs, 'lstatSync');
+        readdir = sinon.stub(fs, 'readdir');
+        rmdir = sinon.stub(fs, 'rmdirSync');
+        unlink = sinon.stub(fs, 'unlinkSync');
+
+        done();
+    });
+
+    suite.afterEach((done) => {
+        exists.restore();
+        lstat.restore();
+        readdir.restore();
+        rmdir.restore();
+        unlink.restore();
+
+        done();
+    });
+
+    suite.test('should check if the folder exists', (test) => {
+        test.plan(1);
+
+        exists.returns(false);
+        del('pizza/party');
+
+        test.ok(exists.calledWith('pizza/party'));
+
+        test.end();
+    });
+
+    suite.end();
+});
 
 tap.test('.resolver', (suite) => {
     const resolver = files.resolver;
@@ -53,5 +96,3 @@ tap.test('.resolver', (suite) => {
 
     suite.end();
 });
-
-// tap.test('')
