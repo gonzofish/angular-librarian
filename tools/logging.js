@@ -9,5 +9,5 @@ exports.create = (prefix = '') => ({
 
 const notify = (type, prefix, args) => {
     args = Array.prototype.slice.call(args);
-    console[type].apply(console, [`[${ prefix }]:`].concat(arguments));
+    console[type].apply(console, [`[${ prefix }]:`].concat(args));
 };
