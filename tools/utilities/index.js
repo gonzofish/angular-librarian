@@ -11,6 +11,7 @@ const addMethods = (mod) => {
 };
 
 addMethods(require('./case-convert'));
+addMethods(require('./colorize'));
 addMethods(require('./files'));
 addMethods(require('./options'));
 
@@ -20,22 +21,6 @@ exports.checkIsScopedName = (name) =>
     // followed by /
     // folloer by 1+ non-/
     /^@[^/]+[/][^/]+$/.test(name);
-
-const colorize = (text, color) => {
-    const colorMap = {
-        blue: 34,
-        cyan: 36,
-        green: 32,
-        red: 31,
-        reset: 0,
-        yellow: 33
-    };
-
-    color = color in colorMap ? colorMap[color] : colorMap.reset;
-
-    return `\x1b[${ color }m${ text }\x1b[0m`;
-};
-exports.colorize = colorize;
 
 exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, answers) => {
     const lookup = { n: false, y: true };
