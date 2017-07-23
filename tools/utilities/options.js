@@ -3,30 +3,61 @@
 exports.checkIsForExamples = (options) =>
     'example' in options || 'examples' in options || 'x' in options;
 
-exports.parseOptions = (options, valid) => options.map((option) => {
-    option = option.trim();
+exports.parseOptions = (candidates, valid) =>
+    createOptionsMap(formatOptions(candidates), valid);
 
-    if (option[0] !== '-') {
-        option = '=' + option;
+const formatOptions = (candidates) => candidates.reduce((options, candidate) => {
+    candidate = candidate.trim();
+
+    if (candidate.substring(0, 2) === '--') {
+        options = options.concat(candidate);
+    } else if (candidate[0] === '-') {
+        options = options.concat(candidate.substring(1).split('').map((option) => '-' + option));
+    } else {
+        options = addValueToLastOption(options, candidate);
     }
 
-    return option;
-}).join('').split('-').reduce((all, optionValue) => {
-    if (optionValue) {
-        const split = optionValue.split('=');
-        const option = split[0].replace(/^\-+/, '');
-        const value = split.slice(1).map((value) =>
-            value.replace(/,$/, '')
-        );
+    return options;
+}, []);
 
-        if (!checkCanAddOption(all, option)) {
-            all[option] = value;
+const addValueToLastOption = (options, candidate) => {
+    let option = options[options.length - 1];
+    let separator = ',';
+
+    if (option && option.substring(0, 2) === '--' && candidate) {
+        if (option.indexOf('=') === -1) {
+            separator = '=';
         }
+
+        options = options.slice(0, -1).concat(option + separator + candidate);
     }
 
-    return all;
+    return options;
+};
+
+const createOptionsMap = (candidates, valid) => candidates.reduce((options, candidate) => {
+    const parts = candidate.split('=');
+    const option = parts[0].replace(/^--?/, '');
+    const values = parts[1] ? parts[1].split(',').map(convertToType) : [];
+
+    if (checkCanAddOption(options, option, valid)) {
+        options[option] = values;
+    }
+
+    return options;
 }, {});
 
-const checkCanAddOption = (all, options) =>
-    valid.indexOf(option) !== -1 &&
-    !all.hasOwnProperty(option);
+const convertToType = (value) => {
+    try {
+        // this will take ANYTHING, so a IIFE
+        // will get parsed...but for an app like
+        // this, it's ok
+        value = eval(value);
+    } catch (e) {}
+
+    return value;
+};
+
+const checkCanAddOption = (options, option, valid) =>
+    (!valid || valid.length === 0 || valid.indexOf(option) !== -1) &&
+    !options.hasOwnProperty(option);
