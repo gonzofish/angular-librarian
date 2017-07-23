@@ -2,6 +2,16 @@
 
 const erectorUtils = require('erector-set/src/utils');
 
+exports.convertYesNoValue = (value) => {
+    if (erectorUtils.checkIsType(value, 'boolean')) {
+        value = value ? 'Y' : 'N';
+    } else if (!value) {
+        value = 'N';
+    }
+
+    return value;
+};
+
 exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, answers) => {
     const lookup = { n: false, y: true };
     let result;
@@ -18,14 +28,4 @@ exports.createYesNoValue = (defaultValue, knownAnswers, followup) => (value, ans
     }
 
     return result;
-};
-
-exports.convertYesNoValue = (value) => {
-    if (erectorUtils.checkIsType(value, 'boolean')) {
-        value = value ? 'Y' : 'N';
-    } else if (!value) {
-        value = 'N';
-    }
-
-    return value;
 };

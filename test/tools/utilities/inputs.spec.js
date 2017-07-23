@@ -27,6 +27,15 @@ tap.test('#convertYesNoValue', (suite) => {
         test.end();
     });
 
+    suite.test('should return the value if it is boolean & a truthy value', (test) => {
+        test.plan(2);
+
+        test.equal(convert(12), 12);
+        test.equal(convert('pizza'), 'pizza');
+
+        test.end();
+    })
+
     suite.end();
 });
 
