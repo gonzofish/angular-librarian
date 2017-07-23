@@ -121,9 +121,118 @@ tap.test('#deleteFolder', (suite) => {
 });
 
 tap.test('#getTemplates', (suite) => {
-    // return a list erector template objects
-    // use .destination if provided
-    // set template to blank if .blank is true
+    const create = (templates) =>
+        files.getTemplates('/root', '/root/current', templates);
+    let mockResolve;
+
+    suite.beforeEach((done) => {
+        mockResolve = sinon.stub(path, 'resolve');
+        mockResolve.callsFake(function() {
+            return Array.prototype.slice.call(arguments)
+                .join('/');
+        });
+
+        done();
+    });
+
+    suite.afterEach((done) => {
+        mockResolve.restore();
+
+        done();
+    });
+
+    suite.test('should return a list of erector template objects', (test) => {
+        test.plan(1);
+
+        const templates = create([
+            { name: 'pizza', overwrite: false },
+            { name: 'broccoli', update: true },
+            { name: 'burger' }
+        ]);
+
+        test.deepEqual(templates, [
+            {
+                check: undefined,
+                destination: '/root/pizza',
+                overwrite: false,
+                template: '/root/current/templates/pizza',
+                update: undefined
+            },
+            {
+                check: undefined,
+                destination: '/root/broccoli',
+                overwrite: undefined,
+                template: '/root/current/templates/broccoli',
+                update: true
+            },
+            {
+                check: undefined,
+                destination: '/root/burger',
+                overwrite: undefined,
+                template: '/root/current/templates/burger',
+                update: undefined
+            }
+        ]);
+
+        test.end();
+    });
+
+    suite.test('should utilize the destination field if provided', (test) => {
+        test.plan(1);
+
+        const templates = create([
+            { name: 'pizza', destination: '/the/pizzeria/palace' },
+            { name: 'burger' }
+        ]);
+
+        test.deepEqual(templates, [
+            {
+                check: undefined,
+                destination: '/the/pizzeria/palace',
+                overwrite: undefined,
+                template: '/root/current/templates/pizza',
+                update: undefined
+            },
+            {
+                check: undefined,
+                destination: '/root/burger',
+                overwrite: undefined,
+                template: '/root/current/templates/burger',
+                update: undefined
+            }
+        ]);
+
+        test.end();
+    });
+
+    suite.test('should provide a blank template if .blank is truthy', (test) => {
+        test.plan(1);
+
+        const templates = create([
+            { name: 'pizza' },
+            { blank: true, name: 'broccoli' }
+        ]);
+
+        test.deepEqual(templates, [
+            {
+                check: undefined,
+                destination: '/root/pizza',
+                overwrite: undefined,
+                template: '/root/current/templates/pizza',
+                update: undefined
+            },
+            {
+                check: undefined,
+                destination: '/root/broccoli',
+                overwrite: undefined,
+                template: undefined,
+                update: undefined
+            }
+        ]);
+
+        test.end();
+    });
+
     suite.end();
 });
 

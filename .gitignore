@@ -1,5 +1,6 @@
 .idea/
 .nyc_output
+.vscode
 coverage
 *.tgz
 debug.log
