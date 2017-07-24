@@ -13,13 +13,16 @@ const utilities = require('../tools/utilities');
 
 const caseConvert = utilities.caseConvert;
 const inputs = utilities.inputs;
+const opts = utilities.options;
 
+let execSync;
 let mockErector;
 let mockLog;
 let mockLogger;
 
 tap.test('initial', (suite) => {
     suite.beforeEach((done) => {
+        execSync = sinon.stub(childProcess, 'execSync');
         mockErector = {
             construct: sinon.stub(erector, 'construct'),
             inquire: sinon.stub(erector, 'inquire')
@@ -31,6 +34,7 @@ tap.test('initial', (suite) => {
     });
 
     suite.afterEach((done) => {
+        execSync.restore();
         mockErector.construct.restore();
         mockErector.inquire.restore();
 
@@ -160,6 +164,24 @@ tap.test('initial', (suite) => {
 
             test.equal(transform('this is calm'), 'WOW!Module');
 
+            test.end();
+        });
+    });
+
+    suite.test('should parse any options available', (test) => {
+        test.plan(1);
+
+        const parseOptions = sinon.stub(opts, 'parseOptions');
+
+        mockErector.inquire.resolves([{ name: 'git' }]);
+        mockLogger.returns({
+            info: mockLog,
+            error() { console.error.apply(console.error, Array.from(arguments)); }
+        });
+        parseOptions.returns({});
+
+        initial('./', 'pizza', 'eat', 'yum').then(() => {
+            test.ok(parseOptions.called);//With(['pizza', 'eat', 'yum'], ['no-install', 'ni']));
             test.end();
         });
     });

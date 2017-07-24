@@ -71,9 +71,9 @@ module.exports = (rootDir, ...args) => {
         }
 
         if (!('ni' in options || 'no-input' in options)) {
-            console.info('Installing Node modules');
+            logger.info('Installing Node modules');
             execute('npm i');
-            console.info('Node modules installed');
+            logger.info('Node modules installed');
         }
 
         process.chdir(startingDir);
@@ -138,7 +138,7 @@ const initGit = (rootDir) => {
     console.info('Removing existing Git project');
     files.deleteFolder(path.resolve(rootDir, '.git'));
     console.info('Initializing new Git project');
-    execute('git init');
+    // execute('git init');
     console.info('Git project initialized');
 };
 
