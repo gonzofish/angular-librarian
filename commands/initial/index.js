@@ -122,8 +122,6 @@ const checkPackageName = (name) =>
     /^(?:@[^/]+[/])?[^/]+$/.test(name) &&
     /^[a-z0-9]*$/.test(name.replace(/(^@|[-/])/g, ''));
 
-const checkScopeFormat = (scope) => /^@[a-z][a-zA-Z0-9]*$/.test(scope);
-
 const extractPackageName = (name) => {
     if (utilities.checkIsScopedName(name)) {
         name = name.split('/')[1];
