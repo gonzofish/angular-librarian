@@ -4,16 +4,23 @@ const childProcess = require('child_process');
 const erector = require('erector-set');
 const path = require('path');
 
-const logging = require('../logging');
+const logging = require('../../tools/logging');
 const utilities = require('../utilities');
 
+const caseConvert = utilities.caseConvert;
+const colorize = utilities.colorize;
+const files = utilities.files;
+const inputs = utilities.inputs;
+const opts = utilities.options;
+
+let logger;
+
 module.exports = (rootDir, ...args) => {
-    const logger = logging.create('Initial');
+    logger = logging.create('Initial');
 
     return erector.inquire(getQuestions(), true, getPreviousTransforms()).then((answers) => {
-        const options = utilities.parseOptions(args, [
-            'ni',
-            'no-input'
+        const options = opts.parseOptions(args, [
+            'no-install', 'ni',
         ]);
 
         const srcDir = path.resolve(rootDir, 'src');
@@ -54,7 +61,7 @@ module.exports = (rootDir, ...args) => {
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
         const startingDir = __dirname;
-        const templates = utilities.getTemplates(rootDir, __dirname, templateList);
+        const templates = files.getTemplates(rootDir, __dirname, templateList);
 
         erector.construct(answers, templates);
 
@@ -74,15 +81,15 @@ module.exports = (rootDir, ...args) => {
 };
 
 const getQuestions = () => {
-    const defaultName = require(path.resolve(process.cwd(), 'package.json')).name;
+    const defaultName = require(files.resolver.root('package.json')).name;
 
     return [
         { defaultAnswer: defaultName, name: 'name', question: `Library name:`, transform: checkNameFormat },
         { name: 'packageName', useAnswer: 'name', transform: extractPackageName },
-        { defaultAnswer: (answers) => utilities.dashToWords(answers[1].answer), name: 'readmeTitle', question: 'README Title:' },
+        { defaultAnswer: (answers) => caseConvert.dashToWords(answers[1].answer), name: 'readmeTitle', question: 'README Title:' },
         { name: 'repoUrl', question: 'Repository URL:' },
-        { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: utilities.createYesNoValue('n') },
-        { name: 'moduleName', useAnswer: 'packageName', transform: (name) => utilities.dashToCap(name) + 'Module' },
+        { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: inputs.createYesNoValue('n') },
+        { name: 'moduleName', useAnswer: 'packageName', transform: (name) => caseConvert.dashToCap(name) + 'Module' },
         { name: 'version', question: 'Version:' }
     ];
 };
@@ -97,7 +104,7 @@ const checkNameFormat = (name) => {
         '        @scope/package-name\n' +
         '        package-name';
 
-        console.error(utilities.colorize(message, 'red'));
+        logger.error(colorize.colorize(message, 'red'));
         name = null;
     }
 
@@ -105,7 +112,6 @@ const checkNameFormat = (name) => {
 };
 
 const checkPackageName = (name) =>
-    name &&
     typeof name === 'string' &&
     name.length > 0 &&
     name.length <= 214 &&
@@ -127,12 +133,12 @@ const extractPackageName = (name) => {
 };
 
 const getPreviousTransforms = () => ({
-    git: utilities.convertYesNoValue
+    git: inputs.convertYesNoValue
 });
 
 const initGit = (rootDir) => {
     console.info('Removing existing Git project');
-    utilities.deleteFolder(path.resolve(rootDir, '.git'));
+    files.deleteFolder(path.resolve(rootDir, '.git'));
     console.info('Initializing new Git project');
     execute('git init');
     console.info('Git project initialized');

@@ -1,6 +1,6 @@
 'use strict';
 
-exports.create = (prefix = '') => ({
+exports.create = (prefix = '') => Object.freeze({
     error() { notify('error', prefix, arguments); },
     info() { notify('info', prefix, arguments); },
     log() { notify('log', prefix, arguments); },

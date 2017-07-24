@@ -119,6 +119,10 @@ npm run g init
 npm run g initialize
 ```
 
+#### Options
+
+- `--no-install` / `--ni`: Skip installing Node modules
+
 #### Prompts
 - `Library name:` a dash-cased name that is used in constructing the `package.json`
     and `*.module.ts` file. It is also used to create the class name of the module.
