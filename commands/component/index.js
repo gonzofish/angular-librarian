@@ -6,6 +6,7 @@ const path = require('path');
 const utilities = require('../utilities');
 
 const colorize = utilities.colorize;
+const files = utilities.files;
 const opts = utilities.options;
 let logger;
 
@@ -19,7 +20,7 @@ module.exports = function createComponent(rootDir, selector) {
         'inline-styles', 'is',
         'inline-template', 'it'
     ]);
-    const forExamples = utilities.checkIsForExamples(options);
+    const forExamples = opts.checkIsForExamples(options);
     const templates = getTemplates(rootDir, forExamples);
     const remaining = getRemainingQuestions(selector, options);
     const knownAnswers = remaining.answers;
@@ -30,7 +31,7 @@ module.exports = function createComponent(rootDir, selector) {
 
         erector.construct(allAnswers, templates);
         notifyUser(allAnswers, forExamples);
-    }).catch((error) => logger.error(colorize.colorize(error, 'red')));
+    }).catch((error) => logger.error(colorize.colorize(error.message, 'red')));
 };
 
 const getRemainingQuestions = (selectorName, options) => {
@@ -115,28 +116,6 @@ const getTemplateQuestions = (knownAnswers) => [
     { allowBlank: true, name: 'template', question: 'Use inline template (y/N)?', transform: utilities.createYesNoValue('n', knownAnswers, setInlineTemplate) },
     { name: 'templateAttribute', useAnswer: 'template', transform: pickTemplateAttribute }
 ];
-
-const createWithMissingSelector = (templates, options) => {
-    const questions = getAllQuestions(options);
-
-    erector.build(questions, templates).then(notifyUser);
-};
-
-const getAllQuestions = () => {
-    const baseQuestions = [
-        { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => utilities.checkIsDashFormat(value) ? value : null },
-        { name: 'componentName', transform: (value) => utilities.dashToCap(value) + 'Component', useAnswer: 'selector' }
-    ];
-
-    return baseQuestions.concat(getComponentOptionQuestions());
-};
-
-const getComponentOptionQuestions = (knownAnswers) => [
-    { allowBlank: true, name: 'styles', question: 'Use inline styles (y/N)?', transform: utilities.createYesNoValue('n', knownAnswers, setInlineStyles) },
-    { allowBlank: true, name: 'template', question: 'Use inline template (y/N)?', transform: utilities.createYesNoValue('n', knownAnswers, setInlineTemplate) },
-    { name: 'styleAttribute', useAnswer: 'styles', transform: pickStyleAttribute },
-    { name: 'templateAttribute', useAnswer: 'template', transform: pickTemplateAttribute }
-].concat(getLifecycleHookQuestions());
 
 const setInlineStyles = (value, answers) => {
     const selector = answers.find((answer) => answer.name === 'selector');
