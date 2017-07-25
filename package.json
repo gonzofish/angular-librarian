@@ -9,7 +9,8 @@
   "scripts": {
     "coverage": "tap \"test/**/*.spec.js\" --cov --coverage-report=lcov",
     "start": "node .",
-    "test": "tap \"test/**/*.spec.js\"",
+    "test": "tap \"test/**/*.spec.js\" --coverage",
+    "posttest": "tap --coverage-report=lcov && codecov",
     "watch": "nodemon -q -x \"npm test\""
   },
   "publishConfig": {
