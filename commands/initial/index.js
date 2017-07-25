@@ -22,11 +22,10 @@ module.exports = (rootDir, ...args) => {
         const options = opts.parseOptions(args, [
             'no-install', 'ni',
         ]);
-
-        const srcDir = path.resolve(rootDir, 'src');
-        let templateList = [
-            { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore' },
-            { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore' },
+        const srcDir = files.resolver.create('src');
+        const templateList = [
+            { destination: files.resolver.root('.gitignore'), name: '__gitignore' },
+            { destination: files.resolver.root('.npmignore'), name: '__npmignore' },
             { name: 'DEVELOPMENT.md' },
             { blank: true, name: 'examples/example.component.html' },
             { blank: true, name: 'examples/example.component.scss' },
@@ -37,17 +36,17 @@ module.exports = (rootDir, ...args) => {
             { blank: true, name: 'examples/styles.scss' },
             { name: 'index.ts' },
             { name: 'karma.conf.js', overwrite: true },
-            { destination: path.resolve(srcDir, '{{ packageName }}.module.ts'), name: 'src/module.ts' },
+            { destination: srcDir('{{ packageName }}.module.ts'), name: 'src/module.ts' },
             { name: 'package.json', update: 'json' },
             { name: 'README.md' },
-            { destination: path.resolve(srcDir, 'index.ts'), name: 'src/index.ts' },
-            { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js', overwrite: true },
+            { destination: srcDir('index.ts'), name: 'src/index.ts' },
+            { destination: srcDir('test.js'), name: 'src/test.js', overwrite: true },
             { name: 'tsconfig.json', overwrite: true },
             { name: 'tsconfig.es2015.json', overwrite: true },
             { name: 'tsconfig.es5.json', overwrite: true },
             { name: 'tsconfig.test.json', overwrite: true },
             { name: 'tslint.json', overwrite: true },
-            { destination: path.resolve(srcDir, 'vendor.ts'), name: 'src/vendor.ts' },
+            { destination: srcDir('vendor.ts'), name: 'src/vendor.ts' },
             { name: 'tasks/build.js', overwrite: true },
             { name: 'tasks/copy-build.js', overwrite: true },
             { name: 'tasks/copy-globs.js', overwrite: true },
@@ -81,7 +80,7 @@ module.exports = (rootDir, ...args) => {
 };
 
 const getQuestions = () => {
-    const defaultName = require(files.resolver.root('package.json')).name;
+    const defaultName = files.include(files.resolver.root('package.json')).name;
 
     return [
         { defaultAnswer: defaultName, name: 'name', question: `Library name:`, transform: checkNameFormat },

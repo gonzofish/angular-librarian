@@ -12,6 +12,7 @@ const logger = require('../commands/logging');
 const utilities = require('../tools/utilities');
 
 const caseConvert = utilities.caseConvert;
+const files = utilities.files;
 const inputs = utilities.inputs;
 const opts = utilities.options;
 
@@ -45,9 +46,9 @@ tap.test('initial', (suite) => {
 
     suite.test('should call erector.inquire with the questions to ask', (test) => {
         const createYesNo = sinon.stub(inputs, 'createYesNoValue');
-        
+
         test.plan(22);
-        
+
         mockErector.inquire.rejects();
         mockLogger.returns({
             info: mockLog,
@@ -59,7 +60,7 @@ tap.test('initial', (suite) => {
         initial('./').then(() => {
             const questions = mockErector.inquire.lastCall.args[0];
             let transform;
-            
+
             // Is there a more concise way to do this with sinon & TAP?
             // Maybe use something like jasmine.any(Function)?
             test.equal(questions[0].defaultAnswer, 'angular-librarian');
@@ -74,7 +75,7 @@ tap.test('initial', (suite) => {
             test.equal(typeof questions[2].defaultAnswer, 'function');
             test.equal(questions[2].name, 'readmeTitle');
             test.equal(questions[2].question, 'README Title:');
-            
+
             test.equal(questions[3].name, 'repoUrl');
             test.equal(questions[3].question, 'Repository URL:');
 
@@ -130,14 +131,14 @@ tap.test('initial', (suite) => {
 
     suite.test('should have a packageName question transform that extracts the package name without a scope', (test) => {
         test.plan(2);
-        
+
         mockErector.inquire.rejects();
         mockLogger.returns({
             error: mockLog
         });
 
         initial('./').then(() => {
-            
+
             const { transform } = mockErector.inquire.lastCall.args[0][1];
 
             test.equal(transform('@myscope/package-name'), 'package-name');
@@ -168,7 +169,7 @@ tap.test('initial', (suite) => {
         });
     });
 
-    suite.test('should parse any options available', (test) => {
+    suite.test('should parse command-line options', (test) => {
         test.plan(1);
 
         const parseOptions = sinon.stub(opts, 'parseOptions');
@@ -182,6 +183,46 @@ tap.test('initial', (suite) => {
 
         initial('./', 'pizza', 'eat', 'yum').then(() => {
             test.ok(parseOptions.called);//With(['pizza', 'eat', 'yum'], ['no-install', 'ni']));
+            test.end();
+        });
+    });
+
+    suite.test('', (test) => {
+        const create = sinon.stub(files.resolver, 'create');
+        const created = sinon.stub();
+        const rooter = sinon.stub(files.resolver, 'root');
+        const include = sinon.stub(files, 'include');
+
+        test.plan(7);
+
+        create.returns(created);
+        created.callsFake(() => '/root/created/dir');
+        include.callsFake((file) => {
+            if (file.indexOf('package.json') !== -1) {
+                return { name: 'fake' };
+            }
+        });
+        rooter.callsFake(function() {
+            return '/root/' + Array.from(arguments).join('/');
+        });
+
+        mockErector.inquire.resolves([{ name: 'git' }]);
+        mockLogger.returns({
+            info: mockLog,
+            error() { console.error.apply(console.error, Array.from(arguments)); }
+        });
+
+        initial('./').then(() => {
+            test.ok(create.calledWith('src'));
+            test.ok(rooter.calledWith('.gitignore'));
+            test.ok(rooter.calledWith('.npmignore'));
+
+            // srcDir
+            test.ok(created.calledWith('{{ packageName }}.module.ts'));
+            test.ok(created.calledWith('index.ts'));
+            test.ok(created.calledWith('test.js'));
+            test.ok(created.calledWith('vendor.ts'));
+
             test.end();
         });
     });

@@ -28,6 +28,8 @@ exports.getTemplates = (rootDir, directory, filenames) => filenames.map((filenam
     overwrite: filename.overwrite
 }));
 
+exports.include = (file) => require(file);
+
 exports.resolver = {
     create() {
         const base = resolvePath(this.root(), arguments);
