@@ -16,45 +16,67 @@ const files = utilities.files;
 const inputs = utilities.inputs;
 const opts = utilities.options;
 
-let execSync;
-let mockErector;
-let mockLog;
-let mockLogger;
+const sandbox = sinon.sandbox.create();
 
 tap.test('initial', (suite) => {
-    suite.beforeEach((done) => {
-        execSync = sinon.stub(childProcess, 'execSync');
-        mockErector = {
-            construct: sinon.stub(erector, 'construct'),
-            inquire: sinon.stub(erector, 'inquire')
-        };
+    let chdir;
+    let execSync;
+    let filesInclude;
+    let getTemplates;
+    let mockErector;
+    let mockLog;
+    let mockLogger;
+    let resolverCreate;
+    let resolverRoot;
 
-        mockLog = sinon.spy();
-        mockLogger = sinon.stub(logger, 'create');
+    suite.beforeEach((done) => {
+        chdir = sandbox.stub(process, 'chdir');
+        execSync = sandbox.stub(childProcess, 'execSync');
+        filesInclude = sandbox.stub(files, 'include');
+        getTemplates = sandbox.stub(files, 'getTemplates');
+        mockLog = sandbox.spy();
+        mockLogger = sandbox.stub(logger, 'create');
+        resolverCreate = sandbox.stub(files.resolver, 'create');
+        resolverRoot = sandbox.stub(files.resolver, 'root');
+
+        filesInclude.callsFake((file) => {
+            if (file.indexOf('package.json') !== -1) {
+                return { name: 'fake-library' };
+            }
+        });
+        mockErector = {
+            construct: sandbox.stub(erector, 'construct'),
+            inquire: sandbox.stub(erector, 'inquire')
+        };
+        mockLogger.returns({
+            info: mockLog,
+            error: mockLog
+        });
+        resolverCreate.callsFake(function() {
+            const createPath = Array.from(arguments).join('/');
+            return function() {
+                return `/created/${ createPath }/` + Array.from(arguments).join('/');
+            };
+        });
+        resolverRoot.callsFake(function() {
+            return '/root/' + Array.from(arguments).join('/');
+        });
+
         done();
     });
 
     suite.afterEach((done) => {
-        execSync.restore();
-        mockErector.construct.restore();
-        mockErector.inquire.restore();
-
-        mockLogger.restore();
+        sandbox.restore();
 
         done();
     });
 
     suite.test('should call erector.inquire with the questions to ask', (test) => {
-        const createYesNo = sinon.stub(inputs, 'createYesNoValue');
+        const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
 
         test.plan(22);
 
         mockErector.inquire.rejects();
-        mockLogger.returns({
-            info: mockLog,
-            error: mockLog
-        });
-
         createYesNo.returns('"no" function');
 
         initial('./').then(() => {
@@ -63,7 +85,7 @@ tap.test('initial', (suite) => {
 
             // Is there a more concise way to do this with sinon & TAP?
             // Maybe use something like jasmine.any(Function)?
-            test.equal(questions[0].defaultAnswer, 'angular-librarian');
+            test.equal(questions[0].defaultAnswer, 'fake-library');
             test.equal(questions[0].name, 'name');
             test.equal(questions[0].question, 'Library name:');
             test.equal(typeof questions[0].transform, 'function');
@@ -91,7 +113,7 @@ tap.test('initial', (suite) => {
             test.equal(questions[6].name, 'version');
             test.equal(questions[6].question, 'Version:');
 
-            test.ok(mockLog.calledWith('Error'));
+            test.ok(mockLog.calledWith('\x1b[31mError\x1b[0m'));
 
             test.end();
         });
@@ -101,9 +123,6 @@ tap.test('initial', (suite) => {
         test.plan(16);
 
         mockErector.inquire.rejects();
-        mockLogger.returns({
-            error: mockLog
-        });
 
         initial('./').then(() => {
             const { transform } = mockErector.inquire.lastCall.args[0][0];
@@ -133,12 +152,8 @@ tap.test('initial', (suite) => {
         test.plan(2);
 
         mockErector.inquire.rejects();
-        mockLogger.returns({
-            error: mockLog
-        });
 
         initial('./').then(() => {
-
             const { transform } = mockErector.inquire.lastCall.args[0][1];
 
             test.equal(transform('@myscope/package-name'), 'package-name');
@@ -149,22 +164,16 @@ tap.test('initial', (suite) => {
     });
 
     suite.test('should have a moduleName question transform that converts the packageName using caseConvert.dashToCap and adds a "Module" suffix', (test) => {
-        const dashToCap = sinon.stub(caseConvert, 'dashToCap');
+        const dashToCap = sandbox.stub(caseConvert, 'dashToCap');
 
         test.plan(1);
 
         mockErector.inquire.rejects();
-        mockLogger.returns({
-            error: mockLog
-        });
-
         dashToCap.returns('WOW!');
 
         initial('./').then(() => {
             const { transform } = mockErector.inquire.lastCall.args[0][5];
-
             test.equal(transform('this is calm'), 'WOW!Module');
-
             test.end();
         });
     });
@@ -172,57 +181,169 @@ tap.test('initial', (suite) => {
     suite.test('should parse command-line options', (test) => {
         test.plan(1);
 
-        const parseOptions = sinon.stub(opts, 'parseOptions');
+        const parseOptions = sandbox.stub(opts, 'parseOptions');
 
         mockErector.inquire.resolves([{ name: 'git' }]);
-        mockLogger.returns({
-            info: mockLog,
-            error() { console.error.apply(console.error, Array.from(arguments)); }
-        });
         parseOptions.returns({});
 
         initial('./', 'pizza', 'eat', 'yum').then(() => {
-            test.ok(parseOptions.called);//With(['pizza', 'eat', 'yum'], ['no-install', 'ni']));
+            test.ok(parseOptions.calledWith(['pizza', 'eat', 'yum'], ['no-install', 'ni']));
             test.end();
         });
     });
 
-    suite.test('', (test) => {
-        const create = sinon.stub(files.resolver, 'create');
-        const created = sinon.stub();
-        const rooter = sinon.stub(files.resolver, 'root');
-        const include = sinon.stub(files, 'include');
+    suite.test('should call files.getTemplates with the rootDir, command dir, & the list of templates', (test) => {
+        const dirname = process.cwd() + path.sep + ['commands', 'initial'].join(path.sep);
 
-        test.plan(7);
-
-        create.returns(created);
-        created.callsFake(() => '/root/created/dir');
-        include.callsFake((file) => {
-            if (file.indexOf('package.json') !== -1) {
-                return { name: 'fake' };
-            }
-        });
-        rooter.callsFake(function() {
-            return '/root/' + Array.from(arguments).join('/');
-        });
-
+        getTemplates.returns([]);
         mockErector.inquire.resolves([{ name: 'git' }]);
-        mockLogger.returns({
-            info: mockLog,
-            error() { console.error.apply(console.error, Array.from(arguments)); }
-        });
+
+        test.plan(1);
 
         initial('./').then(() => {
-            test.ok(create.calledWith('src'));
-            test.ok(rooter.calledWith('.gitignore'));
-            test.ok(rooter.calledWith('.npmignore'));
+            const templateList = getTemplates.lastCall.args[2];
 
-            // srcDir
-            test.ok(created.calledWith('{{ packageName }}.module.ts'));
-            test.ok(created.calledWith('index.ts'));
-            test.ok(created.calledWith('test.js'));
-            test.ok(created.calledWith('vendor.ts'));
+            test.ok(getTemplates.calledWith('./', dirname, [
+                { destination: '/root/.gitignore', name: '__gitignore' },
+                { destination: '/root/.npmignore', name: '__npmignore' },
+                { name: 'DEVELOPMENT.md' },
+                { blank: true, name: 'examples/example.component.html' },
+                { blank: true, name: 'examples/example.component.scss' },
+                { name: 'examples/example.component.ts' },
+                { name: 'examples/example.main.ts' },
+                { name: 'examples/example.module.ts' },
+                { name: 'examples/index.html' },
+                { blank: true, name: 'examples/styles.scss' },
+                { name: 'index.ts' },
+                { name: 'karma.conf.js', overwrite: true },
+                { destination: '/created/src/{{ packageName }}.module.ts', name: 'src/module.ts' },
+                { name: 'package.json', update: 'json' },
+                { name: 'README.md' },
+                { destination: '/created/src/index.ts', name: 'src/index.ts' },
+                { destination: '/created/src/test.js', name: 'src/test.js', overwrite: true },
+                { name: 'tsconfig.json', overwrite: true },
+                { name: 'tsconfig.es2015.json', overwrite: true },
+                { name: 'tsconfig.es5.json', overwrite: true },
+                { name: 'tsconfig.test.json', overwrite: true },
+                { name: 'tslint.json', overwrite: true },
+                { destination: '/created/src/vendor.ts', name: 'src/vendor.ts' },
+                { name: 'tasks/build.js', overwrite: true },
+                { name: 'tasks/copy-build.js', overwrite: true },
+                { name: 'tasks/copy-globs.js', overwrite: true },
+                { name: 'tasks/inline-resources.js', overwrite: true },
+                { name: 'tasks/rollup.js', overwrite: true },
+                { name: 'tasks/test.js', overwrite: true },
+                { name: 'webpack/webpack.common.js', overwrite: true },
+                { name: 'webpack/webpack.dev.js', overwrite: true },
+                { name: 'webpack/webpack.test.js', overwrite: true },
+                { name: 'webpack/webpack.utils.js', overwrite: true }
+            ]));
 
+            test.end();
+        });
+    });
+
+    suite.test('should call erector.construct with the user\'s answers & the templates from files.getTemplates', (test) => {
+        const answers = [
+            { answer: '@myscope/fake-library', name: 'name' },
+            { answer: 'fake-library', name: 'packageName' },
+            { answer: 'Fake Library', name: 'readmeTitle' },
+            { answer: 'http://re.po', name: 'repoUrl' },
+            { answer: false, name: 'git' },
+            { answer: 'FakeLibraryModule', name: 'moduleName' },
+            { answer: '1.0.0', name: 'version' }
+        ];
+        const dirname = process.cwd() + path.sep + ['commands', 'initial'].join(path.sep);
+        const templates = [
+            { destination: '/root/path', template: 'some/template/path' },
+            { desetination: '/root/blank-file', template: undefined }
+        ];
+
+        test.plan(4);
+
+        getTemplates.returns(templates);
+        mockErector.inquire.resolves(answers);
+
+        initial('./').then(() => {
+            // quick check that chdir is being called
+            test.ok(chdir.calledTwice);
+            test.ok(chdir.calledWith('./'));
+            test.ok(chdir.calledWith(dirname));
+
+            test.ok(mockErector.construct.calledWith(answers, templates));
+            test.end();
+        });
+    });
+
+    suite.test('should install NPM modules if the "no install" flag is NOT present', (test) => {
+        const answers = [
+            { answer: '@myscope/fake-library', name: 'name' },
+            { answer: 'fake-library', name: 'packageName' },
+            { answer: 'Fake Library', name: 'readmeTitle' },
+            { answer: 'http://re.po', name: 'repoUrl' },
+            { answer: false, name: 'git' },
+            { answer: 'FakeLibraryModule', name: 'moduleName' },
+            { answer: '1.0.0', name: 'version' }
+        ];
+        const dirname = process.cwd() + path.sep + ['commands', 'initial'].join(path.sep);
+        const templates = [
+            { destination: '/root/path', template: 'some/template/path' },
+            { desetination: '/root/blank-file', template: undefined }
+        ];
+
+        test.plan(3);
+
+        getTemplates.returns(templates);
+        mockErector.inquire.resolves(answers);
+
+        initial('./').then(() => {
+            test.ok(mockLog.calledWith('\x1b[36mInstalling Node modules\x1b[0m'));
+            test.ok(execSync.calledWith(
+                'npm i',
+                { stdio: [0, 1, 2] }
+            ));
+            test.ok(mockLog.calledWith('\x1b[32mNode modules installed\x1b[0m'));
+
+            test.end();
+        });
+    });
+
+    suite.test('should initialize a Git project if the user answers yes to the Git question', (test) => {
+        const answers = [
+            { answer: '@myscope/fake-library', name: 'name' },
+            { answer: 'fake-library', name: 'packageName' },
+            { answer: 'Fake Library', name: 'readmeTitle' },
+            { answer: 'http://re.po', name: 'repoUrl' },
+            { answer: true, name: 'git' },
+            { answer: 'FakeLibraryModule', name: 'moduleName' },
+            { answer: '1.0.0', name: 'version' }
+        ];
+        const dirname = process.cwd() + path.sep + ['commands', 'initial'].join(path.sep);
+        const templates = [
+            { destination: '/root/path', template: 'some/template/path' },
+            { desetination: '/root/blank-file', template: undefined }
+        ];
+        const del = sandbox.stub(files, 'deleteFolder');
+
+        test.plan(6);
+
+        getTemplates.returns(templates);
+        mockErector.inquire.resolves(answers);
+
+        // also tests --no-install flag
+        initial('./', '--no-install').then(() => {
+            test.ok(mockLog.calledWith('\x1b[33mRemoving existing Git project\x1b[0m'));
+            test.ok(del.calledWith('/root/.git'));
+            test.ok(mockLog.calledWith('\x1b[36mInitializing new Git project\x1b[0m'));
+            test.ok(execSync.calledWith(
+                'git init',
+                { stdio: [0, 1, 2] }
+            ));
+            test.notOk(execSync.calledWith(
+                'npm i',
+                { stdio: [0, 1, 2] }
+            ));
+            test.ok(mockLog.calledWith('\x1b[32mGit project initialized\x1b[0m'));
             test.end();
         });
     });

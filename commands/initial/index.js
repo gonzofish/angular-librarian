@@ -59,7 +59,6 @@ module.exports = (rootDir, ...args) => {
             { name: 'webpack/webpack.utils.js', overwrite: true }
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
-        const startingDir = __dirname;
         const templates = files.getTemplates(rootDir, __dirname, templateList);
 
         erector.construct(answers, templates);
@@ -69,14 +68,14 @@ module.exports = (rootDir, ...args) => {
             initGit(rootDir);
         }
 
-        if (!('ni' in options || 'no-input' in options)) {
-            logger.info('Installing Node modules');
+        if (!('ni' in options || 'no-install' in options)) {
+            logger.info(colorize.colorize('Installing Node modules', 'cyan'));
             execute('npm i');
-            logger.info('Node modules installed');
+            logger.info(colorize.colorize('Node modules installed', 'green'));
         }
 
-        process.chdir(startingDir);
-    }).catch((error) => logger.error(error.message));
+        process.chdir(__dirname);
+    }).catch((error) => logger.error(colorize.colorize(error.message, 'red')));
 };
 
 const getQuestions = () => {
@@ -134,11 +133,11 @@ const getPreviousTransforms = () => ({
 });
 
 const initGit = (rootDir) => {
-    console.info('Removing existing Git project');
-    files.deleteFolder(path.resolve(rootDir, '.git'));
-    console.info('Initializing new Git project');
-    // execute('git init');
-    console.info('Git project initialized');
+    logger.info(colorize.colorize('Removing existing Git project', 'yellow'));
+    files.deleteFolder(files.resolver.root('.git'));
+    logger.info(colorize.colorize('Initializing new Git project', 'cyan'));
+    execute('git init');
+    logger.info(colorize.colorize('Git project initialized', 'green'));
 };
 
 const execute = (command) => {
