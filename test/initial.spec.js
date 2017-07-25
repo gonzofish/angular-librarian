@@ -178,6 +178,23 @@ tap.test('initial', (suite) => {
         });
     });
 
+    suite.test('should have a readmeTitle question defaultAnswer that converts the packagenName into words', (test) => {
+        const dashToWords = sandbox.stub(caseConvert, 'dashToWords');
+
+        test.plan(2);
+
+        mockErector.inquire.rejects();
+        dashToWords.returns('Herds of Words');
+
+        initial('./').then(() => {
+            const { defaultAnswer } = mockErector.inquire.lastCall.args[0][2];
+
+            test.equal(defaultAnswer([null, { answer: 'this-is-patrick' }]), 'Herds of Words');
+            test.ok(dashToWords.calledWith('this-is-patrick'));
+            test.end();
+        });
+    });
+
     suite.test('should parse command-line options', (test) => {
         test.plan(1);
 

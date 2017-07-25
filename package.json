@@ -8,10 +8,11 @@
   },
   "scripts": {
     "coverage": "tap \"test/**/*.spec.js\" --cov --coverage-report=lcov",
+    "local": "tap \"test/**/*.spec.js\"",
     "start": "node .",
     "test": "tap \"test/**/*.spec.js\" --coverage",
     "posttest": "tap --coverage-report=lcov && codecov",
-    "watch": "nodemon -q -x \"npm test\""
+    "watch": "nodemon -q -x \"npm run local\""
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
