@@ -1,22 +1,23 @@
 'use strict';
 
 const erector = require('erector-set');
+const logging = require('../../tools/logging');
 const path = require('path');
 const utilities = require('../utilities');
 
+const colorize = utilities.colorize;
+const opts = utilities.options;
+let logger;
+
 module.exports = function createComponent(rootDir, selector) {
-    const options = utilities.parseOptions(Array.from(arguments).slice(selector && selector[0] !== '-' ? 2 : 1), [
-        'd',
-        'defaults',
-        'example',
-        'examples',
-        'h',
-        'hooks',
-        'inline-styles',
-        'inline-template',
-        'is',
-        'it',
-        'x'
+    logger = logging.create('Component');
+
+    const options = opts.parseOptions(Array.from(arguments).slice(selector && selector[0] !== '-' ? 2 : 1), [
+        'default', 'defaults', 'd',
+        'example', 'examples', 'x',
+        'hooks', 'h',
+        'inline-styles', 'is',
+        'inline-template', 'it'
     ]);
     const forExamples = utilities.checkIsForExamples(options);
     const templates = getTemplates(rootDir, forExamples);
@@ -24,12 +25,12 @@ module.exports = function createComponent(rootDir, selector) {
     const knownAnswers = remaining.answers;
     const questions = remaining.questions.reduce((all, method) => all.concat(method(knownAnswers)), []);
 
-    erector.inquire(questions).then((answers) => {
+    return erector.inquire(questions).then((answers) => {
         const allAnswers = knownAnswers.concat(answers);
 
         erector.construct(allAnswers, templates);
         notifyUser(allAnswers, forExamples);
-    });
+    }).catch((error) => logger.error(colorize.colorize(error, 'red')));
 };
 
 const getRemainingQuestions = (selectorName, options) => {

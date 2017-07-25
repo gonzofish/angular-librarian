@@ -18,7 +18,7 @@ const opts = utilities.options;
 
 const sandbox = sinon.sandbox.create();
 
-tap.test('initial', (suite) => {
+tap.test('command: initial', (suite) => {
     let chdir;
     let execSync;
     let filesInclude;
