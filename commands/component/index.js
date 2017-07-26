@@ -5,8 +5,10 @@ const logging = require('../../tools/logging');
 const path = require('path');
 const utilities = require('../utilities');
 
+const caseConvert = utilities.caseConvert;
 const colorize = utilities.colorize;
 const files = utilities.files;
+const inputs = utilities.inputs;
 const opts = utilities.options;
 let logger;
 
@@ -69,7 +71,7 @@ const getKnownSelector = (selector) => {
 };
 
 const getSelectorQuestions = () => [
-    { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => utilities.checkIsDashFormat(value) ? value : null },
+    { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => caseConvert.checkIsDashFormat(value) ? value : null },
     { name: 'componentName', transform: (value) => utilities.dashToCap(value) + 'Component', useAnswer: 'selector' }
 ];
 
@@ -91,7 +93,7 @@ const getKnownStyle = (options) => {
 };
 
 const getStyleQuestions = (knownAnswers) => [
-    { allowBlank: true, name: 'styles', question: 'Use inline styles (y/N)?', transform: utilities.createYesNoValue('n', knownAnswers, setInlineStyles) },
+    { allowBlank: true, name: 'styles', question: 'Use inline styles (y/N)?', transform: inputs.createYesNoValue('n', knownAnswers, setInlineStyles) },
     { name: 'styleAttribute', useAnswer: 'styles', transform: pickStyleAttribute }
 ];
 

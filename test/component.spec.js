@@ -8,7 +8,9 @@ const component = require('../commands/component');
 const logging = require('../commands/logging');
 const utilities = require('../commands/utilities');
 
+const caseConvert = utilities.caseConvert;
 const colorize = utilities.colorize;
+const inputs = utilities.inputs;
 const make = (...args) => component.apply(null, ['./'].concat(Array.from(args)));
 const opts = utilities.options;
 const sandbox = sinon.sandbox.create();
@@ -98,7 +100,7 @@ tap.test('command: component', (suite) => {
             test.ok(log.calledWith(`[red]Error[/red]`));
             test.end();
         });
-    })
+    });
 
     /*
         States for asking questions:
@@ -109,7 +111,10 @@ tap.test('command: component', (suite) => {
         5. inline templates set
     */
     suite.test('should ask all questions if no flags are set and no selector is provided', (test) => {
-        test.plan(30);
+        const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
+
+        createYesNo.returns('"no" function');
+        test.plan(31);
 
         inquire.rejects();
         make().then(() => {
@@ -131,7 +136,12 @@ tap.test('command: component', (suite) => {
             test.equal(question.allowBlank, true);
             test.equal(question.name, 'styles');
             test.equal(question.question, 'Use inline styles (y/N)?');
-            test.equal(typeof question.transform, 'function');
+            test.equal(question.transform, '"no" function');
+            test.ok(createYesNo.calledWith(
+                'n',
+                [],
+                sinon.match.instanceOf(Function)
+            ));
 
             question = questions[3];
             test.equal(question.name, 'styleAttribute');
@@ -166,6 +176,62 @@ tap.test('command: component', (suite) => {
             test.equal(question.name, 'lifecycleNg');
             test.equal(typeof question.transform, 'function');
             test.equal(question.useAnswer, 'hooks');
+
+            test.end();
+        });
+    });
+
+    suite.test('should have a selector transform that returns the value if it is dash format, null otherwise', (test) => {
+        const checkDash = sandbox.stub(caseConvert, 'checkIsDashFormat');
+
+        test.plan(2);
+
+        inquire.rejects();
+        make().then(() => {
+            const questions = inquire.lastCall.args[0];
+            const transform = questions[0].transform;
+
+            checkDash.returns(false);
+            test.equal(transform('value'), null);
+
+            checkDash.resetBehavior();
+            checkDash.returns(true);
+            test.equal(transform('value'), 'value');
+
+            test.end();
+        });
+    });
+
+    suite.test('should have a componentName transform that return the Pascal-case of the selector + Component', (test) => {
+        const dashToCap = sandbox.stub(caseConvert, 'dashToCap');
+
+        test.plan(1);
+
+        inquire.rejects();
+        make().then(() => {
+            const questions = inquire.lastCall.args[0];
+            const transform = questions[1].transform;
+
+            dashToCap.returns('CapVersion');
+            test.equal(transform('cap-version'), 'CapVersionComponent');
+
+            test.end();
+        });
+    });
+
+    suite.test('should have a styles transform callback that sets inline styles', (test) => {
+        const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
+
+        test.plan(3);
+
+        inquire.rejects();
+        make().then(() => {
+            const callback = createYesNo.lastCall.args[2];
+            const answers = [ { answer: 'burger-bonanza', name: 'selector'}];
+
+            test.ok(callback(true, answers), ``);
+            test.ok(callback('', answers),  './burger-bonanza.component.scss');
+            test.ok(callback(false, answers), './burger-bonanza.component.scss');
 
             test.end();
         });
