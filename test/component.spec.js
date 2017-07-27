@@ -114,7 +114,7 @@ tap.test('command: component', (suite) => {
         const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
 
         createYesNo.returns('"no" function');
-        test.plan(31);
+        test.plan(32);
 
         inquire.rejects();
         make().then(() => {
@@ -153,7 +153,12 @@ tap.test('command: component', (suite) => {
             test.equal(question.allowBlank, true);
             test.equal(question.name, 'template');
             test.equal(question.question, 'Use inline template (y/N)?');
-            test.equal(typeof question.transform, 'function');
+            test.equal(question.transform, '"no" function');
+            test.ok(createYesNo.calledWith(
+                'n',
+                [],
+                sinon.match.instanceOf(Function)
+            ));
 
             question = questions[5];
             test.equal(question.name, 'templateAttribute');
@@ -226,13 +231,105 @@ tap.test('command: component', (suite) => {
 
         inquire.rejects();
         make().then(() => {
-            const callback = createYesNo.lastCall.args[2];
+            const callback = createYesNo.firstCall.args[2];
             const answers = [ { answer: 'burger-bonanza', name: 'selector'}];
 
-            test.ok(callback(true, answers), ``);
-            test.ok(callback('', answers),  './burger-bonanza.component.scss');
-            test.ok(callback(false, answers), './burger-bonanza.component.scss');
+            test.equal(callback(true, answers), '``');
+            test.equal(callback('', answers),  `'./burger-bonanza.component.scss'`);
+            test.equal(callback(false, answers), `'./burger-bonanza.component.scss'`);
 
+            test.end();
+        });
+    });
+
+    suite.test('should have a styleAttribute transform that picks the template attribute', (test) => {
+        test.plan(2);
+
+        inquire.rejects();
+        make().then(() => {
+            const questions = inquire.lastCall.args[0]
+            const { transform } = questions[3];
+
+            test.equal(transform('some value'), 'styleUrls');
+            test.equal(transform('``'), 'styles');
+            test.end();
+        });
+    });
+
+    suite.test('should have a templates transform callback that sets inline templates', (test) => {
+        const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
+
+        test.plan(3);
+
+        inquire.rejects();
+        make().then(() => {
+            const callback = createYesNo.lastCall.args[2];
+            const answers = [ { answer: 'pizza-party', name: 'selector'}];
+
+            test.equal(callback(true, answers), '``');
+            test.equal(callback('', answers),  `'./pizza-party.component.html'`);
+            test.equal(callback(false, answers), `'./pizza-party.component.html'`);
+
+            test.end();
+        });
+    });
+
+    suite.test('should have a templateAttribute transform that picks the template attribute', (test) => {
+        test.plan(2);
+
+        inquire.rejects();
+        make().then(() => {
+            const questions = inquire.lastCall.args[0];
+            const { transform } = questions[5];
+
+            test.equal(transform('some value'), 'templateUrl');
+            test.equal(transform('``'), 'template');
+            test.end();
+        });
+    });
+
+    suite.test('should have a hooks transform that sets the lifecycle hooks', (test) => {
+        test.plan(2);
+
+        inquire.rejects();
+        make().then(() => {
+            const questions = inquire.lastCall.args[0];
+            const { transform } = questions[6];
+
+            test.equal(transform('init,oninit,changes,onchanges,check,oncheck,ondestroy,destroy'), ', OnInit, OnChanges, DoCheck, OnDestroy');
+            test.equal(transform(''), '');
+            test.end();
+        });
+    });
+
+    suite.test('should have an implements transform that sets the lifecycle implements', (test) => {
+        test.plan(2);
+
+        inquire.rejects();
+        make().then(() => {
+            const questions = inquire.lastCall.args[0];
+            const { transform } = questions[7];
+
+            test.equal(transform(', DoCheck, OnDestroy'), ' implements DoCheck, OnDestroy');
+            test.equal(transform(''), '');
+            test.end();
+        });
+    });
+
+    suite.test('should have a lifecycleNg transform that sets up the lifecycle methods', (test) => {
+        test.plan(2);
+
+        inquire.rejects();
+        make().then(() => {
+            const questions = inquire.lastCall.args[0];
+            const { transform } = questions[8];
+            const result = '\n' +
+                '\n    ngOnInit() {\n    }\n' +
+                '\n    ngOnChanges() {\n    }\n' +
+                '\n    ngOnDestroy() {\n    }\n';
+
+            test.equal(transform(', OnInit, OnChanges, OnDestroy'), result);
+            test.equal(transform(''), '\n');
             test.end();
         });
     });

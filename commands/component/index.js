@@ -115,7 +115,7 @@ const getKnownTemplate = (options) => {
 };
 
 const getTemplateQuestions = (knownAnswers) => [
-    { allowBlank: true, name: 'template', question: 'Use inline template (y/N)?', transform: utilities.createYesNoValue('n', knownAnswers, setInlineTemplate) },
+    { allowBlank: true, name: 'template', question: 'Use inline template (y/N)?', transform: inputs.createYesNoValue('n', knownAnswers, setInlineTemplate) },
     { name: 'templateAttribute', useAnswer: 'template', transform: pickTemplateAttribute }
 ];
 
@@ -177,9 +177,10 @@ const getLifecycleHookQuestions = () => [
 ];
 
 const setLifecycleHooks = (value) => {
-    const hooks = value.split(',')
+    const hooksArray = value.split(',')
         .map(getHookName)
         .filter((hook) => !!hook);
+    const hooks = [...new Set(hooksArray)];
     const comma = ', ';
 
     if (hooks.length > 0) {
