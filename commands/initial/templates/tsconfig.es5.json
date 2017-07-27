@@ -1,7 +1,7 @@
 {
     "angularCompilerOptions": {
         "annotateForClosureCompiler": true,
-        "flatModuleId": "{{ packageName }}",
+        "flatModuleId": "{{ name }}",
         "flatModuleOutFile": "{{ packageName }}.js",
         "genDir": "../out-tsc/lib-gen-dir/",
         "strictMetadataEmit": true,
