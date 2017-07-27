@@ -1,7 +1,10 @@
 'use strict';
 
 exports.checkIsForExamples = (options) =>
-    'example' in options || 'examples' in options || 'x' in options;
+    exports.checkHasOption(options, ['example', 'examples', 'x']);
+
+exports.checkHasOption = (options, valid) =>
+    !!valid.find((option) => option in options);
 
 exports.parseOptions = (candidates, valid) =>
     createOptionsMap(formatOptions(candidates), valid);

@@ -15,13 +15,27 @@ let logger;
 module.exports = function createComponent(rootDir, selector) {
     logger = logging.create('Component');
 
-    const options = opts.parseOptions(Array.from(arguments).slice(selector && selector[0] !== '-' ? 2 : 1), [
+    const hasSelector = selector && selector[0] !== '-';
+    const options = opts.parseOptions(Array.from(arguments).slice(hasSelector ? 2 : 1), [
         'default', 'defaults', 'd',
         'example', 'examples', 'x',
         'hooks', 'h',
         'inline-styles', 'is',
         'inline-template', 'it'
     ]);
+    const useDefaults = opts.checkHasOption(options, ['default', 'defaults', 'd']);
+
+    if (useDefaults && !hasSelector) {
+        return Promise.reject(
+            'A selector must be provided when using defaults'
+        );
+    } else if (useDefaults) {
+    } else {
+        return inquire(rootDir, selector, options);
+    }
+};
+
+const inquire = (rootDir, selector, options) => {
     const forExamples = opts.checkIsForExamples(options);
     const templates = getTemplates(rootDir, forExamples);
     const remaining = getRemainingQuestions(selector, options);
@@ -33,7 +47,7 @@ module.exports = function createComponent(rootDir, selector) {
 
         erector.construct(allAnswers, templates);
         notifyUser(allAnswers, forExamples);
-    }).catch((error) => logger.error(colorize.colorize(error.message, 'red')));
+    });
 };
 
 const getRemainingQuestions = (selectorName, options) => {
@@ -76,19 +90,27 @@ const getSelectorQuestions = () => [
 ];
 
 const getKnownStyle = (options) => {
-    const keys = Object.keys(options);
+    const useDefaults = 'default' in options || 'defaults' in options || 'd' in options;
+    const useInline = 'is' in options || 'inline-styles' in options;
 
-    if (keys.indexOf('is') === -1 && keys.indexOf('inline-styles') === -1) {
+    if (useDefaults) {
         return {
-            questions: getStyleQuestions
-        };
-    } else {
+            answers: [
+                { answer: setInlineStyles(false, []), name: 'styles' },
+                { answer: pickStyleAttribute(``), name: 'styleAttribute' }
+            ]
+        }
+    } else if (useInline) {
         return {
             answers: [
                 { answer: setInlineStyles(true, []), name: 'styles' },
                 { answer: pickStyleAttribute(``), name: 'styleAttribute' }
             ]
         }
+    } else {
+        return {
+            questions: getStyleQuestions
+        };
     }
 };
 

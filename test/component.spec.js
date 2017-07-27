@@ -18,6 +18,7 @@ const sandbox = sinon.sandbox.create();
 tap.test('command: component', (suite) => {
     let color;
     let construct;
+    let createYesNo;
     let inquire;
     let log;
     let mockLogger;
@@ -26,6 +27,7 @@ tap.test('command: component', (suite) => {
     suite.beforeEach((done) => {
         color = sandbox.stub(colorize, 'colorize');
         construct = sandbox.stub(erector, 'construct');
+        createYesNo = sandbox.stub(inputs, 'createYesNoValue');
         inquire = sandbox.stub(erector, 'inquire');
         log = sandbox.spy();
         mockLogger = sandbox.stub(logging, 'create');
@@ -53,7 +55,7 @@ tap.test('command: component', (suite) => {
         inquire.rejects();
         parseOptions.returns({});
 
-        make('--a', 'big', 'deal').then(() => {
+        make('--a', 'big', 'deal').catch(() => {
             test.ok(parseOptions.calledWith(['--a', 'big', 'deal'], [
                 'default', 'defaults', 'd',
                 'example', 'examples', 'x',
@@ -70,7 +72,7 @@ tap.test('command: component', (suite) => {
         inquire.rejects();
         parseOptions.returns({});
 
-        make('selector', '--yep', '-ise').then(() => {
+        make('selector', '--yep', '-ise').catch(() => {
             test.deepEqual(parseOptions.lastCall.args[0], ['--yep', '-ise']);
             test.end();
         });
@@ -86,18 +88,18 @@ tap.test('command: component', (suite) => {
         parseOptions.resetBehavior();
         parseOptions.returns(options);
 
-        make().then(() => {
+        make().catch(() => {
             test.ok(checkForExamples.calledWith(options));
             test.end();
         });
     });
 
-    suite.test('should output an error if inquire fails', (test) => {
+    suite.test('should return an error if inquire fails', (test) => {
         test.plan(1);
 
         inquire.rejects();
-        make().then(() => {
-            test.ok(log.calledWith(`[red]Error[/red]`));
+        make().catch((error) => {
+            test.ok(error, `Error`);
             test.end();
         });
     });
@@ -110,14 +112,34 @@ tap.test('command: component', (suite) => {
         4. inline-styles set
         5. inline templates set
     */
-    suite.test('should ask all questions if no flags are set and no selector is provided', (test) => {
-        const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
+    suite.test('should throw an error --default and no selector', (test) => {
+        parseOptions.returns({ default: [] });
+        test.plan(1);
 
-        createYesNo.returns('"no" function');
+        // --default doesnt matter here because parseOptions is mocked
+        make('--default').catch((error) => {
+            test.equal(error, 'A selector must be provided when using defaults');
+            test.end();
+        });
+    });
+    // suite.test('should ask for no questions with --default and a selector', (test) => {
+    //     parseOptions.returns({ default: [] });
+    //     test.plan(1);
+
+    //     inquire.rejects();
+    //     // --default doesnt matter here because parseOptions is mocked
+    //     make('my-selector', '--default').then(() => {
+    //         test.ok(erector.inquire.calledWith([]));
+    //         test.end();
+    //     });
+    // });
+
+    suite.test('should ask all questions if no flags are set and no selector is provided', (test) => {
         test.plan(32);
 
+        createYesNo.returns('"no" function');
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0];
             let question = questions[0];
 
@@ -192,7 +214,7 @@ tap.test('command: component', (suite) => {
         test.plan(2);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0];
             const transform = questions[0].transform;
 
@@ -213,7 +235,7 @@ tap.test('command: component', (suite) => {
         test.plan(1);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0];
             const transform = questions[1].transform;
 
@@ -225,12 +247,10 @@ tap.test('command: component', (suite) => {
     });
 
     suite.test('should have a styles transform callback that sets inline styles', (test) => {
-        const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
-
         test.plan(3);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const callback = createYesNo.firstCall.args[2];
             const answers = [ { answer: 'burger-bonanza', name: 'selector'}];
 
@@ -246,7 +266,7 @@ tap.test('command: component', (suite) => {
         test.plan(2);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0]
             const { transform } = questions[3];
 
@@ -257,12 +277,10 @@ tap.test('command: component', (suite) => {
     });
 
     suite.test('should have a templates transform callback that sets inline templates', (test) => {
-        const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
-
         test.plan(3);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const callback = createYesNo.lastCall.args[2];
             const answers = [ { answer: 'pizza-party', name: 'selector'}];
 
@@ -278,7 +296,7 @@ tap.test('command: component', (suite) => {
         test.plan(2);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0];
             const { transform } = questions[5];
 
@@ -292,7 +310,7 @@ tap.test('command: component', (suite) => {
         test.plan(2);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0];
             const { transform } = questions[6];
 
@@ -306,7 +324,7 @@ tap.test('command: component', (suite) => {
         test.plan(2);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0];
             const { transform } = questions[7];
 
@@ -320,7 +338,7 @@ tap.test('command: component', (suite) => {
         test.plan(2);
 
         inquire.rejects();
-        make().then(() => {
+        make().catch(() => {
             const questions = inquire.lastCall.args[0];
             const { transform } = questions[8];
             const result = '\n' +
