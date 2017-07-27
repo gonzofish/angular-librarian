@@ -78,21 +78,21 @@ tap.test('command: component', (suite) => {
         });
     });
 
-    suite.test('should check if the scaffolding is for examples', (test) => {
-        const checkForExamples = sandbox.stub(opts, 'checkIsForExamples');
-        const options = { pizza: [] };
+    // suite.test('should check if the scaffolding is for examples', (test) => {
+    //     const checkForExamples = sandbox.stub(opts, 'checkIsForExamples');
+    //     const options = { pizza: [] };
 
-        test.plan(1);
-        inquire.rejects();
-        checkForExamples.returns(false);
-        parseOptions.resetBehavior();
-        parseOptions.returns(options);
+    //     test.plan(1);
+    //     inquire.rejects();
+    //     checkForExamples.returns(false);
+    //     parseOptions.resetBehavior();
+    //     parseOptions.returns(options);
 
-        make().catch(() => {
-            test.ok(checkForExamples.calledWith(options));
-            test.end();
-        });
-    });
+    //     make().catch(() => {
+    //         test.ok(checkForExamples.calledWith(options));
+    //         test.end();
+    //     });
+    // });
 
     suite.test('should return an error if inquire fails', (test) => {
         test.plan(1);
@@ -118,21 +118,87 @@ tap.test('command: component', (suite) => {
 
         // --default doesnt matter here because parseOptions is mocked
         make('--default').catch((error) => {
-            test.equal(error, 'A selector must be provided when using defaults');
+            test.equal(error, 'A dash-case selector must be provided when using defaults');
             test.end();
         });
     });
-    // suite.test('should ask for no questions with --default and a selector', (test) => {
-    //     parseOptions.returns({ default: [] });
-    //     test.plan(1);
 
-    //     inquire.rejects();
-    //     // --default doesnt matter here because parseOptions is mocked
-    //     make('my-selector', '--default').then(() => {
-    //         test.ok(erector.inquire.calledWith([]));
-    //         test.end();
-    //     });
-    // });
+    suite.test('should throw an error --default and a non-dash-case selector', (test) => {
+        parseOptions.returns({ default: [] });
+        test.plan(1);
+
+        // --default doesnt matter here because parseOptions is mocked
+        make('oops!', '--default').catch((error) => {
+            test.equal(error, 'A dash-case selector must be provided when using defaults');
+            test.end();
+        });
+    });
+
+    suite.test('should ask no questions with --default and a selector', (test) => {
+        parseOptions.returns({ default: [] });
+        test.plan(2);
+
+        // --default doesnt matter here because parseOptions is mocked
+        make('my-selector', '--default').then(() => {
+            test.ok(inquire.notCalled);
+            test.ok(construct.calledWith([
+                { answer: 'my-selector', name: 'selector' },
+                { answer: 'MySelectorComponent', name: 'componentName' },
+                { answer: `'./my-selector.component.scss'`, name: 'styles' },
+                { answer: 'styleUrls', name: 'styleAttribute' },
+                { answer: `'./my-selector.component.html'`, name: 'template' },
+                { answer: 'templateUrl', name: 'templateAttribute' },
+                { answer: '' , name: 'hooks' },
+                { answer: '', name: 'implements' },
+                { answer: '\n', name: 'lifecycleNg' }
+            ]));
+            test.end();
+        });
+    });
+
+    suite.test('should ask no questions with --defaults and a selector', (test) => {
+        parseOptions.returns({ defaults: [] });
+        test.plan(2);
+
+        // --default doesnt matter here because parseOptions is mocked
+        make('my-selector', '--defaults').then(() => {
+            test.ok(inquire.notCalled);
+            test.ok(construct.calledWith([
+                { answer: 'my-selector', name: 'selector' },
+                { answer: 'MySelectorComponent', name: 'componentName' },
+                { answer: `'./my-selector.component.scss'`, name: 'styles' },
+                { answer: 'styleUrls', name: 'styleAttribute' },
+                { answer: `'./my-selector.component.html'`, name: 'template' },
+                { answer: 'templateUrl', name: 'templateAttribute' },
+                { answer: '' , name: 'hooks' },
+                { answer: '', name: 'implements' },
+                { answer: '\n', name: 'lifecycleNg' }
+            ]));
+            test.end();
+        });
+    });
+
+    suite.test('should ask no questions with -d and a selector', (test) => {
+        parseOptions.returns({ d: [] });
+        test.plan(2);
+
+        // --default doesnt matter here because parseOptions is mocked
+        make('my-selector', '-d').then(() => {
+            test.ok(inquire.notCalled);
+            test.ok(construct.calledWith([
+                { answer: 'my-selector', name: 'selector' },
+                { answer: 'MySelectorComponent', name: 'componentName' },
+                { answer: `'./my-selector.component.scss'`, name: 'styles' },
+                { answer: 'styleUrls', name: 'styleAttribute' },
+                { answer: `'./my-selector.component.html'`, name: 'template' },
+                { answer: 'templateUrl', name: 'templateAttribute' },
+                { answer: '' , name: 'hooks' },
+                { answer: '', name: 'implements' },
+                { answer: '\n', name: 'lifecycleNg' }
+            ]));
+            test.end();
+        });
+    });
 
     suite.test('should ask all questions if no flags are set and no selector is provided', (test) => {
         test.plan(32);

@@ -15,8 +15,7 @@ let logger;
 module.exports = function createComponent(rootDir, selector) {
     logger = logging.create('Component');
 
-    const hasSelector = selector && selector[0] !== '-';
-    const options = opts.parseOptions(Array.from(arguments).slice(hasSelector ? 2 : 1), [
+    const options = opts.parseOptions(Array.from(arguments).slice(hasSelector(selector) ? 2 : 1), [
         'default', 'defaults', 'd',
         'example', 'examples', 'x',
         'hooks', 'h',
@@ -25,37 +24,61 @@ module.exports = function createComponent(rootDir, selector) {
     ]);
     const useDefaults = opts.checkHasOption(options, ['default', 'defaults', 'd']);
 
-    if (useDefaults && !hasSelector) {
-        return Promise.reject(
-            'A selector must be provided when using defaults'
-        );
-    } else if (useDefaults) {
+    if (useDefaults) {
+        return constructWithDefaults(rootDir, selector, options);
     } else {
         return inquire(rootDir, selector, options);
     }
 };
 
+const constructWithDefaults = (rootDir, selector, options) => {
+    if (hasSelector(selector) && caseConvert.checkIsDashFormat(selector)) {
+        const selectorAnswers = getKnownSelector(selector);
+        const styleAnswers = getKnownStyle(false, selectorAnswers);
+        const templateAnswers = getKnownTemplate(false, selectorAnswers);
+        const lifecycleAnswers = getKnownLifecycleHooks('');
+
+        const answers = selectorAnswers.concat(
+            styleAnswers,
+            templateAnswers,
+            lifecycleAnswers
+        );
+
+        return Promise.resolve().then(() => {
+            construct(answers, options);
+        });
+    } else {
+        return Promise.reject(
+            'A dash-case selector must be provided when using defaults'
+        );
+    }
+};
+
+const hasSelector = (selector) => selector && selector[0] !== '-';
+
 const inquire = (rootDir, selector, options) => {
-    const forExamples = opts.checkIsForExamples(options);
-    const templates = getTemplates(rootDir, forExamples);
     const remaining = getRemainingQuestions(selector, options);
     const knownAnswers = remaining.answers;
     const questions = remaining.questions.reduce((all, method) => all.concat(method(knownAnswers)), []);
 
-    return erector.inquire(questions).then((answers) => {
-        const allAnswers = knownAnswers.concat(answers);
+    return erector.inquire(questions)
+        .then((answers) => construct(knownAnswer.concat(answers), options));
+};
 
-        erector.construct(allAnswers, templates);
-        notifyUser(allAnswers, forExamples);
-    });
+const construct = (answers, options = {}) => {
+    const forExamples = opts.checkIsForExamples(options);
+    const templates = getTemplates(forExamples);
+
+    erector.construct(answers, templates);
+    notifyUser(answers, forExamples);
 };
 
 const getRemainingQuestions = (selectorName, options) => {
     const all = [
-        getKnownSelector(selectorName),
-        getKnownStyle(options),
-        getKnownTemplate(options),
-        getKnownLifecycleHooks(options)
+        getSelector(selectorName),
+        getStyle(options),
+        getTemplate(options),
+        getLifecycleHooks(options)
     ];
 
     return all.reduce((groups, part) => {
@@ -69,14 +92,9 @@ const getRemainingQuestions = (selectorName, options) => {
     }, { answers: [], questions: []});
 };
 
-const getKnownSelector = (selector) => {
+const getSelector = (selector) => {
     if (utilities.checkIsDashFormat(selector)) {
-        return {
-            answers: [
-                { answer: selector, name: 'selector' },
-                { answer: utilities.dashToCap(selector) + 'Component', name: 'componentName' }
-            ]
-        };
+        return { answers: getKnownSelector(selector) };
     } else {
         return {
             questions: getSelectorQuestions
@@ -84,29 +102,19 @@ const getKnownSelector = (selector) => {
     }
 };
 
+const getKnownSelector = (selector) => [
+    { answer: selector, name: 'selector' },
+    { answer: utilities.dashToCap(selector) + 'Component', name: 'componentName' }
+];
+
 const getSelectorQuestions = () => [
     { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => caseConvert.checkIsDashFormat(value) ? value : null },
     { name: 'componentName', transform: (value) => utilities.dashToCap(value) + 'Component', useAnswer: 'selector' }
 ];
 
-const getKnownStyle = (options) => {
-    const useDefaults = 'default' in options || 'defaults' in options || 'd' in options;
-    const useInline = 'is' in options || 'inline-styles' in options;
-
-    if (useDefaults) {
-        return {
-            answers: [
-                { answer: setInlineStyles(false, []), name: 'styles' },
-                { answer: pickStyleAttribute(``), name: 'styleAttribute' }
-            ]
-        }
-    } else if (useInline) {
-        return {
-            answers: [
-                { answer: setInlineStyles(true, []), name: 'styles' },
-                { answer: pickStyleAttribute(``), name: 'styleAttribute' }
-            ]
-        }
+const getStyle = (options) => {
+    if (opts.checkHasOption(options, ['is', 'inline-styles'])) {
+        return { answers: getKnownStyle(true, []) };
     } else {
         return {
             questions: getStyleQuestions
@@ -114,26 +122,37 @@ const getKnownStyle = (options) => {
     }
 };
 
+const getKnownStyle = (inline, answers = []) => {
+    const selector = answers.find((answer) => answer.name === 'selector');
+
+    return [
+        { answer: setInlineStyles(inline, selector ? [selector] : []), name: 'styles' },
+        { answer: pickStyleAttribute(selector ? selector.answer : ''), name: 'styleAttribute' }
+    ];
+};
+
 const getStyleQuestions = (knownAnswers) => [
     { allowBlank: true, name: 'styles', question: 'Use inline styles (y/N)?', transform: inputs.createYesNoValue('n', knownAnswers, setInlineStyles) },
     { name: 'styleAttribute', useAnswer: 'styles', transform: pickStyleAttribute }
 ];
 
-const getKnownTemplate = (options) => {
-    const keys = Object.keys(options);
-
-    if (keys.indexOf('it') === -1 && keys.indexOf('inline-template') === -1) {
+const getTemplate = (options) => {
+    if (opts.checkHasOption(options, ['it', 'inline-template'])) {
+        return { answers: getKnownTemplate(true, []) };
+    } else {
         return {
             questions: getTemplateQuestions
         };
-    } else {
-        return {
-            answers: [
-                { answer: setInlineTemplate(true, []), name: 'template' },
-                { answer: pickTemplateAttribute(``), name: 'templateAttribute' }
-            ]
-        }
     }
+};
+
+const getKnownTemplate = (inline, answers = []) => {
+    const selector = answers.find((answer) => answer.name === 'selector');
+
+    return [
+        { answer: setInlineTemplate(inline, selector ? [selector] : []), name: 'template' },
+        { answer: pickTemplateAttribute(selector ? selector.answer : ''), name: 'templateAttribute' }
+    ];
 };
 
 const getTemplateQuestions = (knownAnswers) => [
@@ -173,23 +192,22 @@ const pickTemplateAttribute = (value) => {
     return 'template' + attribute;
 };
 
-const getKnownLifecycleHooks = (options) => {
-    const keys = Object.keys(options);
-
-    if (keys.indexOf('h') === -1 && keys.indexOf('hooks') === -1) {
-        return {
-            questions: getLifecycleHookQuestions
-        };
+const getLifecycleHooks = (options) => {
+    if (opts.checkHasOption(options, ['hooks', 'h'])) {
+        return { answers: getKnownLifecycleHooks((options.h || options.hooks || '').join(',')) };
     } else {
-        const hooks = setLifecycleHooks((options.h || options.hooks).join(','));
-        return {
-            answers: [
-                { answer: hooks, name: 'hooks' },
-                { answer: setLifecycleImplements(hooks), name: 'implements' },
-                { answer: setLifecycleMethods(hooks), name: 'lifecycleNg' }
-            ]
-        };
+        return { questions: getLifecycleHookQuestions };
     }
+};
+
+const getKnownLifecycleHooks = (hooks) => {
+    hooks = setLifecycleHooks(hooks);
+
+    return [
+        { answer: hooks, name: 'hooks' },
+        { answer: setLifecycleImplements(hooks), name: 'implements' },
+        { answer: setLifecycleMethods(hooks), name: 'lifecycleNg' }
+    ];
 };
 
 const getLifecycleHookQuestions = () => [
@@ -198,7 +216,7 @@ const getLifecycleHookQuestions = () => [
     { name: 'lifecycleNg', useAnswer: 'hooks', transform: setLifecycleMethods }
 ];
 
-const setLifecycleHooks = (value) => {
+const setLifecycleHooks = (value = '') => {
     const hooksArray = value.split(',')
         .map(getHookName)
         .filter((hook) => !!hook);
@@ -255,28 +273,28 @@ const setLifecycleMethods = (value) => {
     return methods;
 };
 
-const getTemplates = (rootDir, forExamples) => {
+const getTemplates = (forExamples) => {
     const codeDir = forExamples ? 'examples' : 'src';
-    const componentDir = path.resolve(rootDir, codeDir, '{{ selector }}');
+    const componentDir = files.resolver.create(codeDir, '{{ selector }}');
 
-    return utilities.getTemplates(rootDir, __dirname, [
+    return utilities.getTemplates(files.resolver.root(), __dirname, [
         {
-            destination: path.resolve(componentDir, '{{ selector }}.component.ts'),
+            destination: componentDir('{{ selector }}.component.ts'),
             name: 'app.ts'
         },
         {
-            destination: path.resolve(componentDir, '{{ selector }}.component.spec.ts'),
+            destination: componentDir('{{ selector }}.component.spec.ts'),
             name: 'spec.ts'
         },
         {
             blank: true,
             check: checkForStylesFile,
-            destination: path.resolve(componentDir, '{{ selector }}.component.scss')
+            destination: componentDir('{{ selector }}.component.scss')
         },
         {
             blank: true,
             check: checkForTemplateFile,
-            destination: path.resolve(componentDir, '{{ selector }}.component.html')
+            destination: componentDir('{{ selector }}.component.html')
         }
     ]);
 };
@@ -294,7 +312,15 @@ const notifyUser = (answers, forExamples) => {
     const moduleLocation = forExamples ? 'examples/example' : 'src/*';
     const selector = answers.find((answer) => answer.name === 'selector');
 
-    console.info(`\nDon't forget to add the following to the ${ moduleLocation }.module.ts file:`);
-    console.info(`    import { ${componentName.answer} } from './${selector.answer}/${selector.answer}.component';`);
-    console.info(`And to add ${componentName.answer} to the NgModule declarations list`);
+    logger.info(
+        colorize.colorize(`\nDon't forget to add the following to the `, 'green'),
+        `${ moduleLocation }.module.ts`,
+        colorize.colorize('file:', 'green')
+    );
+    logger.info(colorize.colorize(`    import { ${componentName.answer} } from './${selector.answer}/${selector.answer}.component';`, 'cyan'));
+    logger.info(
+        colorize.colorize('And to add ', 'yellow'),
+        `${componentName.answer}`,
+        colorize.colorize(' to the NgModule declarations list', 'green')
+    );
 };
