@@ -711,6 +711,96 @@ tap.test('command: component', (suite) => {
     });
 
     // test output message
+    //   > src/*
+    suite.test('should output completion messages', (test) => {
+        const answers = [
+            { answer: 'taco-time', name: 'selector' },
+            { answer: 'TacoTimeComponent', name: 'componentName' },
+            { answer: '``', name: 'styles' },
+            { answer: 'styles', name: 'styleAttribute' },
+            { answer: '``', name: 'template' },
+            { answer: 'template', name: 'templateAttribute' },
+            { answer: '', name: 'hooks' },
+            { answer: '', name: 'implements' },
+            { answer: '\n', name: 'lifecycleNg' }
+        ];
+        const checkForExamples = sandbox.stub(opts, 'checkIsForExamples');
+        const dirname = [process.cwd(), 'commands', 'component'].join(path.sep);
+        const getTemplates = sandbox.stub(files, 'getTemplates');
+        const options = { pizza: [] };
+        
+        test.plan(4);
+
+        checkForExamples.returns(false);
+        getTemplates.returns([{ file: 'da.html' }]);
+        inquire.resolves(answers);
+        parseOptions.resetBehavior();
+        parseOptions.returns(options);
+
+        make().then(() => {
+            test.equal(log.callCount, 3);
+            test.ok(log.firstCall.calledWith( 
+                `[green]\nDon't forget to add the following to the [/green]`,
+                'src/*.module.ts ',
+                '[green]file:[/green]'
+            ));
+            test.ok(log.secondCall.calledWith( 
+                `[cyan]    import { TacoTimeComponent } from './taco-time/taco-time.component';[/cyan]`
+            ));
+            test.ok(log.thirdCall.calledWith( 
+                `[green]And to add [/green]`,
+                'TacoTimeComponent ',
+                '[green]to the NgModule declarations list[/green]'
+            ));
+
+            test.end();
+        });
+    });
+
+    suite.test('should output completion messages for examples', (test) => {
+        const answers = [
+            { answer: 'taco-time', name: 'selector' },
+            { answer: 'TacoTimeComponent', name: 'componentName' },
+            { answer: '``', name: 'styles' },
+            { answer: 'styles', name: 'styleAttribute' },
+            { answer: '``', name: 'template' },
+            { answer: 'template', name: 'templateAttribute' },
+            { answer: '', name: 'hooks' },
+            { answer: '', name: 'implements' },
+            { answer: '\n', name: 'lifecycleNg' }
+        ];
+        const checkForExamples = sandbox.stub(opts, 'checkIsForExamples');
+        const dirname = [process.cwd(), 'commands', 'component'].join(path.sep);
+        const getTemplates = sandbox.stub(files, 'getTemplates');
+        const options = { pizza: [] };
+        
+        test.plan(4);
+
+        checkForExamples.returns(true);
+        getTemplates.returns([{ file: 'da.html' }]);
+        inquire.resolves(answers);
+        parseOptions.resetBehavior();
+        parseOptions.returns(options);
+
+        make().then(() => {
+            test.equal(log.callCount, 3);
+            test.ok(log.firstCall.calledWith( 
+                `[green]\nDon't forget to add the following to the [/green]`,
+                'examples/example.module.ts ',
+                '[green]file:[/green]'
+            ));
+            test.ok(log.secondCall.calledWith( 
+                `[cyan]    import { TacoTimeComponent } from './taco-time/taco-time.component';[/cyan]`
+            ));
+            test.ok(log.thirdCall.calledWith( 
+                `[green]And to add [/green]`,
+                'TacoTimeComponent ',
+                '[green]to the NgModule declarations list[/green]'
+            ));
+
+            test.end();
+        });
+    });
 
     suite.end();
 });

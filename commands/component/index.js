@@ -315,13 +315,13 @@ const notifyUser = (answers, forExamples) => {
 
     logger.info(
         colorize.colorize(`\nDon't forget to add the following to the `, 'green'),
-        `${ moduleLocation }.module.ts`,
+        `${ moduleLocation }.module.ts `,
         colorize.colorize('file:', 'green')
     );
     logger.info(colorize.colorize(`    import { ${componentName.answer} } from './${selector.answer}/${selector.answer}.component';`, 'cyan'));
     logger.info(
-        colorize.colorize('And to add ', 'yellow'),
-        `${componentName.answer}`,
-        colorize.colorize(' to the NgModule declarations list', 'green')
+        colorize.colorize('And to add ', 'green'),
+        `${componentName.answer} `,
+        colorize.colorize('to the NgModule declarations list', 'green')
     );
 };
