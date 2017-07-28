@@ -710,8 +710,6 @@ tap.test('command: component', (suite) => {
         });
     });
 
-    // test output message
-    //   > src/*
     suite.test('should output completion messages', (test) => {
         const answers = [
             { answer: 'taco-time', name: 'selector' },
