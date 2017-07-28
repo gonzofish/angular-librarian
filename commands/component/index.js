@@ -62,7 +62,7 @@ const inquire = (rootDir, selector, options) => {
     const questions = remaining.questions.reduce((all, method) => all.concat(method(knownAnswers)), []);
 
     return erector.inquire(questions)
-        .then((answers) => construct(knownAnswer.concat(answers), options));
+        .then((answers) => construct(knownAnswers.concat(answers), options));
 };
 
 const construct = (answers, options = {}) => {
@@ -193,7 +193,8 @@ const pickTemplateAttribute = (value) => {
 };
 
 const getLifecycleHooks = (options) => {
-    if (opts.checkHasOption(options, ['hooks', 'h'])) {
+    if ((opts.checkHasOption(options, ['hooks']) && options.hooks.length > 0) || 
+        (opts.checkHasOption(options, ['h']) && options.h.length > 0)) {
         return { answers: getKnownLifecycleHooks((options.h || options.hooks || '').join(',')) };
     } else {
         return { questions: getLifecycleHookQuestions };
@@ -277,7 +278,7 @@ const getTemplates = (forExamples) => {
     const codeDir = forExamples ? 'examples' : 'src';
     const componentDir = files.resolver.create(codeDir, '{{ selector }}');
 
-    return utilities.getTemplates(files.resolver.root(), __dirname, [
+    return files.getTemplates(files.resolver.root(), __dirname, [
         {
             destination: componentDir('{{ selector }}.component.ts'),
             name: 'app.ts'
