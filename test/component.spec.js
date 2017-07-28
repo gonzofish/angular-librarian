@@ -100,7 +100,7 @@ tap.test('command: component', (suite) => {
             test.end();
         });
     });
-    
+
     suite.test('should throw an error --default and no selector', (test) => {
         parseOptions.resetBehavior();
         parseOptions.returns({ default: [] });
@@ -611,7 +611,7 @@ tap.test('command: component', (suite) => {
         const dirname = [process.cwd(), 'commands', 'component'].join(path.sep);
         const getTemplates = sandbox.stub(files, 'getTemplates');
         const options = { pizza: [] };
-        
+
         test.plan(2);
 
         checkForExamples.returns(true);
@@ -726,7 +726,7 @@ tap.test('command: component', (suite) => {
         const dirname = [process.cwd(), 'commands', 'component'].join(path.sep);
         const getTemplates = sandbox.stub(files, 'getTemplates');
         const options = { pizza: [] };
-        
+
         test.plan(4);
 
         checkForExamples.returns(false);
@@ -737,15 +737,15 @@ tap.test('command: component', (suite) => {
 
         make().then(() => {
             test.equal(log.callCount, 3);
-            test.ok(log.firstCall.calledWith( 
+            test.ok(log.firstCall.calledWith(
                 `[green]\nDon't forget to add the following to the [/green]`,
                 'src/*.module.ts ',
                 '[green]file:[/green]'
             ));
-            test.ok(log.secondCall.calledWith( 
+            test.ok(log.secondCall.calledWith(
                 `[cyan]    import { TacoTimeComponent } from './taco-time/taco-time.component';[/cyan]`
             ));
-            test.ok(log.thirdCall.calledWith( 
+            test.ok(log.thirdCall.calledWith(
                 `[green]And to add [/green]`,
                 'TacoTimeComponent ',
                 '[green]to the NgModule declarations list[/green]'
@@ -771,7 +771,7 @@ tap.test('command: component', (suite) => {
         const dirname = [process.cwd(), 'commands', 'component'].join(path.sep);
         const getTemplates = sandbox.stub(files, 'getTemplates');
         const options = { pizza: [] };
-        
+
         test.plan(4);
 
         checkForExamples.returns(true);
@@ -782,15 +782,15 @@ tap.test('command: component', (suite) => {
 
         make().then(() => {
             test.equal(log.callCount, 3);
-            test.ok(log.firstCall.calledWith( 
+            test.ok(log.firstCall.calledWith(
                 `[green]\nDon't forget to add the following to the [/green]`,
                 'examples/example.module.ts ',
                 '[green]file:[/green]'
             ));
-            test.ok(log.secondCall.calledWith( 
+            test.ok(log.secondCall.calledWith(
                 `[cyan]    import { TacoTimeComponent } from './taco-time/taco-time.component';[/cyan]`
             ));
-            test.ok(log.thirdCall.calledWith( 
+            test.ok(log.thirdCall.calledWith(
                 `[green]And to add [/green]`,
                 'TacoTimeComponent ',
                 '[green]to the NgModule declarations list[/green]'

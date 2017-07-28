@@ -6,6 +6,7 @@ const logging = require('../../tools/logging');
 const utilities = require('../utilities');
 
 const caseConvert = utilities.caseConvert;
+const colorize = utilities.colorize;
 const files = utilities.files;
 const opts = utilities.options;
 const resolver = files.resolver;
@@ -20,19 +21,36 @@ module.exports = function createDirective(rootDir, name) {
         'example', 'examples', 'x'
     ]);
     const forExamples = opts.checkIsForExamples(options);
-    const templates = getTemplates(rootDir, forExamples);
 
     if (caseConvert.checkIsDashFormat(name)) {
-        return generateWithKnownName(name, templates, forExamples);
+        return generateWithKnownName(name, forExamples);
     } else {
         return erector.inquire(getAllQuestions()).then((answers) => {
-            erector.construct(answers, templates);
-            notifyUser(answers, forExamples);
+            construct(answers, forExamples);
         });
     }
 };
 
-const getTemplates = (rootDir, forExamples) => {
+const generateWithKnownName = (name, forExamples) => Promise.resolve().then(() => {
+    construct([
+        { name: 'name', answer: name },
+        { name: 'className', answer: caseConvert.dashToCap(name) + 'Directive' },
+        { name: 'selector', answer: caseConvert.dashToCamel(name) }
+    ], forExamples);
+});
+
+const getAllQuestions = () => [
+    { name: 'name', question: 'Directive name (in dash-case):', transform: caseConvert.testIsDashFormat },
+    { name: 'selector', transform: caseConvert.dashToCamel, useAnswer: 'name' },
+    { name: 'className', transform: (value) => caseConvert.dashToCap(value) + 'Directive', useAnswer: 'name' }
+];
+
+const construct = (answers, forExamples) => {
+    erector.construct(answers, getTemplates(forExamples));
+    notifyUser(answers, forExamples);
+};
+
+const getTemplates = (forExamples) => {
     const codeDir = forExamples ? 'examples' : 'src';
     const directiveDir = resolver.create(codeDir, 'directives');
 
@@ -48,29 +66,22 @@ const getTemplates = (rootDir, forExamples) => {
     ]);
 };
 
-const generateWithKnownName = (name, templates, forExamples) => {
-    const knownAnswers = [
-        { name: 'name', answer: name },
-        { name: 'className', answer: caseConvert.dashToCap(name) + 'Directive' },
-        { name: 'selector', answer: caseConvert.dashToCamel(name) }
-    ];
-
-    erector.construct(knownAnswers, templates, true);
-    notifyUser(knownAnswers, forExamples);
-};
-
-const getAllQuestions = () => [
-    { name: 'name', question: 'Directive name (in dash-case):', transform: caseConvert.testIsDashFormat },
-    { name: 'selector', transform: caseConvert.dashToCamel, useAnswer: 'name' },
-    { name: 'className', transform: (value) => caseConvert.dashToCap(value) + 'Directive', useAnswer: 'name' }
-];
-
 const notifyUser = (answers, forExamples) => {
     const className = answers.find((answer) => answer.name === 'className');
     const moduleLocation = forExamples ? 'examples/example' : 'src/*';
     const name = answers.find((answer) => answer.name === 'name');
 
-    logger.info(`Don't forget to add the following to the ${ moduleLocation }.module.ts file:`);
-    logger.info(`    import { ${className.answer} } from './directives/${name.answer}.directive';`);
-    logger.info(`And to add ${className.answer} to the NgModule declarations list`);
+    logger.info(
+        colorize.colorize(`Don't forget to add the following to the`, 'green'),
+        `${ moduleLocation }.module.ts`,
+        colorize.colorize('file:', 'green')
+    );
+    logger.info(
+        `    import { ${ className.answer } } from './directives/${ name.answer }.directive';`
+    );
+    logger.info(
+        colorize.colorize('And to add', 'green'),
+        `${ className.answer }`,
+        colorize.colorize('to the NgModule declarations list', 'green')
+    );
 };

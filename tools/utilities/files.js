@@ -28,6 +28,7 @@ exports.getTemplates = (rootDir, directory, filenames) => filenames.map((filenam
     overwrite: filename.overwrite
 }));
 
+/* istanbul ignore next */
 exports.include = (file) => require(file);
 
 exports.resolver = {
