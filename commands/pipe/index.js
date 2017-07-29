@@ -3,22 +3,28 @@
 const erector = require('erector-set');
 const path = require('path');
 
+const logging = require('../logging');
 const utilities = require('../utilities');
 
+const opts = utilities.options;
+let logger;
+
 module.exports = function createPipe(rootDir, name) {
+    logger = logging.create('Pipe');
+
     const providedOptions = Array.from(arguments).slice(name && name[0] !== '-' ? 2 : 1);
-    const options = utilities.parseOptions(providedOptions, [
+    const options = opts.parseOptions(providedOptions, [
         'example',
         'examples',
         'x'
     ]);
-    const forExamples = utilities.checkIsForExamples(options);
+    const forExamples = opts.checkIsForExamples(options);
     const templates = getTemplates(rootDir, forExamples);
 
     if (utilities.checkIsDashFormat(name)) {
-        generateWithKnownPipeName(name, templates, forExamples);
+        return generateWithKnownPipeName(name, templates, forExamples);
     } else {
-        erector.inquire(getAllQuestions()).then((answers) => {
+        return erector.inquire(getAllQuestions()).then((answers) => {
             erector.construct(answers, templates);
             notifyUser(answers, forExamples);
         });
