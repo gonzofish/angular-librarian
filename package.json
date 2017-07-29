@@ -8,7 +8,7 @@
   },
   "scripts": {
     "coverage": "tap \"test/**/*.spec.js\" --cov --coverage-report=lcov",
-    "local": "tap \"test/**/*.spec.js\"",
+    "local": "tap \"test/**/*.spec.js\" --coverage --coverage-report=text",
     "start": "node .",
     "test": "tap \"test/**/*.spec.js\" --coverage",
     "posttest": "tap --coverage-report=lcov && codecov",
