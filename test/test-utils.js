@@ -2,6 +2,7 @@
 
 const erector = require('erector-set');
 const path = require('path');
+const sinon = require('sinon');
 
 const logging = require('../tools/logging');
 const utilities = require('../tools/utilities');
@@ -63,3 +64,5 @@ exports.mockOnce = (sandbox, util, method) =>
     sandbox.stub(utilities[util], method);
 
 const argsPath = (args) => Array.from(args).join('/');
+
+exports.sinon = sinon;
