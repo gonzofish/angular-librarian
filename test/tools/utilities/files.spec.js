@@ -267,6 +267,17 @@ tap.test('.resolver', (suite) => {
         test.end();
     });
 
+    suite.test('.manual should create a manual path', (test) => {
+        test.plan(1);
+
+        test.equal(
+            resolver.manual('taco', 'lettuce', 'cheese', 'tomato'),
+            'taco/lettuce/cheese/tomato'
+        );
+
+        test.end();
+    });
+
     suite.test('.root should return the root path plus any other arguments', (test) => {
         test.plan(1);
 
