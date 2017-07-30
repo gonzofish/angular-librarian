@@ -12,9 +12,9 @@ let logger;
 
 module.exports = (rootDir) => {
     logger = logging.create('Upgrade');
-
+    /* istanbul ignore next */
     const npmCommand = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
-    
+
     return getLibrarianVersions(npmCommand)
         .then((versions) => installLibrarian(npmCommand, versions))
         .then(upgradeFiles);

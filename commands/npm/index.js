@@ -1,12 +1,17 @@
 'use strict';
 
-const spawn = require('child_process').spawn;
+const childProcess = require('child_process');
 
 module.exports = function (rootDir, type) {
     const args = Array.from(arguments).slice(2);
+    /* istanbul ignore next */
     const cmd = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
-    spawn(cmd, ['run'].concat(getNpmCommand(type, args)), { stdio: 'inherit' });
+    childProcess.spawnSync(
+        cmd,
+        ['run'].concat(getNpmCommand(type, args)),
+        { stdio: 'inherit' }
+    );
 };
 
 const getNpmCommand = (command, args) => {
