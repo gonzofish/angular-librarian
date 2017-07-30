@@ -1,7 +1,6 @@
 'use strict';
 
 const caseConvert = require('./case-convert');
-const colorize = require('./colorize');
 const files = require('./files');
 const inputs = require('./inputs');
 const options = require('./options');
@@ -17,7 +16,9 @@ const addMethods = (mod) => {
 exports.caseConvert = caseConvert;
 addMethods(caseConvert);
 
-exports.colorize = colorize;
+exports.colorize = require('./colorize');
+
+exports.execute = require('./execute');
 
 exports.files = files;
 addMethods(files);

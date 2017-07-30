@@ -19,7 +19,10 @@ tap.test('command: pipe', (suite) => {
         done();
     });
 
-    suite.afterEach((done) => sandbox.restore());
+    suite.afterEach((done) => {
+        sandbox.restore();
+        done();
+    });
 
     suite.test('should create a Pipe logger', (test) => {
         test.plan(1);

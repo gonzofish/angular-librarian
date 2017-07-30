@@ -20,7 +20,10 @@ tap.test('command: service', (suite) => {
         done();
     });
 
-    suite.afterEach((done) => sandbox.restore());
+    suite.afterEach((done) => {
+        sandbox.restore();
+        done();
+    });
 
     suite.test('should create a Service logger', (test) => {
         test.plan(1);
@@ -78,7 +81,7 @@ tap.test('command: service', (suite) => {
                 },
                 {
                     name: 'serviceName',
-                    transform: testUtils.sinon.match.instanceOf(Function),
+                    transform: sinon.match.instanceOf(Function),
                     useAnswer: 'filename'
                 }
             ]));

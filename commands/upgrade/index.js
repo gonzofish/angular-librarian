@@ -3,45 +3,54 @@
 const erector = require('erector-set');
 const fs = require('fs');
 const path = require('path');
-const spawn = require('child_process').spawnSync;
+const childProcess = require('child_process');
 
-const utilities = require('../utilities');
+const logging = require('../../tools/logging');
+const { colorize, files, execute, inputs } = require('../../tools/utilities');
+
+let logger;
 
 module.exports = (rootDir) => {
+    logger = logging.create('Upgrade');
+
     const npmCommand = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
-    const latestVersion = checkLibrarianVersion(npmCommand);
+    
+    return getLibrarianVersions(npmCommand)
+        .then((versions) => installLibrarian(npmCommand, versions))
+        .then(upgradeFiles);
+};
 
-    if (latestVersion) {
-        installLibrarian(npmCommand, latestVersion);
+const upgradeFiles = () => erector.inquire([
+    {
+        allowBlank: true,
+        name: 'proceed',
+        question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
+        transform: inputs.createYesNoValue('n', [])
     }
+]).then((answers) => {
+    if (answers[0].answer) {
+        updateFiles();
+    } else {
+        logger.info(colorize.colorize('    Upgrade cancelled.', 'yellow'));
+    }
+});
 
-    erector.inquire([
-        {
-            allowBlank: true,
-            name: 'proceed',
-            question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
-            transform: utilities.createYesNoValue('n', [])
-        }
-    ]).then((answers) => {
-        if (answers[0].answer) {
-            updateFiles(rootDir);
-        } else {
-            console.info('    Upgrade cancelled');
-        }
-    });
-};
+const getLibrarianVersions = (npm) => new Promise((resolve, reject) => {
+    logger.info(colorize.colorize('Identifying the *newest* angular-librarian version', 'cyan'));
+    const available = execute.execute(npm, ['show', 'angular-librarian', 'version']);
+    logger.info(colorize.colorize('Identifying the *installed* angular-librarian version', 'blue'));
 
-const checkLibrarianVersion = (npm) => {
-    console.info('Identifying the *newest* angular-librarian version');
-    const available = execute(npm, ['show', 'angular-librarian', 'version']);
-    console.info('Identifying the *installed* angular-librarian version');
-    const installed = parseInstalledVersion(execute(npm, ['list', '--depth=0', 'angular-librarian']));
-    const update = require('semver').gt(available, installed);
+    try {
+        const installed = parseInstalledVersion(execute.execute(npm, ['list', '--depth=0', 'angular-librarian']));
 
-    console.info(`\tUpdate of angular-librarian is ${ update ? '' : 'NOT ' }required.`);
-
-    return update ? available : undefined;
-};
+        resolve({
+            available,
+            installed
+        });
+    } catch (error) {
+        reject(error.message);
+    }
+});
 
 const parseInstalledVersion = (installed) => {
     const lines = installed.split(/\r?\n/);
@@ -60,24 +69,28 @@ const parseInstalledVersion = (installed) => {
     return version;
 };
 
-const installLibrarian = (npm, version) => {
-    console.info(`    Installing angular-librarian@${ version }`);
-    execute(npm, ['i', '-D', `angular-librarian@${ version }`]);
+const installLibrarian = (npm, { available, installed}) => {
+    const update = require('semver').gt(available, installed);
+
+    logger.info(
+        colorize.colorize('\tUpdate of angular-librarian is', 'yellow'),
+        update ? '' : colorize.colorize('NOT', 'red'),
+        colorize.colorize('required.', 'yellow')
+    );
+
+    if (update) {
+        logger.info(colorize.colorize(`    Installing angular-librarian@${ available }`, 'green'));
+        execute.execute(npm, ['i', '-D', `angular-librarian@${ available }`]);
+    }
 }
 
-const execute = (command, args) => {
-    const result = spawn(command, args || [], { stdio: 'pipe' });
-
-    return result && result.stdout && result.stdout.toString().trim();
-};
-
-const updateFiles = (rootDir, tempDir) => {
-    console.info('    Updating managed files to latest versions');
-    const answers = JSON.parse(fs.readFileSync(path.resolve(rootDir, '.erector'), 'utf8'));
-    const srcDir = path.resolve(rootDir, 'src');
-    const files = [
-        { destination: path.resolve(rootDir, '.gitignore'), name: '__gitignore', update: updateFlatFile },
-        { destination: path.resolve(rootDir, '.npmignore'), name: '__npmignore', update: updateFlatFile },
+const updateFiles = () => {
+    logger.info(colorize.colorize('    Updating managed files to latest versions', 'cyan'));
+    const answers = files.include(files.resolver.root('.erector'));
+    const srcDir = files.resolver.create('src');
+    const fileList = [
+        { destination: files.resolver.root('.gitignore'), name: '__gitignore', update: updateFlatFile },
+        { destination: files.resolver.root('.npmignore'), name: '__npmignore', update: updateFlatFile },
         { name: 'DEVELOPMENT.md' },
         { name: 'karma.conf.js', overwrite: true },
         { name: 'package.json', update: updatePackageJson },
@@ -91,7 +104,7 @@ const updateFiles = (rootDir, tempDir) => {
         { name: 'tsconfig.json', overwrite: true },
         { name: 'tsconfig.test.json', overwrite: true },
         { name: 'tslint.json', overwrite: true },
-        { destination: path.resolve(srcDir, 'test.js'), name: 'src/test.js', overwrite: true },
+        { destination: srcDir('test.js'), name: 'src/test.js', overwrite: true },
         { name: 'tasks/build.js', overwrite: true },
         { name: 'tasks/copy-build.js', overwrite: true },
         { name: 'tasks/copy-globs.js', overwrite: true },
@@ -103,9 +116,15 @@ const updateFiles = (rootDir, tempDir) => {
         { name: 'webpack/webpack.test.js', overwrite: true },
         { name: 'webpack/webpack.utils.js', overwrite: true }
     ];
-    const templates = utilities.getTemplates(rootDir, path.resolve(__dirname, '..', 'initial'), files);
+    const templates = files.getTemplates(
+        files.resolver.root(),
+        files.resolver.manual(__dirname, '..', 'initial'),
+        fileList
+    );
 
     erector.construct(answers, templates);
+
+    logger.info(colorize.colorize('Files have been upgraded!', 'green'));
 };
 
 const updatePackageJson = (existing, replacement) => {

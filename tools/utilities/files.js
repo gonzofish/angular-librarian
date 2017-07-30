@@ -39,6 +39,9 @@ exports.resolver = {
             return resolvePath(base, arguments);
         };
     },
+    manual(dir) {
+        return resolvePath(dir, arguments);
+    },
     root() {
         return resolvePath(process.cwd(), arguments);
     }

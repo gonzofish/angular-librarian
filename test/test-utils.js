@@ -31,6 +31,7 @@ exports.mock = (sandbox) => {
         parseOptions: sandbox.stub(utilities.options, 'parseOptions'),
         resolver: {
             create: sandbox.stub(utilities.files.resolver, 'create'),
+            manual: sandbox.stub(utilities.files.resolver, 'manual'),
             root: sandbox.stub(utilities.files.resolver, 'root'),
         }
     };
@@ -52,6 +53,9 @@ exports.mock = (sandbox) => {
         return function() {
             return `/created/${ createPath }/` + argsPath(arguments);
         };
+    });
+    mocks.resolver.manual.callsFake(function() {
+        return '/manual/' + argsPath(arguments);
     });
     mocks.resolver.root.callsFake(function() {
         return '/root/' + argsPath(arguments);
