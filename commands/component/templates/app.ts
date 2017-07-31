@@ -8,4 +8,5 @@ import {
     {{ templateAttribute }}: {{ template }}
 })
 export class {{ componentName }}{{ implements }} {
-    constructor() {}{{ lifecycleNg }}}
+    constructor() {}
+{{ lifecycleNg }}}

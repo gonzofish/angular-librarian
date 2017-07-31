@@ -32,6 +32,8 @@ let testDashFormat;
 
 tap.test('command: directive', (suite) => {
     suite.beforeEach((done) => {
+        erector.construct.setTestMode(true);
+
         checkForExamples = sandbox.stub(opts, 'checkIsForExamples');
         construct = sandbox.stub(erector, 'construct');
         creator = sandbox.stub(files.resolver, 'create');
@@ -268,6 +270,74 @@ tap.test('command: directive', (suite) => {
                 '[green]to the NgModule declarations list[/green]'
             ));
 
+            test.end();
+        });
+    });
+
+    suite.test('should scaffold the app & spec files', (test) => {
+        const answers = [
+            {
+                answer: 'burger-blitz',
+                name: 'name'
+            },
+            {
+                answer: 'burgerBlitz',
+                name: 'selector'
+            },
+            {
+                answer: 'BurgerBlitzDirective',
+                name: 'className'
+            }
+        ];
+        const appOutput =
+            `import { Directive } from '@angular/core';\n` +
+            `\n` +
+            `@Directive({\n` +
+            `    selector: '[burgerBlitz]'\n` +
+            `})\n` +
+            `export class BurgerBlitzDirective {\n` +
+            `    constructor() {}\n` +
+            `}\n`;
+        const specOutput =
+            `/* tslint:disable:no-unused-variable */\n` +
+            `import {\n` +
+            `    async,\n` +
+            `    TestBed\n` +
+            `} from '@angular/core/testing';\n` +
+            `\n` +
+            `import { BurgerBlitzDirective } from './burger-blitz.directive';\n` +
+            `\n` +
+            `describe('BurgerBlitzDirective', () => {\n` +
+            `    it('', () => {\n` +
+            `        const directive = new BurgerBlitzDirective();\n` +
+            `\n` +
+            `        expect(directive).toBeTruthy();\n` +
+            `    });\n` +
+            `});\n`;
+        // const getTemplates = sandbox.stub(files, 'getTemplates');
+
+        construct.callThrough();
+
+        getTemplates.resetBehavior();
+        getTemplates.callThrough();
+        inquire.resetBehavior();
+        inquire.resolves(answers);
+
+        test.plan(1);
+
+        make().then((result) => {
+            test.deepEqual(result, [
+                // app.ts
+                {
+                    destination: '/created/src/directives/burger-blitz.directive.ts',
+                    output: appOutput
+                },
+                // spec.ts
+                {
+                    destination: '/created/src/directives/burger-blitz.directive.spec.ts',
+                    output: specOutput
+                }
+            ]);
             test.end();
         });
     });

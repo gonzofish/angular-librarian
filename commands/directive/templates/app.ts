@@ -4,5 +4,5 @@ import { Directive } from '@angular/core';
     selector: '[{{ selector }}]'
 })
 export class {{ className }} {
-    constructor() { }
+    constructor() {}
 }

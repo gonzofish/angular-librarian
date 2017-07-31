@@ -1,5 +1,9 @@
-/* ts-lint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+/* tslint:disable:no-unused-variable */
+import {
+    async,
+    ComponentFixture,
+    TestBed
+} from '@angular/core/testing';
 import { {{ componentName }} } from './{{ selector }}.component';
 
 describe('{{ componentName }}', () => {

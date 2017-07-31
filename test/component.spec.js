@@ -29,6 +29,8 @@ tap.test('command: component', (suite) => {
     let resolverRoot;
 
     suite.beforeEach((done) => {
+        erector.construct.setTestMode(true);
+
         color = sandbox.stub(colorize, 'colorize');
         construct = sandbox.stub(erector, 'construct');
         createYesNo = sandbox.stub(inputs, 'createYesNoValue');
@@ -796,6 +798,106 @@ tap.test('command: component', (suite) => {
                 '[green]to the NgModule declarations list[/green]'
             ));
 
+            test.end();
+        });
+    });
+
+    suite.test('should scaffold the app & spec files', (test) => {
+        const answers = [
+            { answer: 'donut-dance', name: 'selector' },
+            { answer: 'PascalCaseComponent', name: 'componentName' },
+            { answer: `'./donut-dance.component.scss'`, name: 'styles' },
+            { answer: 'styleUrls', name: 'styleAttribute' },
+            { answer: `'./donut-dance.component.html'`, name: 'template' },
+            { answer: 'templateUrl', name: 'templateAttribute' },
+            { answer: ',\n    OnInit,\n    DoCheck', name: 'hooks' },
+            { answer: ' implements OnInit, DoCheck', name: 'implements' },
+            { answer: '\n    ngOnInit() {\n    }\n\n    ngDoCheck() {\n    }\n', name: 'lifecycleNg' }
+        ];
+        const appOutput =
+            `import {\n` +
+            `    Component,\n` +
+            `    OnInit,\n` +
+            `    DoCheck\n` +
+            `} from '@angular/core';\n` +
+            `\n` +
+            `@Component({\n` +
+            `    selector: 'donut-dance',\n` +
+            `    styleUrls: ['./donut-dance.component.scss'],\n` +
+            `    templateUrl: './donut-dance.component.html'\n` +
+            `})\n` +
+            `export class PascalCaseComponent implements OnInit, DoCheck {\n` +
+            `    constructor() {}\n` +
+            `\n` +
+            `    ngOnInit() {\n` +
+            `    }\n` +
+            `\n` +
+            `    ngDoCheck() {\n` +
+            `    }\n` +
+            `}\n`;
+        const specOutput =
+            `/* tslint:disable:no-unused-variable */\n` +
+            `import {\n` +
+            `    async,\n` +
+            `    ComponentFixture,\n` +
+            `    TestBed\n` +
+            `} from '@angular/core/testing';\n` +
+            `import { PascalCaseComponent } from './donut-dance.component';\n` +
+            `\n` +
+            `describe('PascalCaseComponent', () => {\n` +
+            `    let component: PascalCaseComponent;\n` +
+            `    let fixture: ComponentFixture<PascalCaseComponent>;\n` +
+            `\n` +
+            `    beforeEach(async(() => {\n` +
+            `        TestBed.configureTestingModule({\n` +
+            `            declarations: [\n` +
+            `                PascalCaseComponent\n` +
+            `            ]\n` +
+            `        });\n` +
+            `        TestBed.compileComponents();\n` +
+            `    }));\n` +
+            `\n` +
+            `    beforeEach(() => {\n` +
+            `        fixture = TestBed.createComponent(PascalCaseComponent);\n` +
+            `        component = fixture.componentInstance;\n` +
+            `    });\n` +
+            `\n` +
+            `    it('should create the donut-dance', () => {\n` +
+            `        expect(component).toBeTruthy();\n` +
+            `    });\n` +
+            `});\n`;
+        const getTemplates = sandbox.stub(files, 'getTemplates');
+
+        construct.callThrough();
+
+        getTemplates.resetBehavior();
+        getTemplates.callThrough();
+        inquire.resetBehavior();
+        inquire.resolves(answers);
+
+        test.plan(1);
+
+        make().then((result) => {
+            test.deepEqual(result, [
+                // app.ts
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.ts',
+                    output: appOutput
+                },
+                // spec.ts
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.spec.ts',
+                    output: specOutput
+                },
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.scss',
+                    output: ''
+                },
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.html',
+                    output: ''
+                }
+            ]);
             test.end();
         });
     });

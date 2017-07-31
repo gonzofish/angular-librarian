@@ -44,9 +44,8 @@ const constructWithDefaults = (rootDir, selector, options) => {
             lifecycleAnswers
         );
 
-        return Promise.resolve().then(() => {
-            construct(answers, options);
-        });
+        return Promise.resolve()
+            .then(() => construct(answers, options));
     } else {
         return Promise.reject(
             'A dash-case selector must be provided when using defaults'
@@ -68,9 +67,10 @@ const inquire = (rootDir, selector, options) => {
 const construct = (answers, options = {}) => {
     const forExamples = opts.checkIsForExamples(options);
     const templates = getTemplates(forExamples);
+    const results = erector.construct(answers, templates);
 
-    erector.construct(answers, templates);
     notifyUser(answers, forExamples);
+    return results;
 };
 
 const getRemainingQuestions = (selectorName, options) => {
@@ -193,7 +193,7 @@ const pickTemplateAttribute = (value) => {
 };
 
 const getLifecycleHooks = (options) => {
-    if ((opts.checkHasOption(options, ['hooks']) && options.hooks.length > 0) || 
+    if ((opts.checkHasOption(options, ['hooks']) && options.hooks.length > 0) ||
         (opts.checkHasOption(options, ['h']) && options.h.length > 0)) {
         return { answers: getKnownLifecycleHooks((options.h || options.hooks || '').join(',')) };
     } else {
