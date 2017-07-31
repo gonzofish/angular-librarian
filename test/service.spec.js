@@ -168,7 +168,7 @@ tap.test('command: service', (suite) => {
         const answers = [
             { answer: 'donut-dance', name: 'filename' },
             { answer: 'PascalCaseService', name: 'serviceName' }
-        ];``
+        ];
         const checkForExamples = mockOnce('options', 'checkIsForExamples');
         const { inquire } = mocks.erector;
         const { getTemplates, log, resolver } = mocks;
@@ -208,6 +208,67 @@ tap.test('command: service', (suite) => {
                 '[green]to the NgModule providers list or add as a provider to one or more components[/green]'
             ));
 
+            test.end();
+        });
+    });
+
+    suite.test('should generate the app & spec files', (test) => {
+        const { erector, getTemplates } = mocks;
+        const { construct, inquire } = erector;
+        const answers = [
+            { answer: 'pizza-party', name: 'filename' },
+            { answer: 'PizzaPartyService', name: 'serviceName' }
+        ];
+        const appOutput = 
+            `import { Injectable } from '@angular/core';\n` +
+            `\n` +
+            `@Injectable()\n` +
+            `export class PizzaPartyService {\n` +
+            `    constructor() {}\n` +
+            `}\n`;
+        const specOutput =
+            `/* tslint:disable:no-unused-vars */\n` +
+            `import {\n` +
+            `    getTestBed,\n` +
+            `    TestBed\n` +
+            `} from '@angular/core/testing';\n` +
+            `\n` +
+            `import { PizzaPartyService } from './pizza-party.service';\n` +
+            `\n` +
+            `describe('PizzaPartyService', () => {\n` +
+            `    let service: PizzaPartyService;\n` +
+            `\n` +
+            `    beforeEach(() => {\n` +
+            `        TestBed.configureTestingModule({\n` +
+            `            providers: [PizzaPartyService]\n` +
+            `        });\n` +
+            `        service = getTestBed().get(PizzaPartyService);\n` +
+            `    });\n` +
+            `\n` +
+            `    it('', () => {\n` +
+            `        expect(service).toBeTruthy();\n` +
+            `    });\n` +
+            `});\n`;
+
+        construct.callThrough();
+        getTemplates.resetBehavior();
+        getTemplates.callThrough();
+        inquire.resetBehavior();
+        inquire.resolves(answers);
+
+        test.plan(1);
+
+        make().then((result) => {
+            test.deepEqual(result, [
+                {
+                    destination: '/created/src/services/pizza-party.service.ts',
+                    output: appOutput
+                },
+                {
+                    destination: '/created/src/services/pizza-party.service.spec.ts',
+                    output: specOutput
+                }
+            ]);
             test.end();
         });
     });

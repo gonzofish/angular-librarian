@@ -1,5 +1,8 @@
 /* tslint:disable:no-unused-vars */
-import { getTestBed, TestBed } from '@angular/core/testing';
+import {
+    getTestBed,
+    TestBed
+} from '@angular/core/testing';
 
 import { {{ serviceName }} } from './{{ filename }}.service';
 

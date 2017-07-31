@@ -22,9 +22,8 @@ module.exports = function createService(rootDir, name) {
     if (caseConvert.checkIsDashFormat(name)) {
         return generateWithKnownName(name, forExamples);
     } else {
-        return erector.inquire(getAllQuestions()).then((answers) => {
-            construct(answers, forExamples);
-        });
+        return erector.inquire(getAllQuestions())
+            .then((answers) => construct(answers, forExamples));
     }
 };
 
@@ -52,8 +51,10 @@ const getAllQuestions = () => [
 ];
 
 const construct = (answers, forExamples) => {
-    erector.construct(answers, getTemplates(forExamples));
+    const results = erector.construct(answers, getTemplates(forExamples));
+    
     notifyUser(answers, forExamples);
+    return results;
 };
 
 const getTemplates = (forExamples) => {
