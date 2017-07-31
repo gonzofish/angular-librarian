@@ -30,6 +30,8 @@ tap.test('command: initial', (suite) => {
     let resolverRoot;
 
     suite.beforeEach((done) => {
+        erector.construct.setTestMode(true);
+
         chdir = sandbox.stub(process, 'chdir');
         execSync = sandbox.stub(childProcess, 'execSync');
         filesInclude = sandbox.stub(files, 'include');

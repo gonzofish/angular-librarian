@@ -60,8 +60,7 @@ module.exports = (rootDir, ...args) => {
         ];
         const gitAnswer = answers.find((answer) => answer.name === 'git');
         const templates = files.getTemplates(rootDir, __dirname, templateList);
-
-        erector.construct(answers, templates);
+        const results = erector.construct(answers, templates);
 
         process.chdir(rootDir);
         if (gitAnswer.answer) {
@@ -75,6 +74,8 @@ module.exports = (rootDir, ...args) => {
         }
 
         process.chdir(__dirname);
+
+        return results;
     }).catch((error) => logger.error(colorize.colorize(error.message, 'red')));
 };
 

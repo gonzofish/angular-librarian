@@ -98,10 +98,10 @@ published to NPM. The basic structure of a published library is:
 
 ```
 |__bundles/
-   |__<library name>.umd.js
-   |__<library name>.umd.js.map
-   |__<library name>.umd.min.js
-   |__<library name>.bundle.min.js.map
+   |__{{ name }}.umd.js
+   |__{{ name }}.umd.js.map
+   |__{{ name }}.umd.min.js
+   |__{{ name }}.bundle.min.js.map
 |__index.d.ts
 |__package.json
 |__README.md
