@@ -36,6 +36,8 @@ exports.mock = (sandbox) => {
         }
     };
 
+    erector.construct.setTestMode(true);
+
     mocks.colorize.callsFake((text, color) =>
         `[${ color }]${ text }[/${ color }]`
     );

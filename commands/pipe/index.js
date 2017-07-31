@@ -44,8 +44,10 @@ const generateWithKnownPipeName = (name, forExamples) => {
 };
 
 const construct = (answers, forExamples) => {
-    erector.construct(answers, getTemplates(forExamples));
+    const result = erector.construct(answers, getTemplates(forExamples));
     notifyUser(answers, forExamples);
+
+    return result;
 };
 
 const getTemplates = (forExamples) => {

@@ -222,5 +222,61 @@ tap.test('command: pipe', (suite) => {
         });
     });
 
+    suite.test('should generate the corresponding pipe & spec files', (test) => {
+        const { erector, getTemplates } = mocks;
+        const { construct, inquire } = erector;
+        const answers = [
+            { answer: 'donut-dance', name: 'filename' },
+            { answer: 'camelCase', name: 'pipeName' },
+            { answer: 'PascalCasePipe', name: 'className' }
+        ];
+        const appOutput =
+            `import { Pipe, PipeTransform } from '@angular/core';\n` +
+            `\n` +
+            `@Pipe({ name: 'camelCase' })\n` +
+            `export class PascalCasePipe implements PipeTransform {\n` +
+            `    transform(value: any, args?: any): any {\n` +
+            `\n` +
+            `    }\n` +
+            `}\n`;;
+        const specOutput =
+            `/* tslint:disable:no-unused-variable */\n` +
+            `\n` +
+            `import { TestBed, async } from '@angular/core/testing';\n` +
+            `import { PascalCasePipe } from './donut-dance.pipe';\n` +
+            `\n` +
+            `describe('PascalCasePipe', () => {\n` +
+            `    it('', () => {\n` +
+            `        const pipe = new PascalCasePipe();\n` +
+            `        expect(pipe).toBeTruthy();\n` +
+            `    });\n` +
+            `});\n`;
+
+        construct.callThrough();
+
+        getTemplates.resetBehavior();
+        getTemplates.callThrough();
+        inquire.resetBehavior();
+        inquire.resolves(answers);
+
+        test.plan(1);
+
+        make().then((result) => {
+            test.deepEqual(result, [
+                // app.ts
+                {
+                    destination: '/created/src/pipes/donut-dance.pipe.ts',
+                    output: appOutput
+                },
+                // spec.ts
+                {
+                    destination: '/created/src/pipes/donut-dance.pipe.spec.ts',
+                    output: specOutput
+                }
+            ]);
+            test.end();
+        });
+    });
+
     suite.end();
 });

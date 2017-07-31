@@ -38,6 +38,7 @@
     "erector-set": "1.0.0-beta.1"
   },
   "devDependencies": {
+    "erector-set": "^1.0.0-beta.2",
     "nodemon": "^1.11.0",
     "sinon": "^2.3.8",
     "tap": "^10.7.0"
