@@ -152,7 +152,7 @@ tap.test('command: service', (suite) => {
                 '[green]file:[/green]'
             ));
             test.ok(log.secondCall.calledWith(
-                `    import { PascalCaseService } from './services/donut-dance.service';`
+                `[cyan]    import { PascalCaseService } from './services/donut-dance.service';[/cyan]`
             ));
             test.ok(log.thirdCall.calledWith(
                 '[green]And to add[/green]',

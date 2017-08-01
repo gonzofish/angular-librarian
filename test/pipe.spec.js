@@ -162,7 +162,7 @@ tap.test('command: pipe', (suite) => {
                 '[green]file:[/green]'
             ));
             test.ok(log.secondCall.calledWith(
-                `    import { PascalCasePipe } from './pipes/donut-dance.pipe';`
+                `[cyan]    import { PascalCasePipe } from './pipes/donut-dance.pipe';[/cyan]`
             ));
             test.ok(log.thirdCall.calledWith(
                 '[green]And to add[/green]',

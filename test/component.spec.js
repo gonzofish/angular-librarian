@@ -740,7 +740,7 @@ tap.test('command: component', (suite) => {
         make().then(() => {
             test.equal(log.callCount, 3);
             test.ok(log.firstCall.calledWith(
-                `[green]\nDon't forget to add the following to the [/green]`,
+                `[green]Don't forget to add the following to the [/green]`,
                 'src/*.module.ts ',
                 '[green]file:[/green]'
             ));
