@@ -79,7 +79,7 @@ const notifyUser = (answers, forExamples) => {
         colorize.colorize('file:', 'green')
     );
     logger.info(
-        `    import { ${ className.answer } } from './directives/${ name.answer }.directive';`
+        colorize.colorize(`    import { ${ className.answer } } from './directives/${ name.answer }.directive';`, 'cyan')
     );
     logger.info(
         colorize.colorize('And to add', 'green'),

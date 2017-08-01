@@ -52,7 +52,7 @@ const getAllQuestions = () => [
 
 const construct = (answers, forExamples) => {
     const results = erector.construct(answers, getTemplates(forExamples));
-    
+
     notifyUser(answers, forExamples);
     return results;
 };
@@ -83,7 +83,9 @@ const notifyUser = (answers, forExamples) => {
         `${ moduleLocation }.module.ts`,
         colorize.colorize('file:', 'green')
     );
-    logger.info(`    import { ${serviceName.answer} } from './services/${filename.answer}.service';`);
+    logger.info(
+        colorize.colorize(`    import { ${serviceName.answer} } from './services/${filename.answer}.service';`, 'cyan')
+    );
     logger.info(
         colorize.colorize('And to add', 'green'),
         serviceName.answer,

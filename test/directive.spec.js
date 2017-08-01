@@ -262,7 +262,7 @@ tap.test('command: directive', (suite) => {
                 '[green]file:[/green]'
             ));
             test.ok(log.secondCall.calledWith(
-                `    import { BurgerBlitzDirective } from './directives/burger-blitz.directive';`
+                `[cyan]    import { BurgerBlitzDirective } from './directives/burger-blitz.directive';[/cyan]`
             ));
             test.ok(log.thirdCall.calledWith(
                 '[green]And to add[/green]',

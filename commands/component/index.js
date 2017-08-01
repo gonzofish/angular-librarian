@@ -314,7 +314,7 @@ const notifyUser = (answers, forExamples) => {
     const selector = answers.find((answer) => answer.name === 'selector');
 
     logger.info(
-        colorize.colorize(`\nDon't forget to add the following to the `, 'green'),
+        colorize.colorize(`Don't forget to add the following to the `, 'green'),
         `${ moduleLocation }.module.ts `,
         colorize.colorize('file:', 'green')
     );

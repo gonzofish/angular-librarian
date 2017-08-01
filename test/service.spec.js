@@ -200,7 +200,7 @@ tap.test('command: service', (suite) => {
                 '[green]file:[/green]'
             ));
             test.ok(log.secondCall.calledWith(
-                `    import { PascalCaseService } from './services/donut-dance.service';`
+                `[cyan]    import { PascalCaseService } from './services/donut-dance.service';[/cyan]`
             ));
             test.ok(log.thirdCall.calledWith(
                 '[green]And to add[/green]',
@@ -219,7 +219,7 @@ tap.test('command: service', (suite) => {
             { answer: 'pizza-party', name: 'filename' },
             { answer: 'PizzaPartyService', name: 'serviceName' }
         ];
-        const appOutput = 
+        const appOutput =
             `import { Injectable } from '@angular/core';\n` +
             `\n` +
             `@Injectable()\n` +

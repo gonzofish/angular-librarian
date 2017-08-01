@@ -84,7 +84,7 @@ const notifyUser = (answers, forExamples) => {
         colorize.colorize('file:', 'green')
     );
     logger.info(
-        `    import { ${className.answer} } from './pipes/${filename.answer}.pipe';`
+        colorize.colorize(`    import { ${className.answer} } from './pipes/${filename.answer}.pipe';`, 'cyan')
     );
     logger.info(
         colorize.colorize('And to add', 'green'),
