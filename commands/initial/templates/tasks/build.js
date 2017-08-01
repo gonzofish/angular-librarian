@@ -22,14 +22,14 @@ const es2015Dir = path.resolve(tscDir, 'lib-es2015');
 
 const runPromise = (message, fn) => {
     return function() {
-        console.info(colorize(message, 'cyan'));
+        console.info(colorize.colorize(message, 'cyan'));
         return fn().then(complete);
     };
 };
 
 const complete = (depth = 0) => {
     const spaces = ' '.repeat(depth);
-    console.info(colorize(`${ spaces }> Complete`, 'green'));
+    console.info(colorize.colorize(`${ spaces }> Complete`, 'green'));
 };
 const compileCode = () => Promise.all([2015, 5].map((type) =>
     ngc({ project: path.resolve(rootDir, `tsconfig.es${ type }.json`)})
