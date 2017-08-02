@@ -17,8 +17,8 @@ you have done into configuration files per the
 
 ## Upgrading
 
-The best path of migration is to use the built-in upgrade command in
-one of the following ways:
+Unless the migration states it, the best path of migration is to first use the
+built-in upgrade command in one of the following ways:
 
 ```shell
 ngl u
@@ -31,17 +31,23 @@ npm run g ugrade
 
 After doing that, following the version-specific list of migration steps.
 
+**Again, if read the migration steps first before running this command. You
+may need to take steps before running the upgrade command!**
+
 ## Migrations
 
 - [< 1.0.0-beta.12 to 1.0.0-beta.12](#1beta12)
 
-
 ### <a id="1beta12"></a>From < 1.0.0-beta.12 to 1.0.0-beta.12
 
-To migrate to this version, manually change the following <package name> should
-be the value of the `name` attribute in your `package.json` without scope (i.e,
-`@myscope/my-package` should be `my-package`):
+To perform this migration, make the changes below.
 
+Note, <package name> should be the value of the `name` attribute in your
+`package.json` without scope (i.e, `@myscope/my-package` should be
+`my-package`).
+
+1. Go into your `package.json` and set the `angular-librarian` version to
+   `1.0.0-beta.12`, run `npm update`, then run `ngl upgrade`
 1. Remove files:
     - `tsconfig.build.json`
     - `webpack/webpack.build.json`
