@@ -2,6 +2,7 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/gonzofish/angular-librarian/branches/master/badge.svg)](https://semaphoreci.com/gonzofish/angular-librarian)
 [![codecov](https://codecov.io/gh/gonzofish/angular-librarian/branch/master/graph/badge.svg)](https://codecov.io/gh/gonzofish/angular-librarian)
+[![npm version](https://badge.fury.io/js/angular-librarian.svg)](https://badge.fury.io/js/angular-librarian)
 
 An Angular 2+ scaffolding setup. Generates AOT-compliant code using similar
 paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
