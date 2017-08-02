@@ -114,12 +114,12 @@ Sets up the project. Can also be run to update a project to the latest angular-l
 #### Call signature
 
 ```shell
-ngl i
-ngl init
-ngl initialize
-npm run g i
-npm run g init
-npm run g initialize
+ngl i <options>
+ngl init <options>
+ngl initialize <options>
+npm run g i <options>
+npm run g init <options>
+npm run g initialize <options>
 ```
 
 #### Options
@@ -200,11 +200,22 @@ Generates a component
 #### Call signatures
 
 ```shell
-ngl c
-ngl component <selector>
-npm run g c
-npm run g component <selector>
+ngl c <options>
+ngl component <selector> <options>
+npm run g c <options>
+npm run g component <selector> <options>
 ```
+
+#### Options
+
+- `--defaults` / `-d`: Create a component with file-based templates & styles, no
+   lifecycle hooks
+- `--examples` / `-x`: Generate the component in the `examples` directory
+- `--hooks=<list of hooks>` / `--h=<list of hooks>`: Use the provided lifecycle
+   hooks.
+- `--inline-styles` / `--is`: Use inline styles
+- `--inline-template` / `--it`: Use an inline template
+
 
 #### Prompts
 
@@ -244,11 +255,15 @@ Generates a directive
 #### Call signatures
 
 ```shell
-ngl d
-ngl directive <directive-name>
-npm run g d
-npm run g directive <directive-name>
+ngl d <options>
+ngl directive <directive-name> <options>
+npm run g d <options>
+npm run g directive <directive-name> <options>
 ```
+
+#### Options
+
+- `--examples` / `-x`: Generate the directive in the `examples` directory
 
 #### Prompts
 
@@ -276,11 +291,13 @@ Generates a service
 #### Call signatures
 
 ```shell
-ngl s
-ngl service <service-name>
-npm run g s
-npm run g service <service-name>
+ngl s <options>
+ngl service <service-name> <options>
+npm run g s <options>
+npm run g service <service-name> <options>
 ```
+
+- `--examples` / `-x`: Generate the service in the `examples` directory
 
 #### Prompts
 
@@ -308,11 +325,13 @@ Generates a pipe
 #### Call signatures
 
 ```shell
-ngl p
-ngl p <pipe-name>
-npm run g p
-npm run g p <pipe-name>
+ngl p <options>
+ngl p <pipe-name> <options>
+npm run g p <options>
+npm run g p <pipe-name> <options>
 ```
+
+- `--examples` / `-x`: Generate the pipe in the `examples` directory
 
 #### Prompts
 
@@ -532,8 +551,13 @@ npm pack
 ```
 
 Which will generate a compressed file containing your library as it will look
-when packaged up and published to NPM. The basic structure of a published
-library is:
+when packaged up and published to NPM. The packaging process removes any files
+specific to developing your library. It, more importantly, creates distribution
+files for usage with many different module systems.
+
+### Unscoped Structure
+
+The basic structure of a published, unscoped library is:
 
 ```
 |__bundles/
@@ -546,17 +570,37 @@ library is:
 |__README.md
 |__*.d.ts
 |__<library name>.d.ts
-|__<library name>.module.d.ts
 |__<library name>.es5.js
 |__<library name>.es5.js.map
 |__<library name>.js
 |__<library name>.js.map
 |__<library name>.metadata.json
+|__<library name>.module.d.ts
 ```
 
-As you can see, the packaging removes any files specific to developing your
-library. It, more importantly, creates distribution files for usage with many
-different module systems.
+### Scoped Structure
+
+For a scoped package, the structure will appear slightly different:
+
+```
+|__@<scope name>/
+   |__<library name>.es5.js
+   |__<library name>.es5.js.map
+   |__<library name>.js
+   |__<library name>.js.map
+|__bundles/
+   |__<library name>.umd.js
+   |__<library name>.umd.js.map
+   |__<library name>.umd.min.js
+   |__<library name>.bundle.min.js.map
+|__index.d.ts
+|__package.json
+|__README.md
+|__*.d.ts
+|__<library name>.d.ts
+|__<library name>.metadata.json
+|__<library name>.module.d.ts
+```
 
 ## <a name="contribute"></a>Contributing
 
