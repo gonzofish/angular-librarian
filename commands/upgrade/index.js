@@ -86,7 +86,7 @@ const installLibrarian = (npm, { available, installed}) => {
 
 const updateFiles = () => {
     logger.info(colorize.colorize('    Updating managed files to latest versions', 'cyan'));
-    const answers = files.open(files.resolver.root('.erector'), 'json');
+    const answers = getErectorAnswers();
     const srcDir = files.resolver.create('src');
     const fileList = [
         { destination: files.resolver.root('.gitignore'), name: '__gitignore', update: updateFlatFile },
@@ -127,23 +127,37 @@ const updateFiles = () => {
     logger.info(colorize.colorize('Files have been upgraded!', 'green'));
 };
 
+const getErectorAnswers = () => {
+    // we do this because packageName may not exist from older versions
+    let answers = files.open(files.resolver.root('.erector'), 'json');
+    const name = answers.find((answer) => answer.name === 'name');
+    const hasPackageName = answers.find((answer) => answer.name === 'packageName');
+
+    if (!hasPackageName) {
+        answers.push({
+            answer: name.answer,
+            name: 'packageName'
+        });
+    }
+
+    return answers;
+};
+
 const updatePackageJson = (existing, replacement) => {
     const merged = JSON.parse(erector.updaters.json(existing, replacement));
     const exist = JSON.parse(existing);
+    const alterFields = [
+        'author', 'description', 'es2015',
+        'keywords', 'license', 'main',
+        'module', 'name', 'repository',
+        'typings', 'version'
+    ];
 
-    // attributes handled by ngl that
-    // the user may have modified
-    merged.author = exist.author;
-    merged.description = exist.description;
-    merged.es2015 = exist.es2015;
-    merged.keywords = exist.keywords;
-    merged.license = exist.license;
-    merged.main = exist.main;
-    merged.module = exist.module;
-    merged.name = exist.name;
-    merged.repository = exist.repository;
-    merged.typings = exist.typings;
-    merged.version = exist.version;
+    alterFields.forEach((field) => {
+        if (field in exist) {
+            merged[field] = exist[field];
+        }
+    });
 
     return JSON.stringify(merged, null, 2);
 };

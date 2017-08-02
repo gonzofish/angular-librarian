@@ -178,6 +178,12 @@ tap.test('command: upgrade', (suite) => {
         const { getTemplates, log } = mocks;
         const answers = [
             {
+                name: 'name',
+                answer: 'my-package'
+            }
+        ];
+        const inquireAnswers = [
+            {
                 name: 'proceed',
                 answer: true
             }
@@ -187,7 +193,7 @@ tap.test('command: upgrade', (suite) => {
 
         open.returns(answers);
         inquire.resetBehavior();
-        inquire.resolves(answers);
+        inquire.resolves(inquireAnswers);
         test.plan(4);
 
         make().then(() => {
@@ -249,6 +255,12 @@ tap.test('command: upgrade', (suite) => {
         const { inquire } = mocks.erector;
         const answers = [
             {
+                name: 'name',
+                answer: 'my-package'
+            }
+        ];
+        const inquireAnswers = [
+            {
                 name: 'proceed',
                 answer: true
             }
@@ -280,9 +292,7 @@ tap.test('command: upgrade', (suite) => {
 
         open.returns(answers);
         inquire.resetBehavior();
-        inquire.resolves(answers);
-        inquire.resetBehavior();
-        inquire.resolves(answers);
+        inquire.resolves(inquireAnswers);
         jsonUpdater.returns(json);
         test.plan(1);
 
@@ -315,6 +325,16 @@ tap.test('command: upgrade', (suite) => {
         const { inquire } = mocks.erector;
         const answers = [
             {
+                name: 'name',
+                answer: 'my-package'
+            },
+            {
+                name: 'packageName',
+                answer: 'my-package'
+            }
+        ];
+        const inquireAnswers = [
+            {
                 name: 'proceed',
                 answer: true
             }
@@ -324,9 +344,7 @@ tap.test('command: upgrade', (suite) => {
 
         open.returns(answers);
         inquire.resetBehavior();
-        inquire.resolves(answers);
-        inquire.resetBehavior();
-        inquire.resolves(answers);
+        inquire.resolves(inquireAnswers);
         test.plan(2);
 
         make().then(() => {
