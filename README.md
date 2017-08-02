@@ -390,7 +390,7 @@ ngl l
 npm run lint
 ```
 
-### <a name="publish"></a>publish (alias: p)
+### <a name="publish"></a>publish (alias: pub)
 
 Create a tag and publish the library code using the
 [`np` library](https://github.com/sindresorhus/np). Note that the `version`
@@ -432,7 +432,6 @@ ngl test <type>
 ngl t <type>
 npm test <type>
 
-
 ```
 
 ### <a name="upgrade"></a>upgrade (alias: u, up)
@@ -463,7 +462,11 @@ Any files with a asterisk (*) next to their name have a merge strategy associate
 
 ```shell
 ngl upgrade
+ngl up
 ngl u
+npm run g upgrade
+npm run g up
+npm run g u
 ```
 
 ## <a name="unit"></a>Unit Testing
@@ -543,17 +546,19 @@ matching name in `configs`. The configuration is applied using the
 
 ## <a name="pack"></a>Packaging
 
-To test your packages output before publishing, you can run the specified publish
-commands above.
+To test your packages output before publishing, run the following commands:
 
 ```shell
+ngl build
+cd dist
 npm pack
 ```
 
-Which will generate a compressed file containing your library as it will look
-when packaged up and published to NPM. The packaging process removes any files
-specific to developing your library. It, more importantly, creates distribution
-files for usage with many different module systems.
+These commands will build the output files into a `dist` directory, change into
+the `dist` directory, and generate a compressed file containing your library as
+it will look when packaged up and published to NPM. The packaging process
+removes any files specific to developing your library, such as `*.spec.ts` files
+and `.npmignore`.
 
 ### Unscoped Structure
 
