@@ -1,4 +1,4 @@
-# Migration Documentation
+# Migration Guides
 
 ## Custom Configurations
 

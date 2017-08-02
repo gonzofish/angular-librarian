@@ -6,7 +6,7 @@
 An Angular 2+ scaffolding setup. Generates AOT-compliant code using similar
 paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
-- [Migration Docs](MIGRATION.md)
+- [Migration Guides](MIGRATION.md)
 - [To Use the `ngl` Command](#ngl-command)
 - [Usage](#usage)
 - [Generative Commands](#generative-commands)
