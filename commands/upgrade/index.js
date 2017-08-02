@@ -129,13 +129,18 @@ const updateFiles = () => {
 
 const getErectorAnswers = () => {
     // we do this because packageName may not exist from older versions
+    const pkg = files.include(files.resolver.root('package.json'), 'json');
     let answers = files.open(files.resolver.root('.erector'), 'json');
-    const name = answers.find((answer) => answer.name === 'name');
+    let name = answers.find((answer) => answer.name === 'name').name;
     const hasPackageName = answers.find((answer) => answer.name === 'packageName');
+
+    if (name !== pkg.name) {
+        name = pkg.name;
+    }
 
     if (!hasPackageName) {
         answers.push({
-            answer: name.answer,
+            answer: name,
             name: 'packageName'
         });
     }

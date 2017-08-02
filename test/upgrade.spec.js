@@ -189,8 +189,12 @@ tap.test('command: upgrade', (suite) => {
             }
         ];
         const dirname = [process.cwd(), 'commands', 'upgrade'].join(path.sep);
+        const include = mockOnce('files', 'include');
         const open = mockOnce('files', 'open');
 
+        include.returns({
+            name: 'my-package'
+        });
         open.returns(answers);
         inquire.resetBehavior();
         inquire.resolves(inquireAnswers);
@@ -288,8 +292,12 @@ tap.test('command: upgrade', (suite) => {
             typings: './toppings.d.ts',
             version: '9.9.9'
         });
+        const include = mockOnce('files', 'include');
         const open = mockOnce('files', 'open');
 
+        include.returns({
+            name: 'my-package'
+        });
         open.returns(answers);
         inquire.resetBehavior();
         inquire.resolves(inquireAnswers);
@@ -340,8 +348,12 @@ tap.test('command: upgrade', (suite) => {
             }
         ];
         let existing = 'pizza\nburgers\nice cream';
+        const include = mockOnce('files', 'include');
         const open = mockOnce('files', 'open');
 
+        include.returns({
+            name: 'big-package'
+        });
         open.returns(answers);
         inquire.resetBehavior();
         inquire.resolves(inquireAnswers);
