@@ -1,5 +1,7 @@
 # Migration Guides
 
+If this guide is not clear, feel free to [create an issue](https://github.com/gonzofish/angular-librarian/issues/new?title=[Migration]%20)!
+
 ## Custom Configurations
 
 For all migrations, first, make sure you have no altered any of the following
@@ -61,6 +63,22 @@ be the value of the `name` attribute in your `package.json` without scope (i.e,
 5. Change in build TS configs (`tsconfig.es5.json` and `tsconfig.es2015.json`):
     - `"flatModuleOutFile": "{{ packageName }}.js"` to
       `"flatModuleOutFile": "<package name>.js"`
+6. Any Angular packages you may be pulling in, should be added to a
+   `configs/rollup.config.js`, per the [Custom Configurations](README.md#custom-config)
+   documentation. For instance, if you pull in `@angular/forms`, the Rollup config would
+   be:
 
+```javascript
+'use strict';
 
-Run `npm install` again, to ensure all dependencies are up-to-date.
+module.exports = {
+    external: [
+        '@angular/forms',
+    ],
+    globals: {
+        '@angular/forms': 'ng.forms',
+    }
+};
+```
+
+Run `npm install` and/or `npm update` again, to ensure all dependencies are up-to-date.
