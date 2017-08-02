@@ -33,9 +33,12 @@ After doing that, following the version-specific list of migration steps.
 
 - [< 1.0.0-beta.12 to 1.0.0-beta.12](#1beta12)
 
+
 ### <a id="1beta12"></a>From < 1.0.0-beta.12 to 1.0.0-beta.12
 
-To migrate to this version, manually change the following:
+To migrate to this version, manually change the following <package name> should
+be the value of the `name` attribute in your `package.json` without scope (i.e,
+`@myscope/my-package` should be `my-package`):
 
 1. Remove files:
     - `tsconfig.build.json`
@@ -54,3 +57,10 @@ To migrate to this version, manually change the following:
     - `"typings": "./<package name>.d.ts"`
 4. Change in `package.json`:
     - `"main": "./<package name>.bundle.js"` to `"main": "./bundles/<package name>.umd.js"`
+    - `"angular-librarian": "<version>"` to `"angular-librarian": "1.0.0-beta.12"`
+5. Change in build TS configs (`tsconfig.es5.json` and `tsconfig.es2015.json`):
+    - `"flatModuleOutFile": "{{ packageName }}.js"` to
+      `"flatModuleOutFile": "<package name>.js"`
+
+
+Run `npm install` again, to ensure all dependencies are up-to-date.
