@@ -7,11 +7,18 @@ module.exports = function (rootDir, type) {
     /* istanbul ignore next */
     const cmd = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
-    childProcess.spawnSync(
-        cmd,
-        ['run'].concat(getNpmCommand(type, args)),
-        { stdio: 'inherit' }
-    );
+    return new Promise((resolve, reject) => {
+        try {
+            childProcess.spawnSync(
+                cmd,
+                ['run'].concat(getNpmCommand(type, args)),
+                { stdio: 'inherit' }
+            );
+            resolve();
+        } catch (error) {
+            reject(error.message);
+        }
+    });
 };
 
 const getNpmCommand = (command, args) => {
