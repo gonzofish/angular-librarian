@@ -31,6 +31,16 @@ exports.getTemplates = (rootDir, directory, filenames) => filenames.map((filenam
 /* istanbul ignore next */
 exports.include = (file) => require(file);
 
+exports.open = (file, json = false) => {
+    let contents = fs.readFileSync(file, 'utf8');
+
+    if (json) {
+        contents = JSON.parse(contents);
+    }
+
+    return contents;
+}
+
 exports.resolver = {
     create() {
         const base = resolvePath(this.root(), arguments);

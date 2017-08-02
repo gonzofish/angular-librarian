@@ -3,13 +3,18 @@
 const commands = require('./commands');
 const inquire = require('erector-set').inquire;
 
+const colorize = require('./tools/utilities/colorize');
+const logging = require('./tools/logging');
+
 const main = (cliArgs) => {
     const command = getCommandName(cliArgs[0]);
     const commandArgs = cliArgs.slice(command === 'npm' ? 0 : 1);
+    const logger = logging.create('Librarian');
     const rootDir = process.cwd();
 
     if (typeof commands[command] === 'function') {
-        commands[command].apply(null, [rootDir].concat(commandArgs));
+        commands[command].apply(null, [rootDir].concat(commandArgs))
+            .catch((error) => logger.error(colorize.colorize(error, 'red')));
     } else {
         askForCommand();
     }

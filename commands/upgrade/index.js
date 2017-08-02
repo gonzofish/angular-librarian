@@ -86,7 +86,7 @@ const installLibrarian = (npm, { available, installed}) => {
 
 const updateFiles = () => {
     logger.info(colorize.colorize('    Updating managed files to latest versions', 'cyan'));
-    const answers = files.include(files.resolver.root('.erector'));
+    const answers = files.open(files.resolver.root('.erector'), 'json');
     const srcDir = files.resolver.create('src');
     const fileList = [
         { destination: files.resolver.root('.gitignore'), name: '__gitignore', update: updateFlatFile },

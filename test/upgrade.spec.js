@@ -132,7 +132,7 @@ tap.test('command: upgrade', (suite) => {
     suite.test('should call erector.inquire with a confirm file upgrade question', (test) => {
         const { inquire } = mocks.erector;
         const createYesNo = mockOnce('inputs', 'createYesNoValue');
-        
+
         createYesNo.returns('yes-no');
         test.plan(2);
 
@@ -150,7 +150,7 @@ tap.test('command: upgrade', (suite) => {
         });
     });
 
-    suite.test('should cancel the file upgrade when the use answers no', (test) => {
+    suite.test('should cancel the file upgrade when the user answers no', (test) => {
         const { construct, inquire } = mocks.erector;
         const { log } = mocks;
         const answers = [
@@ -159,7 +159,7 @@ tap.test('command: upgrade', (suite) => {
                 answer: false
             }
         ];
-        
+
         inquire.resetBehavior();
         inquire.resolves(answers);
         test.plan(2);
@@ -173,7 +173,7 @@ tap.test('command: upgrade', (suite) => {
         });
     });
 
-    suite.test('should upgrade the files when the use answers yes', (test) => {
+    suite.test('should upgrade the files when the user answers yes', (test) => {
         const { construct, inquire } = mocks.erector;
         const { getTemplates, log } = mocks;
         const answers = [
@@ -183,9 +183,9 @@ tap.test('command: upgrade', (suite) => {
             }
         ];
         const dirname = [process.cwd(), 'commands', 'upgrade'].join(path.sep);
-        const include = mockOnce('files', 'include');
-        
-        include.returns(answers);
+        const open = mockOnce('files', 'open');
+
+        open.returns(answers);
         inquire.resetBehavior();
         inquire.resolves(answers);
         test.plan(4);
@@ -239,7 +239,7 @@ tap.test('command: upgrade', (suite) => {
             test.ok(log.calledWith(
                 '[green]Files have been upgraded![/green]'
             ));
-            
+
             test.end();
         });
     });
@@ -276,9 +276,9 @@ tap.test('command: upgrade', (suite) => {
             typings: './toppings.d.ts',
             version: '9.9.9'
         });
-        const include = mockOnce('files', 'include');
-        
-        include.returns(answers);
+        const open = mockOnce('files', 'open');
+
+        open.returns(answers);
         inquire.resetBehavior();
         inquire.resolves(answers);
         inquire.resetBehavior();
@@ -320,9 +320,9 @@ tap.test('command: upgrade', (suite) => {
             }
         ];
         let existing = 'pizza\nburgers\nice cream';
-        const include = mockOnce('files', 'include');
-        
-        include.returns(answers);
+        const open = mockOnce('files', 'open');
+
+        open.returns(answers);
         inquire.resetBehavior();
         inquire.resolves(answers);
         inquire.resetBehavior();

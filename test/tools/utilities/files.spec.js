@@ -236,6 +236,50 @@ tap.test('#getTemplates', (suite) => {
     suite.end();
 });
 
+tap.test('#open', (suite) => {
+    const contents = `I'm a delicious pizza!`;
+    let open = files.open;
+    let read;
+
+    suite.beforeEach((done) => {
+        read = sinon.stub(fs, 'readFileSync');
+        read.returns(contents);
+
+        done();
+    });
+
+    suite.afterEach((done) => {
+        read.restore();
+        done();
+    });
+
+    suite.test('should return the contents', (test) => {
+        test.plan(2);
+
+        test.equal(open('./my-file.txt'), contents);
+        test.ok(read.calledWith('./my-file.txt'));
+
+        test.end();
+    });
+
+    suite.test('should parse the contents with JSON.parse if the json flag is true', (test) => {
+        const parse = sinon.stub(JSON, 'parse');
+        const jsonContents = 'JSON pizza!';
+
+        parse.returns(jsonContents);
+
+        test.plan(2);
+
+        test.equal(open('./my-file.txt', true), jsonContents);
+        test.ok(parse.calledWith(contents));
+
+        parse.restore();
+        test.end();
+    });
+
+    suite.end();
+});
+
 tap.test('.resolver', (suite) => {
     const resolver = files.resolver;
 
@@ -254,6 +298,7 @@ tap.test('.resolver', (suite) => {
     suite.afterEach((done) => {
         mockCwd.restore();
         mockResolve.restore();
+        done();
     });
 
     suite.test('.create should return a method', (test) => {
