@@ -26,6 +26,12 @@ const doRollup = (libName, dirs) => {
             '@angular/core': 'ng.core'
         },
         moduleName: librarianUtils.dashToCamel(nameParts.package),
+        onwarn: function rollupOnWarn(warning) {
+            // keeps TypeScript this errors down
+            if (warning.code !== 'THIS_IS_UNDEFINED') {
+                console.warn(warning.message);
+            }
+        },
         plugins: [
             rollupNodeResolve({
                 jsnext: true,
