@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const librarianUtils = require('angular-librarian/commands/utilities');
 const path = require('path');
 const rollup = require('rollup');
+const rollupCommon = require('rollup-plugin-commonjs');
 const rollupNodeResolve = require('rollup-plugin-node-resolve');
 const rollupSourcemaps = require('rollup-plugin-sourcemaps');
 const rollupUglify = require('rollup-plugin-uglify');
@@ -25,7 +26,16 @@ const doRollup = (libName, dirs) => {
             '@angular/core': 'ng.core'
         },
         moduleName: librarianUtils.dashToCamel(nameParts.package),
-        plugins: [ rollupNodeResolve(), rollupSourcemaps() ],
+        plugins: [
+            rollupCommon({
+                include: ['node_modules/rxjs/**']
+            }),
+            rollupNodeResolve({
+                jsnext: true,
+                module: true
+            }),
+            rollupSourcemaps()
+        ],
         sourceMap: true
     }, dirs.root);
     const fesm2015Config = Object.assign({}, baseConfig, {
