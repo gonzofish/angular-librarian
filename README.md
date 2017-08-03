@@ -533,6 +533,7 @@ Those attributes and their merge strategies are:
 The rollup configuration will append the provided attributes to create a new
 attribute of unique values. The attributes supported:
 
+- `commonjs`: a list of CommonJS dependencies to pull in. Will always include `node_modules/rxjs/**` to properly rollup RxJS.
 - `external`: creates a new array of unique values
 - `globals`: adds new attributes to the object
 

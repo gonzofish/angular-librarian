@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const librarianUtils = require('angular-librarian/commands/utilities');
 const path = require('path');
 const rollup = require('rollup');
+const rollupCommon = require('rollup-plugin-commonjs');
 const rollupNodeResolve = require('rollup-plugin-node-resolve');
 const rollupSourcemaps = require('rollup-plugin-sourcemaps');
 const rollupUglify = require('rollup-plugin-uglify');
@@ -25,7 +26,13 @@ const doRollup = (libName, dirs) => {
             '@angular/core': 'ng.core'
         },
         moduleName: librarianUtils.dashToCamel(nameParts.package),
-        plugins: [ rollupNodeResolve(), rollupSourcemaps() ],
+        plugins: [
+            rollupNodeResolve({
+                jsnext: true,
+                module: true
+            }),
+            rollupSourcemaps()
+        ],
         sourceMap: true
     }, dirs.root);
     const fesm2015Config = Object.assign({}, baseConfig, {
@@ -96,15 +103,24 @@ const generateDestinations = (dist, nameParts) => {
 };
 
 const generateConfig = (base, rootDir) => {
+    let commonjsIncludes = ['node_modules/rxjs/**'];
     const customLocation = path.resolve(rootDir, 'configs', 'rollup.config.js');
 
     if (fs.existsSync(customLocation)) {
         const custom = require(customLocation);
         const external = (custom.external || []).filter((external) => base.external.indexOf(external) === -1);
+        const includes = (custom.commonjs || []).filter((include) => commonjsIncludes.indexOf(include) === -1);
 
         base.external = base.external.concat(external);
         base.globals = erectorUtils.mergeDeep(custom.globals, base.globals);
+        commonjsIncludes = commonjsIncludes.concat(includes);
     }
+
+    base.plugins.unshift(
+        rollupCommon({
+            include: commonjsIncludes
+        })
+    );
 
     return base;
 };
