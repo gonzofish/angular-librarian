@@ -93,7 +93,7 @@ const getRemainingQuestions = (selectorName, options) => {
 };
 
 const getSelector = (selector) => {
-    if (utilities.checkIsDashFormat(selector)) {
+    if (caseConvert.checkIsDashFormat(selector)) {
         return { answers: getKnownSelector(selector) };
     } else {
         return {
@@ -104,12 +104,12 @@ const getSelector = (selector) => {
 
 const getKnownSelector = (selector) => [
     { answer: selector, name: 'selector' },
-    { answer: utilities.dashToCap(selector) + 'Component', name: 'componentName' }
+    { answer: caseConvert.dashToCap(selector) + 'Component', name: 'componentName' }
 ];
 
 const getSelectorQuestions = () => [
     { name: 'selector', question: 'What is the component selector (in dash-case)?', transform: (value) => caseConvert.checkIsDashFormat(value) ? value : null },
-    { name: 'componentName', transform: (value) => utilities.dashToCap(value) + 'Component', useAnswer: 'selector' }
+    { name: 'componentName', transform: (value) => caseConvert.dashToCap(value) + 'Component', useAnswer: 'selector' }
 ];
 
 const getStyle = (options) => {
