@@ -4,6 +4,7 @@ const colorMap = {
     blue: 34,
     cyan: 36,
     green: 32,
+    magenta: 35,
     red: 31,
     reset: 0,
     yellow: 33
