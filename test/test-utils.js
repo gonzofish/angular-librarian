@@ -20,12 +20,14 @@ exports.makeMake = (command) =>
 
 exports.mock = (sandbox) => {
     const mocks = {
+        checkVersion: sandbox.stub(utilities.files.librarianVersions, 'checkIsBranch'),
         colorize: sandbox.stub(utilities.colorize, 'colorize'),
         erector: {
             construct: sandbox.stub(erector, 'construct'),
             inquire: sandbox.stub(erector, 'inquire')
         },
         getTemplates: sandbox.stub(utilities.files, 'getTemplates'),
+        getVersion: sandbox.stub(utilities.files.librarianVersions, 'get'),
         log: sandbox.spy(),
         logger: sandbox.stub(logging, 'create'),
         parseOptions: sandbox.stub(utilities.options, 'parseOptions'),
@@ -38,11 +40,13 @@ exports.mock = (sandbox) => {
 
     erector.construct.setTestMode(true);
 
+    mocks.checkVersion.returns(false);
     mocks.colorize.callsFake((text, color) =>
         `[${ color }]${ text }[/${ color }]`
     );
     mocks.erector.inquire.rejects();
     mocks.getTemplates.returns('fake-templates');
+    mocks.getVersion.returns('ice-cream');
     mocks.logger.returns({
         error: mocks.log,
         info: mocks.log,

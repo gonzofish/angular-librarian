@@ -25,6 +25,7 @@ const npm = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
 
 tap.test('command: upgrade', (suite) => {
+    let getVersion;
     let gt;
     let make;
     let mocks;
@@ -101,7 +102,7 @@ tap.test('command: upgrade', (suite) => {
             ));
             test.ok(gt.calledWith('300.0.1', '300.0.0'));
             test.ok(log.thirdCall.calledWith(
-                '[yellow]\tUpdate of angular-librarian is[/yellow]',
+                '[yellow]\tUpgrade of angular-librarian is[/yellow]',
                 '[red]NOT[/red]',
                 '[yellow]required.[/yellow]'
             ));
@@ -124,6 +125,25 @@ tap.test('command: upgrade', (suite) => {
             test.ok(execute.thirdCall.calledWith(
                 npm,
                 ['i', '-D', 'angular-librarian@300.0.1']
+            ));
+            test.end();
+        });
+    });
+
+    suite.test('should upgrade the branch version if specified in the project package.json', (test) => {
+        const { checkVersion, log } = mocks;
+
+        checkVersion.resetBehavior();
+        checkVersion.returns(true);
+
+        test.plan(3);
+
+        make().catch(() => {
+            test.ok(log.calledWith('[green]Upgrading angular-librarian from:[/green]'));
+            test.ok(log.calledWith('[magenta]    ice-cream[/magenta]'));
+            test.ok(execute.calledWith(
+                npm,
+                ['up', 'angular-librarian']
             ));
             test.end();
         });
@@ -182,6 +202,16 @@ tap.test('command: upgrade', (suite) => {
                 answer: 'my-package'
             }
         ];
+        const finalAnswers = answers.concat(
+            {
+                name: 'packageName',
+                answer: 'my-package'
+            },
+            {
+            name: 'librarianVersion',
+            answer: 'ice-cream'
+            }
+        );
         const inquireAnswers = [
             {
                 name: 'proceed',
@@ -242,7 +272,7 @@ tap.test('command: upgrade', (suite) => {
                     { name: 'webpack/webpack.utils.js', overwrite: true }
                 ]
             ));
-            test.ok(construct.calledWith(answers, 'fake-templates'));
+            test.ok(construct.calledWith(finalAnswers, 'fake-templates'));
             test.ok(log.calledWith(
                 '[cyan]    Updating managed files to latest versions[/cyan]'
             ));
