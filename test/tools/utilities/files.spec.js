@@ -336,3 +336,139 @@ tap.test('.resolver', (suite) => {
 
     suite.end();
 });
+
+tap.test('.librarianVersions', (suite) => {
+    const versions = files.librarianVersions;
+
+    suite.test('#checkIsBranch should return true for URLs', (test) => {
+        const check = versions.checkIsBranch;
+
+        test.plan(5);
+
+        test.ok(check('https://github.com/gonzofish/angular-librarian'));
+        test.ok(check('http://github.com/gonzofish/angular-librarian'));
+        test.ok(check('git+https://github.com/gonzofish/angular-librarian'));
+        test.ok(check('git+http://github.com/gonzofish/angular-librarian'));
+        test.notOk(check('pizza'));
+
+        test.end();
+    });
+
+    suite.test('#get should return the installed angular-librarian version for non-branch', (test) => {
+        const dirname = [process.cwd(), 'tools', 'utilities'].join(path.sep);
+        const include = sinon.stub(files, 'include');
+        const manual = sinon.stub(files.resolver, 'manual');
+        const root = sinon.stub(files.resolver, 'root');
+
+        include.callsFake((version) => {
+            if (version === 'banana') {
+                return { version };
+            } else {
+                return {
+                    devDependencies: {
+                        'angular-librarian': version
+                    }
+                };
+            }
+        });
+        manual.returns('banana')
+        root.returns('pizza');
+
+        test.plan(5);
+
+        test.equal(versions.get(), 'banana');
+        test.ok(root.calledWith('package.json'));
+        test.ok(include.calledWith('pizza'));
+        test.ok(manual.calledWith(dirname, '..', '..', 'package.json'));
+        test.ok(include.calledWith('banana'));
+
+        include.restore();
+        manual.restore();
+        root.restore();
+
+        test.end();
+    });
+
+    suite.test('#get should use the angular-librarian in dependencies if its not in devDependencies', (test) => {
+        const include = sinon.stub(files, 'include');
+        const manual = sinon.stub(files.resolver, 'manual');
+        const root = sinon.stub(files.resolver, 'root');
+
+        include.callsFake((version) => {
+            if (version === 'banana') {
+                return { version };
+            } else {
+                return {
+                    dependencies: {
+                        'angular-librarian': version
+                    }
+                };
+            }
+        });
+        manual.returns('banana')
+        root.returns('pizza');
+
+        test.plan(1);
+
+        versions.get();
+        test.ok(include.calledWith('pizza'));
+
+        include.restore();
+        manual.restore();
+        root.restore();
+
+        test.end();
+    });
+
+    suite.test('#get should use the angular-librarian installed if none exists in the project package.json', (test) => {
+        const include = sinon.stub(files, 'include');
+        const manual = sinon.stub(files.resolver, 'manual');
+        const root = sinon.stub(files.resolver, 'root');
+
+        include.callsFake((version) => {
+            if (version === 'banana') {
+                return { version };
+            }
+        });
+        manual.returns('banana')
+        root.returns('pizza');
+
+        test.plan(1);
+
+        test.equal(versions.get(), 'banana');
+
+        include.restore();
+        manual.restore();
+        root.restore();
+
+        test.end();
+    });
+
+    suite.test('#get should return the URL for an installed branch version', (test) => {
+        const include = sinon.stub(files, 'include');
+        const manual = sinon.stub(files.resolver, 'manual');
+        const root = sinon.stub(files.resolver, 'root');
+
+        include.callsFake((version) => {
+            return {
+                devDependencies: {
+                    'angular-librarian': 'https://' + version
+                }
+            };
+        });
+        root.returns('pizza');
+
+        test.plan(2);
+
+        test.equal(versions.get(), 'https://pizza');
+        test.notOk(manual.called);
+
+        include.restore();
+        manual.restore();
+        root.restore();
+
+        test.end();
+    });
+
+    suite.end();
+});
