@@ -58,9 +58,10 @@ module.exports = (rootDir, ...args) => {
             { name: 'webpack/webpack.test.js', overwrite: true },
             { name: 'webpack/webpack.utils.js', overwrite: true }
         ];
+        const librarianVersion = utilities.getLibrarianVersion();
         const gitAnswer = answers.find((answer) => answer.name === 'git');
         const templates = files.getTemplates(rootDir, __dirname, templateList);
-        const results = erector.construct(answers, templates);
+        const results = erector.construct(answers.concat({ answer: librarianVersion, name: 'librarianVersion' }), templates);
 
         process.chdir(rootDir);
         if (gitAnswer.answer) {
