@@ -33,7 +33,7 @@ paradigms to the [Angular CLI](https://github.com/angular/angular-cli).
 
 
 
-## <a name="ngl-command"></a>To Use the ngl Command
+## <a id="ngl-command"></a>To Use the ngl Command
 
 The `ngl` command does _not_ install globally by default. To get it working
 there are some additional steps. To learn how to install it on your system,
@@ -109,7 +109,7 @@ Command | Purpose
 [pipe](#pipe) | Creates a pipe
 [service](#service) | Creates a service
 
-### <a name="init"></a>initialize (aliases: i, init)
+### <a id="init"></a>initialize (aliases: i, init)
 
 Sets up the project. Can also be run to update a project to the latest angular-librarian configuration.
 
@@ -195,7 +195,7 @@ Creates the project structure and a slew of files:
     application is loaded
 
 
-### <a name="component"></a>component (alias: c)
+### <a id="component"></a>component (alias: c)
 
 Generates a component
 
@@ -250,7 +250,7 @@ and a `component.ts`, `component.spec.ts`, and, if necessary, `component.html` a
       |__<selector>.component.ts
 ```
 
-### <a name="directive"></a>directive (alias: d)
+### <a id="directive"></a>directive (alias: d)
 
 Generates a directive
 
@@ -286,7 +286,7 @@ for a service--a `directive.ts` and `directive.spec.ts` file.
       |__<directive-name>.directive.ts
 ```
 
-### <a name="service"></a>service (alias: s)
+### <a id="service"></a>service (alias: s)
 
 Generates a service
 
@@ -320,7 +320,7 @@ for a service--a `service.ts` and `service.spec.ts` file.
       |__<service-name>.service.ts
 ```
 
-### <a name="pipe"></a>pipe (alias: p)
+### <a id="pipe"></a>pipe (alias: p)
 
 Generates a pipe
 
@@ -354,7 +354,7 @@ for a service--a `pipe.ts` and `pipe.spec.ts` file.
       |__<pipe-name>.pipe.ts
 ```
 
-## <a name="project-commands"></a>Project Commands
+## <a id="project-commands"></a>Project Commands
 
 There are commands provided out of the box, as NPM scripts. They are:
 
@@ -367,7 +367,7 @@ Command     | Purpose
 [test](#test) | Execute unit tests
 [upgrade](#upgrade) | Upgrade current project to latest Angular Librarian
 
-### <a name="build"></a>build (alias: b)
+### <a id="build"></a>build (alias: b)
 
 Build the library's code. This will run the code through
 the `ngc` compiler and compile the code for distribution.
@@ -380,7 +380,7 @@ ngl b
 npm run build
 ```
 
-### <a name="lint"></a>lint (alias: l)
+### <a id="lint"></a>lint (alias: l)
 
 Lint code through TSLint
 
@@ -392,7 +392,7 @@ ngl l
 npm run lint
 ```
 
-### <a name="publish"></a>publish (alias: pub)
+### <a id="publish"></a>publish (alias: pub)
 
 Create a tag and publish the library code using the
 [`np` library](https://github.com/sindresorhus/np). Note that the `version`
@@ -406,7 +406,7 @@ ngl pub <version>
 npm run tagVersion <version>
 ```
 
-### <a name="serve"></a>serve (alias: v)
+### <a id="serve"></a>serve (alias: v)
 
 Start the webpack dev server and run the library
 code through it.
@@ -422,7 +422,7 @@ npm start
 We use `start` for direct `npm` commands to keep the command as
 concise as possible.
 
-### <a name="test"></a>test (alias: t)
+### <a id="test"></a>test (alias: t)
 
 Run unit tests on code. For unit test types, see the
 [unit testing](#unit) section below.
@@ -436,7 +436,7 @@ npm test <type>
 
 ```
 
-### <a name="upgrade"></a>upgrade (alias: u, up)
+### <a id="upgrade"></a>upgrade (alias: u, up)
 
 Upgrades the current project to the latest Angular Librarian (if necessary) and
 update managed files to the latest versions.
@@ -471,7 +471,7 @@ npm run g up
 npm run g u
 ```
 
-## <a name="unit"></a>Unit Testing
+## <a id="unit"></a>Unit Testing
 
 Unit testing is done using Karma and Webpack. The setup is all done during the `initialize` command.
 The provided testing commands will watch your files for changes.
@@ -487,14 +487,13 @@ Configurations:
 
 Command | Testing TypeScript
 ---     | ---
-default | Run through Chrome & PhantomJS with files being watched & tests automatically re-run
-headless| Run through PhantomJS with files being watched & tests automatically re-run
-single  | Run through PhantomJS one time with no file watching
-watch   | Run through Chrome with files being watched & tests automatically re-run
+default | Run through PhantomJS one time with no file watching
+headless (aliases: hl, h)| Run through PhantomJS with files being watched & tests automatically re-run
+watch (alias: w)| Run through Chrome with files being watched & tests automatically re-run
 
 Note that Chrome still requires a manual refresh on the Debug tab to see updated test results.
 
-## <a name="custom-config"></a>Custom Configurations
+## <a id="custom-config"></a>Custom Configurations
 
 Some configurations can be extended with custom properties. These
 configurations should be placed in a `configs` directory under the project's
@@ -506,7 +505,7 @@ root directory with the corresponding name:
     - `webpack.dev.js`
     - `webpack.test.js`
 
-### <a name="karma-config"></a>Karma Configuration
+### <a id="karma-config"></a>Karma Configuration
 
 A custom Karma configuration should be a Node module that exports a function.
 The exported function will be relay the Karma `config` variable. If provided,
@@ -528,7 +527,7 @@ Those attributes and their merge strategies are:
     - `logLevel`
     - `port`
 
-### <a name="rollup-config"></a>Rollup Configuration
+### <a id="rollup-config"></a>Rollup Configuration
 
 The rollup configuration will append the provided attributes to create a new
 attribute of unique values. The attributes supported:
@@ -541,13 +540,13 @@ _Note_: there is no file provided named `rollup.config.js` like other
 configuration files--instead the configuration is maintained in
 `tasks/rollup.js`.
 
-### <a name="webpack-configs"></a>Webpack Configurations
+### <a id="webpack-configs"></a>Webpack Configurations
 
 Either of the Webpack configurations can be extended by providing a file with a
 matching name in `configs`. The configuration is applied using the
 `webpack-merge` library.
 
-## <a name="pack"></a>Packaging
+## <a id="pack"></a>Packaging
 
 To test your packages output before publishing, run the following commands:
 
@@ -610,7 +609,7 @@ For a scoped package, the structure will appear slightly different:
 |__<library name>.module.d.ts
 ```
 
-## <a name="contribute"></a>Contributing
+## <a id="contribute"></a>Contributing
 
 If you'd like to contribute to `angular-librarian`, please see the
 [contributing guide](.github/CONTRIBUTING.md)!

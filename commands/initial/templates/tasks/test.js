@@ -16,10 +16,14 @@ function run(type) {
 function getConfig(type) {
     switch (type) {
         case 'headless':
+        case 'hl':
+        case 'h':
             return getHeadlessConfig();
         case 'all':
+        case 'a':
             return getAllConfig();
         case 'watch':
+        case 'w':
             return getWatchConfig();
         default:
             return getSingleConfig();
