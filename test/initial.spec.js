@@ -21,7 +21,9 @@ const sandbox = sinon.sandbox.create();
 tap.test('command: initial', (suite) => {
     let chdir;
     let execSync;
+    let filesBranch;
     let filesInclude;
+    let filesVersions;
     let getTemplates;
     let mockErector;
     let mockLog;
@@ -34,7 +36,9 @@ tap.test('command: initial', (suite) => {
 
         chdir = sandbox.stub(process, 'chdir');
         execSync = sandbox.stub(childProcess, 'execSync');
+        filesBranch = sandbox.stub(files.librarianVersions, 'checkIsBranch');
         filesInclude = sandbox.stub(files, 'include');
+        filesVersions = sandbox.stub(files.librarianVersions, 'get');
         getTemplates = sandbox.stub(files, 'getTemplates');
         mockLog = sandbox.spy();
         mockLogger = sandbox.stub(logger, 'create');
@@ -46,6 +50,7 @@ tap.test('command: initial', (suite) => {
                 return { name: 'fake-library' };
             }
         });
+        filesVersions.returns('ice-cream');
         mockErector = {
             construct: sandbox.stub(erector, 'construct'),
             inquire: sandbox.stub(erector, 'inquire')
@@ -273,6 +278,10 @@ tap.test('command: initial', (suite) => {
             { answer: '1.0.0', name: 'version' }
         ];
         const dirname = process.cwd() + path.sep + ['commands', 'initial'].join(path.sep);
+        const finalAnswers = answers.concat({
+            answer: 'ice-cream',
+            name: 'librarianVersion'
+        });
         const templates = [
             { destination: '/root/path', template: 'some/template/path' },
             { desetination: '/root/blank-file', template: undefined }
@@ -289,7 +298,7 @@ tap.test('command: initial', (suite) => {
             test.ok(chdir.calledWith('./'));
             test.ok(chdir.calledWith(dirname));
 
-            test.ok(mockErector.construct.calledWith(answers, templates));
+            test.ok(mockErector.construct.calledWith(finalAnswers, templates));
             test.end();
         });
     });

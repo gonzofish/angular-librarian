@@ -29,7 +29,7 @@ exports.getTemplates = (rootDir, directory, filenames) => filenames.map((filenam
 }));
 
 /* istanbul ignore next */
-exports.include = (file) => require(file);
+exports.include = (file) => fs.existsSync(file) && require(file);
 
 exports.open = (file, json = false) => {
     let contents = fs.readFileSync(file, 'utf8');
@@ -62,4 +62,43 @@ const resolvePath = (prefix, args) => {
     const argsList = Array.prototype.slice.call(args);
 
     return path.resolve.apply(path.resolve, [prefix].concat(argsList));
+};
+
+const getLibrarianVersion = () => {
+    let version = getPackageLibrarianVersion();
+
+    if (!checkIsBranch(version)) {
+        version = exports.include(
+            exports.resolver.manual(__dirname, '..', '..', 'package.json')
+        ).version;
+    }
+
+    return version;
+};
+
+const getPackageLibrarianVersion = () => {
+    const pkg = exports.include(exports.resolver.root('package.json'));
+    let version;
+
+    if (pkg) {
+        version = getVersionFromPackage(pkg);
+    }
+
+    return version;
+};
+
+const getVersionFromPackage = (pkg) =>
+    getPackageVersion(pkg, 'devDependencies') ||
+        getPackageVersion(pkg, 'dependencies');
+
+const getPackageVersion = (pkg, attribute) =>
+    pkg[attribute] &&
+    'angular-librarian' in pkg[attribute] &&
+    pkg[attribute]['angular-librarian'];
+
+const checkIsBranch = (version) => /^(git\+)?https?\:/.test(version);
+
+exports.librarianVersions = {
+    checkIsBranch,
+    get: getLibrarianVersion
 };

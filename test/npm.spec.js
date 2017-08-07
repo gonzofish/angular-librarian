@@ -4,6 +4,8 @@ const childProcess = require('child_process');
 const sinon = require('sinon');
 const tap = require('tap');
 
+const colorize = require('../tools/utilities/colorize');
+const logging = require('../tools/logging');
 const npm = require('../commands/npm');
 
 const cmd = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
@@ -74,6 +76,36 @@ tap.test('command: npm', (suite) => {
         testRun(test, ['test', 'headless'], ['test', 'headless']);
 
         test.end();
+    });
+
+    suite.test('should return a promise', (test) => {
+        test.plan(1);
+
+        npm('./', 'b').then(() => {
+            test.ok(true);
+            test.end();
+        });
+    });
+
+    suite.test('should reject if an error happens', (test) => {
+        const color = sandbox.stub(colorize, 'colorize');
+        const log = sandbox.spy();
+        const logger = sandbox.stub(logging, 'create');
+
+        color.callsFake((text, color) => `[${ color }]${ text }[/${ color }]`);
+        logger.returns({
+            error: log
+        });
+        spawn.callsFake(() => {
+            throw new Error(`I'm afraid I've got some bad news!`);
+        });
+
+        test.plan(1);
+
+        npm('./').catch((error) => {
+            test.equal(error, `I'm afraid I've got some bad news!`);
+            test.end();
+        });
     });
 
     suite.end();

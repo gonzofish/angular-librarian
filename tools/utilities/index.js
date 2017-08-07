@@ -1,33 +1,11 @@
 'use strict';
 
-const caseConvert = require('./case-convert');
-const files = require('./files');
-const inputs = require('./inputs');
-const options = require('./options');
-
-const addMethods = (mod) => {
-    const methods = Object.keys(mod);
-
-    methods.forEach((method) =>
-        exports[method] = mod[method]
-    );
-};
-
-exports.caseConvert = caseConvert;
-addMethods(caseConvert);
-
+exports.caseConvert = require('./case-convert');
 exports.colorize = require('./colorize');
-
 exports.execute = require('./execute');
-
-exports.files = files;
-addMethods(files);
-
-exports.inputs = inputs;
-addMethods(inputs);
-
-exports.options = options;
-addMethods(options);
+exports.files = require('./files');
+exports.inputs = require('./inputs');
+exports.options = require('./options');
 
 exports.checkIsScopedName = (name) =>
     // @

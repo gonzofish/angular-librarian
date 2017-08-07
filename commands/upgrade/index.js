@@ -7,6 +7,7 @@ const childProcess = require('child_process');
 
 const logging = require('../../tools/logging');
 const { colorize, files, execute, inputs } = require('../../tools/utilities');
+const { librarianVersions } = files;
 
 let logger;
 
@@ -15,25 +16,28 @@ module.exports = (rootDir) => {
     /* istanbul ignore next */
     const npmCommand = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
-    return getLibrarianVersions(npmCommand)
-        .then((versions) => installLibrarian(npmCommand, versions))
+    return upgradeLibrarian(npmCommand)
         .then(upgradeFiles);
 };
 
-const upgradeFiles = () => erector.inquire([
-    {
-        allowBlank: true,
-        name: 'proceed',
-        question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
-        transform: inputs.createYesNoValue('n', [])
-    }
-]).then((answers) => {
-    if (answers[0].answer) {
-        updateFiles();
+const upgradeLibrarian = (npmCommand) => {
+    const version = librarianVersions.get();
+
+    if (!librarianVersions.checkIsBranch(version)) {
+        return getLibrarianVersions(npmCommand)
+            .then((versions) => installLibrarian(npmCommand, versions));
     } else {
-        logger.info(colorize.colorize('    Upgrade cancelled.', 'yellow'));
+        return Promise.resolve()
+            .then(() => upgradeBranchLibrarian(npmCommand, version));
     }
-});
+};
+
+const upgradeBranchLibrarian = (npm, version) => {
+    logger.info(colorize.colorize('Upgrading angular-librarian from:', 'green'));
+    logger.info(colorize.colorize('    ' + version, 'magenta'));
+
+    execute.execute(npm, ['up', 'angular-librarian']);
+}
 
 const getLibrarianVersions = (npm) => new Promise((resolve, reject) => {
     logger.info(colorize.colorize('Identifying the *newest* angular-librarian version', 'cyan'));
@@ -73,7 +77,7 @@ const installLibrarian = (npm, { available, installed}) => {
     const update = require('semver').gt(available, installed);
 
     logger.info(
-        colorize.colorize('\tUpdate of angular-librarian is', 'yellow'),
+        colorize.colorize('\tUpgrade of angular-librarian is', 'yellow'),
         update ? '' : colorize.colorize('NOT', 'red'),
         colorize.colorize('required.', 'yellow')
     );
@@ -84,9 +88,24 @@ const installLibrarian = (npm, { available, installed}) => {
     }
 }
 
+const upgradeFiles = () => erector.inquire([
+    {
+        allowBlank: true,
+        name: 'proceed',
+        question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
+        transform: inputs.createYesNoValue('n', [])
+    }
+]).then((answers) => {
+    if (answers[0].answer) {
+        updateFiles();
+    } else {
+        logger.info(colorize.colorize('    Upgrade cancelled.', 'yellow'));
+    }
+});
+
 const updateFiles = () => {
     logger.info(colorize.colorize('    Updating managed files to latest versions', 'cyan'));
-    const answers = getErectorAnswers();
+    const answers = getErectorAnswers().concat({ answer: librarianVersions.get(), name: 'librarianVersion' });
     const srcDir = files.resolver.create('src');
     const fileList = [
         { destination: files.resolver.root('.gitignore'), name: '__gitignore', update: updateFlatFile },
