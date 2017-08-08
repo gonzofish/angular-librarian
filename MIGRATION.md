@@ -36,7 +36,25 @@ may need to take steps before running the upgrade command!**
 
 ## Migrations
 
+- [1.0.0-beta.13](#1beta13)
 - [< 1.0.0-beta.12 to 1.0.0-beta.12](#1beta12)
+
+### <a id="1beta13"></a>1.0.0-beta.13
+
+A small bug was introduced and not accounted for with `tasks/rollup.js`. Line
+28 reads:
+
+```javascript
+moduleName: librarianUtils.dashToCamel(nameParts.package),
+```
+
+But should read:
+
+```javascript
+moduleName: librarianUtils.caseConvert.dashToCamel(nameParts.package),
+```
+
+The bug has been fixed but will not be available until the next release.
 
 ### <a id="1beta12"></a>From < 1.0.0-beta.12 to 1.0.0-beta.12
 

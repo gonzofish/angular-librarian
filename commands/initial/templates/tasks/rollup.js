@@ -25,7 +25,7 @@ const doRollup = (libName, dirs) => {
             '@angular/common': 'ng.common',
             '@angular/core': 'ng.core'
         },
-        moduleName: librarianUtils.dashToCamel(nameParts.package),
+        moduleName: librarianUtils.caseConvert.dashToCamel(nameParts.package),
         onwarn: function rollupOnWarn(warning) {
             // keeps TypeScript this errors down
             if (warning.code !== 'THIS_IS_UNDEFINED') {
