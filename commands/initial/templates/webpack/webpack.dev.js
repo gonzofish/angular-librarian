@@ -29,7 +29,6 @@ module.exports = webpackCommon('dev', {
     devtool: 'cheap-module-eval-source-map',
     entry: {
         app: [ examplePath('example.main') ],
-        scripts: [],
         vendor: [ webpackUtils.srcPath('vendor') ],
         styles: [ examplePath('styles.scss') ]
     },
