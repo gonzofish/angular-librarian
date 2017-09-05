@@ -4,8 +4,10 @@
 .npmignore
 .nyc_output
 *.tgz
+CODE_OF_CONDUCT.md
 coverage
 debug.log
+MIGRATION.md
 node_modules
 npm-debug.log*
 package
