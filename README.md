@@ -1,4 +1,4 @@
-# angular-librarian
+# Angular Librarian
 
 [![Build Status](https://semaphoreci.com/api/v1/gonzofish/angular-librarian/branches/master/badge.svg)](https://semaphoreci.com/gonzofish/angular-librarian)
 [![codecov](https://codecov.io/gh/gonzofish/angular-librarian/branch/master/graph/badge.svg)](https://codecov.io/gh/gonzofish/angular-librarian)
@@ -111,7 +111,7 @@ Command | Purpose
 
 ### <a id="init"></a>initialize (aliases: i, init)
 
-Sets up the project. Can also be run to update a project to the latest angular-librarian configuration.
+Sets up the project. Can also be run to update a project to the latest Angular Librarian configuration.
 
 #### Call signature
 
@@ -611,5 +611,5 @@ For a scoped package, the structure will appear slightly different:
 
 ## <a id="contribute"></a>Contributing
 
-If you'd like to contribute to `angular-librarian`, please see the
+If you'd like to contribute to Angular Librarian, please see the
 [contributing guide](.github/CONTRIBUTING.md)!
