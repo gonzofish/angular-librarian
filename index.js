@@ -30,6 +30,9 @@ const getCommandName = (command) => {
         case 'lint':
         case 'pub':
         case 'publish':
+        case 'r':
+        case 'rel':
+        case 'release':
         case 'serve':
         case 't':
         case 'test':
