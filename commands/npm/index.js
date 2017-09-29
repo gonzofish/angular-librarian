@@ -12,11 +12,14 @@ module.exports = function (rootDir, type) {
             const output = childProcess.spawnSync(
                 cmd,
                 ['run'].concat(getNpmCommand(type, args)),
-                { stdio: 'inherit' }
+                { stdio: ['inherit', 'inherit', 'pipe'] }
             );
+            const stderr = output.stderr && output.stderr.toString();
 
             if (output.error) {
                 throw output.error;
+            } else if (stderr) {
+                throw new Error(stderr);
             } else if (output.status !== 0) {
                 throw new Error(`Execution of "${ type }" errored, see above for more information.`);
             } else {
