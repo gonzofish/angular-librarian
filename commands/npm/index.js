@@ -32,6 +32,10 @@ const getNpmCommand = (command, args) => {
         case 'pub':
         case 'publish':
             return ['tagVersion'].concat(args);
+        case 'r':
+        case 'rel':
+        case 'release':
+            return ['release'].concat(args);
         case 'v':
         case 'serve':
             return 'start';
@@ -40,5 +44,5 @@ const getNpmCommand = (command, args) => {
             return ['test'].concat(args);
         default:
             return '';
-    };
+    }
 }

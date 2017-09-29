@@ -128,6 +128,7 @@ const updateFiles = () => {
         { name: 'tasks/copy-build.js', overwrite: true },
         { name: 'tasks/copy-globs.js', overwrite: true },
         { name: 'tasks/inline-resources.js', overwrite: true },
+        { name: 'tasks/release.js', overwrite: true },
         { name: 'tasks/rollup.js', overwrite: true },
         { name: 'tasks/test.js', overwrite: true },
         { name: 'webpack/webpack.common.js', overwrite: true },
