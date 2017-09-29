@@ -25,6 +25,7 @@ tap.test('command: npm', (suite) => {
 
     suite.beforeEach((done) => {
         spawn = sandbox.stub(childProcess, 'spawnSync');
+        spawn.returns({ status: 0 });
         done();
     });
 
