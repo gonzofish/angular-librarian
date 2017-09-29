@@ -7,14 +7,22 @@ module.exports = (type) => {
 
     return new Promise((resolve, reject) => {
         try {
-            childProcess.spawnSync(
+            const output = childProcess.spawnSync(
                 'np',
                 ['--no-publish'].concat(extraArgument),
                 { stdio: 'inherit' }
             );
-            resolve();
+
+            if (output.error) {
+                throw output.error;
+            } else if (output.status !== 0) {
+                throw new Error('Execution of `np` errored, see above for more information.');
+            } else {
+                resolve();
+            }
         } catch (error) {
             reject(error.message);
+            process.exit(1);
         }
     });
 };
@@ -33,5 +41,5 @@ const getCommand = (type) => {
 }
 
 if (!module.parent) {
-    module.exports(process.argv[2]);
+    return module.exports(process.argv[2]);
 }

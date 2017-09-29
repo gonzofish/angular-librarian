@@ -21,7 +21,7 @@ const main = (cliArgs) => {
 };
 
 const getCommandName = (command) => {
-    command = command ? command.replace(/^\-+/, '') : command;
+    command = command ? command.replace(/^-+/, '') : command;
 
     switch (command) {
         case 'b':

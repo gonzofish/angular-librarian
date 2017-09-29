@@ -9,12 +9,19 @@ module.exports = function (rootDir, type) {
 
     return new Promise((resolve, reject) => {
         try {
-            childProcess.spawnSync(
+            const output = childProcess.spawnSync(
                 cmd,
                 ['run'].concat(getNpmCommand(type, args)),
                 { stdio: 'inherit' }
             );
-            resolve();
+
+            if (output.error) {
+                throw output.error;
+            } else if (output.status !== 0) {
+                throw new Error(`Execution of "${ type }" errored, see above for more information.`);
+            } else {
+                resolve();
+            }
         } catch (error) {
             reject(error.message);
         }
