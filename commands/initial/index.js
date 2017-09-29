@@ -52,6 +52,7 @@ module.exports = (rootDir, ...args) => {
             { name: 'tasks/copy-globs.js', overwrite: true },
             { name: 'tasks/inline-resources.js', overwrite: true },
             { name: 'tasks/rollup.js', overwrite: true },
+            { name: 'tasks/tag-version.js', overwrite: true },
             { name: 'tasks/test.js', overwrite: true },
             { name: 'webpack/webpack.common.js', overwrite: true },
             { name: 'webpack/webpack.dev.js', overwrite: true },

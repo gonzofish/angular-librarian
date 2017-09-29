@@ -13,18 +13,20 @@ const sandbox = sinon.sandbox.create();
 
 tap.test('command: npm', (suite) => {
     const testRun = (test, type, args) => {
-        npm.apply(npm, ['./'].concat(type));
+        npm.apply(npm, ['./'].concat(type)).then(() => {})
         test.ok(spawn.calledWith(
             cmd,
             ['run'].concat(args),
-            { stdio: 'inherit' }
+            { stdio: ['inherit', 'inherit', 'pipe'] }
         ));
     };
 
     let spawn;
 
     suite.beforeEach((done) => {
+        sandbox.restore();
         spawn = sandbox.stub(childProcess, 'spawnSync');
+        spawn.returns({ status: 0 });
         done();
     });
 
@@ -87,25 +89,71 @@ tap.test('command: npm', (suite) => {
         });
     });
 
-    suite.test('should reject if an error happens', (test) => {
-        const color = sandbox.stub(colorize, 'colorize');
-        const log = sandbox.spy();
-        const logger = sandbox.stub(logging, 'create');
+    suite.test('rejections', (subSuite) => {
+        let color;
+        let log;
+        let logger;
 
-        color.callsFake((text, color) => `[${ color }]${ text }[/${ color }]`);
-        logger.returns({
-            error: log
-        });
-        spawn.callsFake(() => {
-            throw new Error(`I'm afraid I've got some bad news!`);
+        subSuite.beforeEach((done) => {
+            color = sandbox.stub(colorize, 'colorize');
+            log = sandbox.spy();
+            logger = sandbox.stub(logging, 'create');
+
+            color.callsFake((text, color) => `[${ color }]${ text }[/${ color }]`);
+            logger.returns({
+                error: log
+            });
+            done();
         });
 
-        test.plan(1);
-
-        npm('./').catch((error) => {
-            test.equal(error, `I'm afraid I've got some bad news!`);
-            test.end();
+        subSuite.afterEach(() => {
+            spawn.reset();
         });
+
+        subSuite.test('should reject if an error happens', (test) => {
+            spawn.callsFake(() => {
+                throw new Error(`I'm afraid I've got some bad news!`);
+            });
+
+            test.plan(1);
+
+            npm('./').catch((error) => {
+                test.equal(error, `I'm afraid I've got some bad news!`);
+                test.end();
+            });
+        });
+
+        subSuite.test('should return output.error if it exists', (test) => {
+            spawn.returns({ error: new Error(`I'm afraid I've got some bad news?`) });
+            test.plan(1);
+
+            npm('./').catch((error) => {
+                test.equal(error, `I'm afraid I've got some bad news?`);
+                test.end();
+            });
+        });
+
+        subSuite.test('should return an error if stderr has a value', (test) => {
+            spawn.returns({ stderr: { toString() { return `I'm afraid I've got some bad news.`; } } });
+            test.plan(1);
+
+            npm('./').catch((error) => {
+                test.equal(error, `I'm afraid I've got some bad news.`);
+                test.end();
+            });
+        });
+
+        subSuite.test('should return an error if the output.status is not 0', (test) => {
+            spawn.returns({ status: 1 });
+            test.plan(1);
+
+            npm('./', 'pizza').catch((error) => {
+                test.equal(error, `Execution of "pizza" errored, see above for more information.`);
+                test.end();
+            });
+        });
+
+        subSuite.end();
     });
 
     suite.end();

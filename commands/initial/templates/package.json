@@ -14,7 +14,7 @@
     "posttagVersion": "npm run build && npm publish dist",
     "prebuild": "rimraf dist out-tsc",
     "start": "webpack-dev-server --open --config ./webpack/webpack.dev.js",
-    "tagVersion": "np --no-publish",
+    "tagVersion": "node ./tasks/tag-version",
     "test": "node ./tasks/test"
   },
   "keywords": [],

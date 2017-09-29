@@ -1,4 +1,6 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
+'use strict';
+
 const path = require('path');
 const spawn = require('child_process').spawn;
 
