@@ -21,7 +21,6 @@ const sandbox = sinon.sandbox.create();
 tap.test('command: initial', (suite) => {
     let chdir;
     let execSync;
-    let filesBranch;
     let filesInclude;
     let filesVersions;
     let getTemplates;
@@ -34,9 +33,10 @@ tap.test('command: initial', (suite) => {
     suite.beforeEach((done) => {
         erector.construct.setTestMode(true);
 
+        sandbox.stub(files.librarianVersions, 'checkIsBranch');
+
         chdir = sandbox.stub(process, 'chdir');
         execSync = sandbox.stub(childProcess, 'execSync');
-        filesBranch = sandbox.stub(files.librarianVersions, 'checkIsBranch');
         filesInclude = sandbox.stub(files, 'include');
         filesVersions = sandbox.stub(files.librarianVersions, 'get');
         getTemplates = sandbox.stub(files, 'getTemplates');
@@ -88,7 +88,6 @@ tap.test('command: initial', (suite) => {
 
         initial('./').then(() => {
             const questions = mockErector.inquire.lastCall.args[0];
-            let transform;
 
             // Is there a more concise way to do this with sinon & TAP?
             // Maybe use something like jasmine.any(Function)?
@@ -225,8 +224,6 @@ tap.test('command: initial', (suite) => {
         test.plan(1);
 
         initial('./').then(() => {
-            const templateList = getTemplates.lastCall.args[2];
-
             test.ok(getTemplates.calledWith('./', dirname, [
                 { destination: '/root/.gitignore', name: '__gitignore' },
                 { destination: '/root/.npmignore', name: '__npmignore' },
@@ -255,6 +252,7 @@ tap.test('command: initial', (suite) => {
                 { name: 'tasks/copy-build.js', overwrite: true },
                 { name: 'tasks/copy-globs.js', overwrite: true },
                 { name: 'tasks/inline-resources.js', overwrite: true },
+                { name: 'tasks/release.js', overwrite: true },
                 { name: 'tasks/rollup.js', overwrite: true },
                 { name: 'tasks/test.js', overwrite: true },
                 { name: 'webpack/webpack.common.js', overwrite: true },
@@ -313,7 +311,6 @@ tap.test('command: initial', (suite) => {
             { answer: 'FakeLibraryModule', name: 'moduleName' },
             { answer: '1.0.0', name: 'version' }
         ];
-        const dirname = process.cwd() + path.sep + ['commands', 'initial'].join(path.sep);
         const templates = [
             { destination: '/root/path', template: 'some/template/path' },
             { desetination: '/root/blank-file', template: undefined }
@@ -346,7 +343,6 @@ tap.test('command: initial', (suite) => {
             { answer: 'FakeLibraryModule', name: 'moduleName' },
             { answer: '1.0.0', name: 'version' }
         ];
-        const dirname = process.cwd() + path.sep + ['commands', 'initial'].join(path.sep);
         const templates = [
             { destination: '/root/path', template: 'some/template/path' },
             { desetination: '/root/blank-file', template: undefined }

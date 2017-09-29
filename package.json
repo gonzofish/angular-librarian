@@ -38,11 +38,13 @@
     "erector-set": "1.0.0-beta.3"
   },
   "devDependencies": {
+    "eslint": "^4.7.2",
+    "eslint-plugin-node": "^5.2.0",
     "nodemon": "^1.11.0",
     "sinon": "^2.4.1",
     "tap": "^10.7.1"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.0.0"
   }
 }

@@ -13,6 +13,7 @@
     "postbuild": "rimraf build",
     "posttagVersion": "npm run build && npm publish dist",
     "prebuild": "rimraf dist out-tsc",
+    "release": "node ./tasks/release",
     "start": "webpack-dev-server --open --config ./webpack/webpack.dev.js",
     "tagVersion": "np --no-publish",
     "test": "node ./tasks/test"
