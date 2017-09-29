@@ -395,16 +395,23 @@ npm run lint
 ### <a id="publish"></a>publish (alias: pub)
 
 Create a tag and publish the library code using the
-[`np` library](https://github.com/sindresorhus/np). Note that the `version`
-argument utilizes the `version` arguments of the `np` library.
+[`np` library](https://github.com/sindresorhus/np). Optionally,
+arguments can be passed to make the build work faster.
+
+> **Note**: only use the optional arguments if you are 100% confident
+> your code works with the current dependencies & passes all tests!
 
 #### Call signatures
 
 ```shell
-ngl publish <version>
-ngl pub <version>
-npm run tagVersion <version>
+ngl publish <option>
+ngl pub <option>
+npm run tagVersion <option>
 ```
+
+- `no-cleanup`/`nc`: publishes but does not do a cleanup of `node_modules`
+- `yolo`/`y`: publishes but does not do a cleanup of `node_modules` nor
+    does it run tests.
 
 ### <a id="serve"></a>serve (alias: v)
 
