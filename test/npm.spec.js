@@ -13,11 +13,11 @@ const sandbox = sinon.sandbox.create();
 
 tap.test('command: npm', (suite) => {
     const testRun = (test, type, args) => {
-        npm.apply(npm, ['./'].concat(type));
+        npm.apply(npm, ['./'].concat(type)).then(() => {})
         test.ok(spawn.calledWith(
             cmd,
             ['run'].concat(args),
-            { stdio: 'inherit' }
+            { stdio: ['inherit', 'inherit', 'pipe'] }
         ));
     };
 
