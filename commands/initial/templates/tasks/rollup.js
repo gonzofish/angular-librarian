@@ -10,6 +10,8 @@ const rollupNodeResolve = require('rollup-plugin-node-resolve');
 const rollupSourcemaps = require('rollup-plugin-sourcemaps');
 const rollupUglify = require('rollup-plugin-uglify');
 
+const rollupGlobals = require('./rollup-globals');
+
 const doRollup = (libName, dirs) => {
     const nameParts = extractName(libName);
     const es5Entry = path.resolve(dirs.es5, `${ nameParts.package }.js`);
@@ -17,14 +19,8 @@ const doRollup = (libName, dirs) => {
     const destinations = generateDestinations(dirs.dist, nameParts);
     const baseConfig = generateConfig({
         entry: es5Entry,
-        external: [
-            '@angular/common',
-            '@angular/core'
-        ],
-        globals: {
-            '@angular/common': 'ng.common',
-            '@angular/core': 'ng.core'
-        },
+        external: Object.keys(rollupGlobals),
+        globals: rollupGlobals,
         moduleName: librarianUtils.caseConvert.dashToCamel(nameParts.package),
         onwarn: function rollupOnWarn(warning) {
             // keeps TypeScript this errors down
