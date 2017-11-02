@@ -88,7 +88,7 @@ const getQuestions = () => {
     return [
         { defaultAnswer: defaultName, name: 'name', question: `Library name:`, transform: checkNameFormat },
         { name: 'packageName', useAnswer: 'name', transform: extractPackageName },
-        { defaultAnswer: '', name: 'prefix', question: `Prefix (component/directive selector):` },
+        { allowBlank: true, defaultAnswer: '', name: 'prefix', question: `Prefix (component/directive selector):` },
         { defaultAnswer: (answers) => caseConvert.dashToWords(answers[1].answer), name: 'readmeTitle', question: 'README Title:' },
         { name: 'repoUrl', question: 'Repository URL:' },
         { name: 'git', question: 'Reinitialize Git project (y/N)?', transform: inputs.createYesNoValue('n') },

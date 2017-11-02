@@ -82,7 +82,7 @@ tap.test('command: initial', (suite) => {
     suite.test('should call erector.inquire with the questions to ask', (test) => {
         const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
 
-        test.plan(25);
+        test.plan(26);
 
         mockErector.inquire.rejects();
         createYesNo.returns('"no" function');
@@ -102,6 +102,7 @@ tap.test('command: initial', (suite) => {
             test.equal(questions[1].useAnswer, 'name');
 
             test.equal(typeof questions[2].defaultAnswer, 'string');
+            test.equal(questions[2].allowBlank, true);
             test.equal(questions[2].name, 'prefix');
             test.equal(questions[2].question, 'Prefix (component/directive selector):');
 
