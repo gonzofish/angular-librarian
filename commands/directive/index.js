@@ -16,7 +16,7 @@ let prefix;
 
 module.exports = function createDirective(rootDir, name) {
     logger = logging.create('Directive');
-    prefix = files.selectorPrefix();
+    prefix = files.selectorPrefix('directive-selector');
 
     const providedOptions = Array.from(arguments).slice(name && name[0] !== '-' ? 2 : 1);
     const options = opts.parseOptions(providedOptions, [

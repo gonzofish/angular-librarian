@@ -475,23 +475,47 @@ tap.test('.librarianVersions', (suite) => {
 
 tap.test('.selectorPrefix', (suite) => {
     const selectorPrefix = files.selectorPrefix;
-    const include = sinon.stub(files, 'include');
 
-    suite.test('should read the prefix setting from tslint.json', (test) => {
+    suite.test('should read the prefix directive-selector setting from tslint.json', (test) => {
+        const include = sinon.stub(files, 'include');
+
         include.returns({
             rules: {
                 'directive-selector': [
                     true,
-                    "attribute",
-                    "ngfl",
-                    "camelCase"
+                    'attribute',
+                    'ngfl',
+                    'camelCase'
                 ],
             }
         });
 
         test.plan(1);
 
-        test.equal(selectorPrefix(), 'ngfl');
+        test.equal(selectorPrefix('directive-selector'), 'ngfl');
+
+        include.restore();
+
+        test.end();
+    });
+
+    suite.test('should read the prefix directive-selector setting from tslint.json', (test) => {
+        const include = sinon.stub(files, 'include');
+
+        include.returns({
+            rules: {
+                'directive-selector': [
+                    true,
+                    'attribute',
+                    'ngfl',
+                    'camelCase'
+                ],
+            }
+        });
+
+        test.plan(1);
+
+        test.equal(selectorPrefix('directive-selector'), 'ngfl');
 
         include.restore();
 
@@ -499,20 +523,22 @@ tap.test('.selectorPrefix', (suite) => {
     });
 
     suite.test('should read the empty prefix from tslint.json', (test) => {
+        const include = sinon.stub(files, 'include');
+
         include.returns({
             rules: {
                 'directive-selector': [
                     true,
-                    "attribute",
-                    "",
-                    "camelCase"
+                    'attribute',
+                    '',
+                    'camelCase'
                 ],
             }
         });
 
         test.plan(1);
 
-        test.equal(selectorPrefix(), '');
+        test.equal(selectorPrefix('directive-selector'), '');
 
         include.restore();
 
@@ -520,6 +546,8 @@ tap.test('.selectorPrefix', (suite) => {
     });
 
     suite.test('should return empty prefix if directive-selector is not set', (test) => {
+        const include = sinon.stub(files, 'include');
+
         include.returns({
             rules: {
             }
@@ -527,7 +555,7 @@ tap.test('.selectorPrefix', (suite) => {
 
         test.plan(1);
 
-        test.equal(selectorPrefix(), '');
+        test.equal(selectorPrefix('directive-selector'), '');
 
         include.restore();
 
@@ -535,12 +563,14 @@ tap.test('.selectorPrefix', (suite) => {
     });
 
     suite.test('should return empty prefix if rules is not set', (test) => {
+        const include = sinon.stub(files, 'include');
+
         include.returns({
         });
 
         test.plan(1);
 
-        test.equal(selectorPrefix(), '');
+        test.equal(selectorPrefix('directive-selector'), '');
 
         include.restore();
 

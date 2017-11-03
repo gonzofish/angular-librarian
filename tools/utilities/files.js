@@ -103,14 +103,13 @@ exports.librarianVersions = {
     get: getLibrarianVersion
 };
 
-const getSelectorPrefixFromTslintRules = () => {
+const getSelectorPrefixFromTslintRules = (selector) => {
     const tslint = exports.include(exports.resolver.root('tslint.json'));
-    const directiveSelector = 'directive-selector';
 
     let prefix = '';
 
-    if (tslint && tslint.rules && tslint.rules[directiveSelector]) {
-        prefix = getValueFromTslintRules(tslint, directiveSelector)[2];
+    if (tslint && tslint.rules && tslint.rules[selector]) {
+        prefix = getValueFromTslintRules(tslint, selector)[2];
     }
 
     return prefix;
@@ -119,4 +118,4 @@ const getSelectorPrefixFromTslintRules = () => {
 const getValueFromTslintRules = (tslint, attribute) =>
   tslint.rules[attribute];
 
-exports.selectorPrefix = () => getSelectorPrefixFromTslintRules();
+exports.selectorPrefix = (selector) => getSelectorPrefixFromTslintRules(selector);
