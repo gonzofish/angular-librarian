@@ -910,7 +910,7 @@ tap.test('command: component', (suite) => {
     });
 
     suite.test('should scaffold the app & spec files with a prefix', (test) => {
-        filesSelectorPrefix.value('ngfl');
+        filesSelectorPrefix.returns('ngfl');
 
         const answers = [
             { answer: 'donut-dance', name: 'selector' },

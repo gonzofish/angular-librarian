@@ -119,4 +119,4 @@ const getSelectorPrefixFromTslintRules = () => {
 const getValueFromTslintRules = (tslint, attribute) =>
   tslint.rules[attribute];
 
-exports.selectorPrefix = getSelectorPrefixFromTslintRules();
+exports.selectorPrefix = () => getSelectorPrefixFromTslintRules();
