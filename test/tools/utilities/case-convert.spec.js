@@ -106,6 +106,18 @@ tap.test('#dashToCamel should convert a dash-case to camel case', (test) => {
     test.end();
 });
 
+tap.test('#dashToPascal should convert a dash-case to PascalCase', (test) => {
+    const convert = caseConvert.dashToPascal;
+
+    test.plan(3);
+
+    test.equal(convert('this-is-camel-case'), 'ThisIsCamelCase');
+    test.equal(convert('this-is-camel-case', '~'), 'This~Is~Camel~Case');
+    test.equal(convert('startedAsACamel'), 'StartedAsACamel');
+
+    test.end();
+});
+
 tap.test('#dashToCap should convert a dash-case to Pascal case', (test) => {
     const convert = caseConvert.dashToCap;
 

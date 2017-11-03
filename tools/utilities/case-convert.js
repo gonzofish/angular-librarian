@@ -13,8 +13,8 @@ exports.dashToCamel = (value, replaceChar = '') =>
         match.replace('-', replaceChar).toUpperCase()
     );
 
-exports.dashToPascal = (value) => {
-  const dash = exports.dashToCamel(value);
+exports.dashToPascal = (value, replaceChar = '') => {
+  const dash = exports.dashToCamel(value, replaceChar);
 
   return dash[0].toUpperCase() + exports.dashToCamel(dash.slice(1));
 }
