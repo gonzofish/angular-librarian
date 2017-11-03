@@ -7,6 +7,7 @@ const tap = require('tap');
 
 const component = require('../commands/component');
 const logging = require('../commands/logging');
+const testUtils = require('./test-utils');
 const utilities = require('../commands/utilities');
 
 const caseConvert = utilities.caseConvert;
@@ -21,6 +22,7 @@ tap.test('command: component', (suite) => {
     let color;
     let construct;
     let createYesNo;
+    let filesSelectorPrefix;
     let inquire;
     let log;
     let mockLogger;
@@ -34,6 +36,7 @@ tap.test('command: component', (suite) => {
         color = sandbox.stub(colorize, 'colorize');
         construct = sandbox.stub(erector, 'construct');
         createYesNo = sandbox.stub(inputs, 'createYesNoValue');
+        filesSelectorPrefix = sandbox.stub(files, 'selectorPrefix');
         inquire = sandbox.stub(erector, 'inquire');
         log = sandbox.spy();
         mockLogger = sandbox.stub(logging, 'create');
@@ -144,7 +147,8 @@ tap.test('command: component', (suite) => {
                 { answer: 'templateUrl', name: 'templateAttribute' },
                 { answer: '' , name: 'hooks' },
                 { answer: '', name: 'implements' },
-                { answer: '\n', name: 'lifecycleNg' }
+                { answer: '\n', name: 'lifecycleNg' },
+                { answer: '', name: 'prefix' }
             ]));
             test.end();
         });
@@ -167,7 +171,8 @@ tap.test('command: component', (suite) => {
                 { answer: 'templateUrl', name: 'templateAttribute' },
                 { answer: '' , name: 'hooks' },
                 { answer: '', name: 'implements' },
-                { answer: '\n', name: 'lifecycleNg' }
+                { answer: '\n', name: 'lifecycleNg' },
+                { answer: '', name: 'prefix' }
             ]));
             test.end();
         });
@@ -190,7 +195,8 @@ tap.test('command: component', (suite) => {
                 { answer: 'templateUrl', name: 'templateAttribute' },
                 { answer: '' , name: 'hooks' },
                 { answer: '', name: 'implements' },
-                { answer: '\n', name: 'lifecycleNg' }
+                { answer: '\n', name: 'lifecycleNg' },
+                { answer: '', name: 'prefix' }
             ]));
             test.end();
         });
@@ -200,68 +206,69 @@ tap.test('command: component', (suite) => {
         test.plan(32);
 
         createYesNo.returns('"no" function');
+
         inquire.rejects();
         make().catch(() => {
-            const questions = inquire.lastCall.args[0];
-            let question = questions[0];
+            const questions = testUtils.mapQuestionsToQuestionName(inquire.lastCall.args[0]);
 
             // selector
+            let question = questions.selector;
             test.equal(question.name, 'selector');
             test.equal(question.question, 'What is the component selector (in dash-case)?')
             test.equal(typeof question.transform, 'function');
 
-            question = questions[1];
+            question = questions.componentName;
             test.equal(question.name, 'componentName');
             test.equal(typeof question.transform, 'function');
             test.equal(question.useAnswer, 'selector');
 
             // styling
-            question = questions[2];
+            question = questions.styles;
             test.equal(question.allowBlank, true);
             test.equal(question.name, 'styles');
             test.equal(question.question, 'Use inline styles (y/N)?');
             test.equal(question.transform, '"no" function');
             test.ok(createYesNo.calledWith(
                 'n',
-                [],
+                [{ name: 'prefix', answer: ''}],
                 sinon.match.instanceOf(Function)
             ));
 
-            question = questions[3];
+            question = questions.styleAttribute;
             test.equal(question.name, 'styleAttribute');
             test.equal(typeof question.transform, 'function');
             test.equal(question.useAnswer, 'styles');
 
             // template
-            question = questions[4];
+            question = questions.template;
             test.equal(question.allowBlank, true);
             test.equal(question.name, 'template');
             test.equal(question.question, 'Use inline template (y/N)?');
             test.equal(question.transform, '"no" function');
             test.ok(createYesNo.calledWith(
                 'n',
-                [],
+                [{ name: 'prefix', answer: ''}],
                 sinon.match.instanceOf(Function)
             ));
 
-            question = questions[5];
+            question = questions.templateAttribute;
             test.equal(question.name, 'templateAttribute');
             test.equal(typeof question.transform, 'function');
             test.equal(question.useAnswer, 'template');
 
             // lifecycle hooks
-            question = questions[6];
+            question = questions.hooks;
             test.equal(question.allowBlank, true);
             test.equal(question.name, 'hooks');
             test.equal(question.question, 'Lifecycle hooks (comma-separated):');
             test.equal(typeof question.transform, 'function');
 
-            question = questions[7];
+            question = questions.implements;
             test.equal(question.name, 'implements');
             test.equal(typeof question.transform, 'function');
             test.equal(question.useAnswer, 'hooks');
 
-            question = questions[8];
+            question = questions.lifecycleNg;
             test.equal(question.name, 'lifecycleNg');
             test.equal(typeof question.transform, 'function');
             test.equal(question.useAnswer, 'hooks');
@@ -823,6 +830,108 @@ tap.test('command: component', (suite) => {
             `\n` +
             `@Component({\n` +
             `    selector: 'donut-dance',\n` +
+            `    styleUrls: ['./donut-dance.component.scss'],\n` +
+            `    templateUrl: './donut-dance.component.html'\n` +
+            `})\n` +
+            `export class PascalCaseComponent implements OnInit, DoCheck {\n` +
+            `    constructor() {}\n` +
+            `\n` +
+            `    ngOnInit() {\n` +
+            `    }\n` +
+            `\n` +
+            `    ngDoCheck() {\n` +
+            `    }\n` +
+            `}\n`;
+        const specOutput =
+            `/* tslint:disable:no-unused-variable */\n` +
+            `import {\n` +
+            `    async,\n` +
+            `    ComponentFixture,\n` +
+            `    TestBed\n` +
+            `} from '@angular/core/testing';\n` +
+            `import { PascalCaseComponent } from './donut-dance.component';\n` +
+            `\n` +
+            `describe('PascalCaseComponent', () => {\n` +
+            `    let component: PascalCaseComponent;\n` +
+            `    let fixture: ComponentFixture<PascalCaseComponent>;\n` +
+            `\n` +
+            `    beforeEach(async(() => {\n` +
+            `        TestBed.configureTestingModule({\n` +
+            `            declarations: [\n` +
+            `                PascalCaseComponent\n` +
+            `            ]\n` +
+            `        });\n` +
+            `        TestBed.compileComponents();\n` +
+            `    }));\n` +
+            `\n` +
+            `    beforeEach(() => {\n` +
+            `        fixture = TestBed.createComponent(PascalCaseComponent);\n` +
+            `        component = fixture.componentInstance;\n` +
+            `    });\n` +
+            `\n` +
+            `    it('should create the donut-dance', () => {\n` +
+            `        expect(component).toBeTruthy();\n` +
+            `    });\n` +
+            `});\n`;
+        const getTemplates = sandbox.stub(files, 'getTemplates');
+
+        construct.callThrough();
+
+        getTemplates.resetBehavior();
+        getTemplates.callThrough();
+        inquire.resetBehavior();
+        inquire.resolves(answers);
+
+        test.plan(1);
+
+        make().then((result) => {
+            test.deepEqual(result, [
+                // app.ts
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.ts',
+                    output: appOutput
+                },
+                // spec.ts
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.spec.ts',
+                    output: specOutput
+                },
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.scss',
+                    output: ''
+                },
+                {
+                    destination: '/created/src/donut-dance/donut-dance.component.html',
+                    output: ''
+                }
+            ]);
+            test.end();
+        });
+    });
+
+    suite.test('should scaffold the app & spec files with a prefix', (test) => {
+        filesSelectorPrefix.value('ngfl');
+
+        const answers = [
+            { answer: 'donut-dance', name: 'selector' },
+            { answer: 'PascalCaseComponent', name: 'componentName' },
+            { answer: `'./donut-dance.component.scss'`, name: 'styles' },
+            { answer: 'styleUrls', name: 'styleAttribute' },
+            { answer: `'./donut-dance.component.html'`, name: 'template' },
+            { answer: 'templateUrl', name: 'templateAttribute' },
+            { answer: ',\n    OnInit,\n    DoCheck', name: 'hooks' },
+            { answer: ' implements OnInit, DoCheck', name: 'implements' },
+            { answer: '\n    ngOnInit() {\n    }\n\n    ngDoCheck() {\n    }\n', name: 'lifecycleNg' }
+        ];
+        const appOutput =
+            `import {\n` +
+            `    Component,\n` +
+            `    OnInit,\n` +
+            `    DoCheck\n` +
+            `} from '@angular/core';\n` +
+            `\n` +
+            `@Component({\n` +
+            `    selector: 'ngfl-donut-dance',\n` +
             `    styleUrls: ['./donut-dance.component.scss'],\n` +
             `    templateUrl: './donut-dance.component.html'\n` +
             `})\n` +

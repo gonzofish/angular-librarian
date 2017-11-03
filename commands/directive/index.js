@@ -12,9 +12,11 @@ const opts = utilities.options;
 const resolver = files.resolver;
 
 let logger;
+let prefix;
 
 module.exports = function createDirective(rootDir, name) {
     logger = logging.create('Directive');
+    prefix = files.selectorPrefix;
 
     const providedOptions = Array.from(arguments).slice(name && name[0] !== '-' ? 2 : 1);
     const options = opts.parseOptions(providedOptions, [
@@ -32,16 +34,24 @@ module.exports = function createDirective(rootDir, name) {
 
 const generateWithKnownName = (name, forExamples) => Promise.resolve().then(() => {
     construct([
-        { name: 'name', answer: name },
+        { name: 'directiveName', answer: name },
         { name: 'className', answer: caseConvert.dashToCap(name) + 'Directive' },
-        { name: 'selector', answer: caseConvert.dashToCamel(name) }
+        { name: 'selector', answer: addSelectorPrefix(name) },
     ], forExamples);
 });
 
+const addSelectorPrefix = (value) => {
+  if (!prefix) {
+    return caseConvert.dashToCamel(value);
+  } else {
+    return `${prefix}${caseConvert.dashToPascal(value)}`;
+  }
+}
+
 const getAllQuestions = () => [
-    { name: 'name', question: 'Directive name (in dash-case):', transform: caseConvert.testIsDashFormat },
-    { name: 'selector', transform: caseConvert.dashToCamel, useAnswer: 'name' },
-    { name: 'className', transform: (value) => caseConvert.dashToCap(value) + 'Directive', useAnswer: 'name' }
+    { name: 'directiveName', question: 'Directive name (in dash-case):', transform: caseConvert.testIsDashFormat },
+    { name: 'selector', transform: addSelectorPrefix, useAnswer: 'directiveName' },
+    { name: 'className', transform: (value) => caseConvert.dashToCap(value) + 'Directive', useAnswer: 'directiveName' }
 ];
 
 const construct = (answers, forExamples) => {
@@ -58,11 +68,11 @@ const getTemplates = (forExamples) => {
 
     return files.getTemplates(resolver.root(), __dirname, [
         {
-            destination: directiveDir('{{ name }}.directive.ts'),
+            destination: directiveDir('{{ directiveName }}.directive.ts'),
             name: 'app.ts'
         },
         {
-            destination: directiveDir('{{ name }}.directive.spec.ts'),
+            destination: directiveDir('{{ directiveName }}.directive.spec.ts'),
             name: 'test.ts'
         }
     ]);
@@ -71,7 +81,7 @@ const getTemplates = (forExamples) => {
 const notifyUser = (answers, forExamples) => {
     const className = answers.find((answer) => answer.name === 'className');
     const moduleLocation = forExamples ? 'examples/example' : 'src/*';
-    const name = answers.find((answer) => answer.name === 'name');
+    const directiveName = answers.find((answer) => answer.name === 'directiveName');
 
     logger.info(
         colorize.colorize(`Don't forget to add the following to the`, 'green'),
@@ -79,7 +89,7 @@ const notifyUser = (answers, forExamples) => {
         colorize.colorize('file:', 'green')
     );
     logger.info(
-        colorize.colorize(`    import { ${ className.answer } } from './directives/${ name.answer }.directive';`, 'cyan')
+        colorize.colorize(`    import { ${ className.answer } } from './directives/${ directiveName.answer }.directive';`, 'cyan')
     );
     logger.info(
         colorize.colorize('And to add', 'green'),

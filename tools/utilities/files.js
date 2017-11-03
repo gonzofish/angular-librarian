@@ -102,3 +102,21 @@ exports.librarianVersions = {
     checkIsBranch,
     get: getLibrarianVersion
 };
+
+const getSelectorPrefixFromTslintRules = () => {
+    const tslint = exports.include(exports.resolver.root('tslint.json'));
+    const directiveSelector = 'directive-selector';
+
+    let prefix = '';
+
+    if (tslint && tslint.rules && tslint.rules[directiveSelector]) {
+        prefix = getValueFromTslintRules(tslint, directiveSelector)[2];
+    }
+
+    return prefix;
+};
+
+const getValueFromTslintRules = (tslint, attribute) =>
+  tslint.rules[attribute];
+
+exports.selectorPrefix = getSelectorPrefixFromTslintRules();
