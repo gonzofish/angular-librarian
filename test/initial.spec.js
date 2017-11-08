@@ -2,6 +2,7 @@
 
 const childProcess = require('child_process');
 const erector = require('erector-set');
+const fs = require('fs');
 const path = require('path');
 const process = require('process');
 const sinon = require('sinon');
@@ -81,7 +82,7 @@ tap.test('command: initial', (suite) => {
     suite.test('should call erector.inquire with the questions to ask', (test) => {
         const createYesNo = sandbox.stub(inputs, 'createYesNoValue');
 
-        test.plan(22);
+        test.plan(26);
 
         mockErector.inquire.rejects();
         createYesNo.returns('"no" function');
@@ -100,24 +101,29 @@ tap.test('command: initial', (suite) => {
             test.equal(typeof questions[1].transform, 'function');
             test.equal(questions[1].useAnswer, 'name');
 
-            test.equal(typeof questions[2].defaultAnswer, 'function');
-            test.equal(questions[2].name, 'readmeTitle');
-            test.equal(questions[2].question, 'README Title:');
+            test.equal(typeof questions[2].defaultAnswer, 'string');
+            test.equal(questions[2].allowBlank, true);
+            test.equal(questions[2].name, 'prefix');
+            test.equal(questions[2].question, 'Prefix (component/directive selector):');
 
-            test.equal(questions[3].name, 'repoUrl');
-            test.equal(questions[3].question, 'Repository URL:');
+            test.equal(typeof questions[3].defaultAnswer, 'function');
+            test.equal(questions[3].name, 'readmeTitle');
+            test.equal(questions[3].question, 'README Title:');
 
-            test.equal(questions[4].name, 'git');
-            test.equal(questions[4].question, 'Reinitialize Git project (y/N)?');
+            test.equal(questions[4].name, 'repoUrl');
+            test.equal(questions[4].question, 'Repository URL:');
+
+            test.equal(questions[5].name, 'git');
+            test.equal(questions[5].question, 'Reinitialize Git project (y/N)?');
             test.ok(createYesNo.calledWith('n'));
-            test.equal(questions[4].transform, '"no" function');
+            test.equal(questions[5].transform, '"no" function');
 
-            test.equal(questions[5].name, 'moduleName');
-            test.equal(typeof questions[5].transform, 'function');
-            test.equal(questions[5].useAnswer, 'packageName');
+            test.equal(questions[6].name, 'moduleName');
+            test.equal(typeof questions[6].transform, 'function');
+            test.equal(questions[6].useAnswer, 'packageName');
 
-            test.equal(questions[6].name, 'version');
-            test.equal(questions[6].question, 'Version:');
+            test.equal(questions[7].name, 'version');
+            test.equal(questions[7].question, 'Version:');
 
             test.ok(mockLog.calledWith('\x1b[31mError\x1b[0m'));
 
@@ -178,7 +184,7 @@ tap.test('command: initial', (suite) => {
         dashToCap.returns('WOW!');
 
         initial('./').then(() => {
-            const { transform } = mockErector.inquire.lastCall.args[0][5];
+            const { transform } = mockErector.inquire.lastCall.args[0][6];
             test.equal(transform('this is calm'), 'WOW!Module');
             test.end();
         });
@@ -193,7 +199,7 @@ tap.test('command: initial', (suite) => {
         dashToWords.returns('Herds of Words');
 
         initial('./').then(() => {
-            const { defaultAnswer } = mockErector.inquire.lastCall.args[0][2];
+            const { defaultAnswer } = mockErector.inquire.lastCall.args[0][3];
 
             test.equal(defaultAnswer([null, { answer: 'this-is-patrick' }]), 'Herds of Words');
             test.ok(dashToWords.calledWith('this-is-patrick'));
@@ -270,6 +276,7 @@ tap.test('command: initial', (suite) => {
         const answers = [
             { answer: '@myscope/fake-library', name: 'name' },
             { answer: 'fake-library', name: 'packageName' },
+            { answer: 'ngfl', name: 'prefix' },
             { answer: 'Fake Library', name: 'readmeTitle' },
             { answer: 'http://re.po', name: 'repoUrl' },
             { answer: false, name: 'git' },
@@ -306,6 +313,7 @@ tap.test('command: initial', (suite) => {
         const answers = [
             { answer: '@myscope/fake-library', name: 'name' },
             { answer: 'fake-library', name: 'packageName' },
+            { answer: 'ngfl', name: 'prefix' },
             { answer: 'Fake Library', name: 'readmeTitle' },
             { answer: 'http://re.po', name: 'repoUrl' },
             { answer: false, name: 'git' },
@@ -338,6 +346,7 @@ tap.test('command: initial', (suite) => {
         const answers = [
             { answer: '@myscope/fake-library', name: 'name' },
             { answer: 'fake-library', name: 'packageName' },
+            { answer: 'ngfl', name: 'prefix' },
             { answer: 'Fake Library', name: 'readmeTitle' },
             { answer: 'http://re.po', name: 'repoUrl' },
             { answer: true, name: 'git' },

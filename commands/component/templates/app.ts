@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 
 @Component({
-    selector: '{{ selector }}',
+    selector: '{{ prefix }}{{ selector }}',
     {{ styleAttribute }}: [{{ styles }}],
     {{ templateAttribute }}: {{ template }}
 })

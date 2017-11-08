@@ -4,7 +4,7 @@ import {
     TestBed
 } from '@angular/core/testing';
 
-import { {{ className }} } from './{{ name }}.directive';
+import { {{ className }} } from './{{ directiveName }}.directive';
 
 describe('{{ className }}', () => {
     it('', () => {

@@ -76,3 +76,11 @@ exports.mockOnce = (sandbox, util, method) =>
 const argsPath = (args) => Array.from(args).join('/');
 
 exports.sinon = sinon;
+
+exports.mapQuestionsToQuestionName = (questions) => {
+  const map = {};
+
+  questions.forEach(question => map[question.name] = question);
+
+  return map;
+}

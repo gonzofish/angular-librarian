@@ -472,3 +472,110 @@ tap.test('.librarianVersions', (suite) => {
 
     suite.end();
 });
+
+tap.test('.selectorPrefix', (suite) => {
+    const selectorPrefix = files.selectorPrefix;
+
+    suite.test('should read the prefix directive-selector setting from tslint.json', (test) => {
+        const include = sinon.stub(files, 'include');
+
+        include.returns({
+            rules: {
+                'directive-selector': [
+                    true,
+                    'attribute',
+                    'ngfl',
+                    'camelCase'
+                ],
+            }
+        });
+
+        test.plan(1);
+
+        test.equal(selectorPrefix('directive-selector'), 'ngfl');
+
+        include.restore();
+
+        test.end();
+    });
+
+    suite.test('should read the prefix directive-selector setting from tslint.json', (test) => {
+        const include = sinon.stub(files, 'include');
+
+        include.returns({
+            rules: {
+                'directive-selector': [
+                    true,
+                    'attribute',
+                    'ngfl',
+                    'camelCase'
+                ],
+            }
+        });
+
+        test.plan(1);
+
+        test.equal(selectorPrefix('directive-selector'), 'ngfl');
+
+        include.restore();
+
+        test.end();
+    });
+
+    suite.test('should read the empty prefix from tslint.json', (test) => {
+        const include = sinon.stub(files, 'include');
+
+        include.returns({
+            rules: {
+                'directive-selector': [
+                    true,
+                    'attribute',
+                    '',
+                    'camelCase'
+                ],
+            }
+        });
+
+        test.plan(1);
+
+        test.equal(selectorPrefix('directive-selector'), '');
+
+        include.restore();
+
+        test.end();
+    });
+
+    suite.test('should return empty prefix if directive-selector is not set', (test) => {
+        const include = sinon.stub(files, 'include');
+
+        include.returns({
+            rules: {
+            }
+        });
+
+        test.plan(1);
+
+        test.equal(selectorPrefix('directive-selector'), '');
+
+        include.restore();
+
+        test.end();
+    });
+
+    suite.test('should return empty prefix if rules is not set', (test) => {
+        const include = sinon.stub(files, 'include');
+
+        include.returns({
+        });
+
+        test.plan(1);
+
+        test.equal(selectorPrefix('directive-selector'), '');
+
+        include.restore();
+
+        test.end();
+    });
+
+    suite.end();
+});

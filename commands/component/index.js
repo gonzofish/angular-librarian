@@ -11,9 +11,11 @@ const files = utilities.files;
 const inputs = utilities.inputs;
 const opts = utilities.options;
 let logger;
+let prefix;
 
 module.exports = function createComponent(rootDir, selector) {
     logger = logging.create('Component');
+    prefix = files.selectorPrefix('component-selector') ? `${files.selectorPrefix('component-selector')}-` : '';
 
     const options = opts.parseOptions(Array.from(arguments).slice(hasSelector(selector) ? 2 : 1), [
         'default', 'defaults', 'd',
@@ -37,11 +39,13 @@ const constructWithDefaults = (rootDir, selector, options) => {
         const styleAnswers = getKnownStyle(false, selectorAnswers);
         const templateAnswers = getKnownTemplate(false, selectorAnswers);
         const lifecycleAnswers = getKnownLifecycleHooks('');
+        const prefixAnswer = getPrefixAnswer();
 
         const answers = selectorAnswers.concat(
             styleAnswers,
             templateAnswers,
-            lifecycleAnswers
+            lifecycleAnswers,
+            prefixAnswer
         );
 
         return Promise.resolve()
@@ -57,7 +61,9 @@ const hasSelector = (selector) => selector && selector[0] !== '-';
 
 const inquire = (rootDir, selector, options) => {
     const remaining = getRemainingQuestions(selector, options);
-    const knownAnswers = remaining.answers;
+    const prefixAnswer = getPrefixAnswer();
+    const knownAnswers = remaining.answers.concat(prefixAnswer);
+;
     const questions = remaining.questions.reduce((all, method) => all.concat(method(knownAnswers)), []);
 
     return erector.inquire(questions)
@@ -72,6 +78,8 @@ const construct = (answers, options = {}) => {
     notifyUser(answers, forExamples);
     return results;
 };
+
+const getPrefixAnswer = () => [{ name: 'prefix', answer: prefix }];
 
 const getRemainingQuestions = (selectorName, options) => {
     const all = [
@@ -103,8 +111,8 @@ const getSelector = (selector) => {
 };
 
 const getKnownSelector = (selector) => [
-    { answer: selector, name: 'selector' },
-    { answer: caseConvert.dashToCap(selector) + 'Component', name: 'componentName' }
+    { name: 'selector', answer: selector },
+    { name: 'componentName', answer: caseConvert.dashToCap(selector) + 'Component' }
 ];
 
 const getSelectorQuestions = () => [
