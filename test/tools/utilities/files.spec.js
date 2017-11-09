@@ -474,7 +474,7 @@ tap.test('.librarianVersions', (suite) => {
 });
 
 tap.test('.selectorPrefix', (suite) => {
-    const selectorPrefix = files.selectorPrefix;
+    const selectorPrefix = files.getSelectorPrefix;
 
     suite.test('should read the prefix directive-selector setting from tslint.json', (test) => {
         const include = sinon.stub(files, 'include');

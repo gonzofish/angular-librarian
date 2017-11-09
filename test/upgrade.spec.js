@@ -25,7 +25,6 @@ const npm = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
 
 tap.test('command: upgrade', (suite) => {
-    let getVersion;
     let gt;
     let make;
     let mocks;
@@ -208,8 +207,12 @@ tap.test('command: upgrade', (suite) => {
                 answer: 'my-package'
             },
             {
-            name: 'librarianVersion',
-            answer: 'ice-cream'
+                name: 'librarianVersion',
+                answer: 'ice-cream'
+            },
+            {
+                name: 'prefix',
+                answer: 'nglpf'
             }
         );
         const inquireAnswers = [
@@ -219,9 +222,11 @@ tap.test('command: upgrade', (suite) => {
             }
         ];
         const dirname = [process.cwd(), 'commands', 'upgrade'].join(path.sep);
+        const getPrefix = mockOnce('files', 'getSelectorPrefix');
         const include = mockOnce('files', 'include');
         const open = mockOnce('files', 'open');
 
+        getPrefix.returns('nglpf');
         include.returns({
             name: 'my-package'
         });

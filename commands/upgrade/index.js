@@ -109,7 +109,10 @@ const upgradeFiles = (npmCommand) => erector.inquire([
 
 const updateFiles = () => {
     logger.info(colorize.colorize('Updating managed files to latest versions', 'blue'));
-    const answers = getErectorAnswers().concat({ answer: librarianVersions.get(), name: 'librarianVersion' });
+    const answers = getErectorAnswers().concat([
+        { answer: librarianVersions.get(), name: 'librarianVersion' },
+        { answer: files.getSelectorPrefix(), name: 'prefix' }
+    ]);
     const srcDir = files.resolver.create('src');
     const fileList = [
         { destination: files.resolver.root('.gitignore'), name: '__gitignore', update: updateFlatFile },

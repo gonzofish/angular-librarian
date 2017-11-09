@@ -105,7 +105,6 @@ exports.librarianVersions = {
 
 const getSelectorPrefixFromTslintRules = (selector) => {
     const tslint = exports.include(exports.resolver.root('tslint.json'));
-
     let prefix = '';
 
     if (tslint && tslint.rules && tslint.rules[selector]) {
@@ -118,4 +117,5 @@ const getSelectorPrefixFromTslintRules = (selector) => {
 const getValueFromTslintRules = (tslint, attribute) =>
   tslint.rules[attribute];
 
-exports.selectorPrefix = (selector) => getSelectorPrefixFromTslintRules(selector);
+exports.getSelectorPrefix = (selector) =>
+    getSelectorPrefixFromTslintRules(selector);

@@ -15,7 +15,7 @@ let prefix;
 
 module.exports = function createComponent(rootDir, selector) {
     logger = logging.create('Component');
-    prefix = files.selectorPrefix('component-selector') ? `${files.selectorPrefix('component-selector')}-` : '';
+    prefix = files.getSelectorPrefix('component-selector') ? `${files.getSelectorPrefix('component-selector')}-` : '';
 
     const options = opts.parseOptions(Array.from(arguments).slice(hasSelector(selector) ? 2 : 1), [
         'default', 'defaults', 'd',
