@@ -11,13 +11,13 @@ const { librarianVersions } = files;
 
 let logger;
 
-module.exports = (rootDir) => {
+module.exports = () => {
     logger = logging.create('Upgrade');
     /* istanbul ignore next */
     const npmCommand = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
     return upgradeLibrarian(npmCommand)
-        .then(upgradeFiles);
+        .then(() => upgradeFiles(npmCommand));
 };
 
 const upgradeLibrarian = (npmCommand) => {
@@ -32,17 +32,10 @@ const upgradeLibrarian = (npmCommand) => {
     }
 };
 
-const upgradeBranchLibrarian = (npm, version) => {
-    logger.info(colorize.colorize('Upgrading angular-librarian from:', 'green'));
-    logger.info(colorize.colorize('    ' + version, 'magenta'));
-
-    execute.execute(npm, ['up', 'angular-librarian']);
-}
-
 const getLibrarianVersions = (npm) => new Promise((resolve, reject) => {
-    logger.info(colorize.colorize('Identifying the *newest* angular-librarian version', 'cyan'));
+    logger.info(colorize.colorize('Identifying the *newest* Angular Librarian version', 'blue'));
     const available = execute.execute(npm, ['show', 'angular-librarian', 'version']);
-    logger.info(colorize.colorize('Identifying the *installed* angular-librarian version', 'blue'));
+    logger.info(colorize.colorize('Identifying the *installed* Angular Librarian version', 'blue'));
 
     try {
         const installed = parseInstalledVersion(execute.execute(npm, ['list', '--depth=0', 'angular-librarian']));
@@ -77,34 +70,45 @@ const installLibrarian = (npm, { available, installed}) => {
     const update = require('semver').gt(available, installed);
 
     logger.info(
-        colorize.colorize('\tUpgrade of angular-librarian is', 'yellow'),
+        colorize.colorize('    Upgrade of Angular Librarian is', 'yellow'),
         update ? '' : colorize.colorize('NOT', 'red'),
         colorize.colorize('required.', 'yellow')
     );
 
     if (update) {
-        logger.info(colorize.colorize(`    Installing angular-librarian@${ available }`, 'green'));
+        logger.info(colorize.colorize(`Installing Angular Librarian ${ available }`, 'blue'));
         execute.execute(npm, ['i', '-D', `angular-librarian@${ available }`]);
     }
-}
+};
 
-const upgradeFiles = () => erector.inquire([
+const upgradeBranchLibrarian = (npm, version) => {
+    logger.info(colorize.colorize('Upgrading Angular Librarian from:', 'blue'));
+    logger.info(colorize.colorize('    ' + version, 'magenta'));
+
+    execute.execute(npm, ['up', 'angular-librarian']);
+};
+
+const upgradeFiles = (npmCommand) => erector.inquire([
     {
         allowBlank: true,
         name: 'proceed',
-        question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
+        question: colorize.colorize('The following will overwrite some of the files in your project. Would you like to continue ', 'red') +
+            '(y/N)' +
+            colorize.colorize('?', 'magenta'),
         transform: inputs.createYesNoValue('n', [])
     }
 ]).then((answers) => {
     if (answers[0].answer) {
         updateFiles();
+        runPostUpgradeInstall(npmCommand);
+        logger.info(colorize.colorize('Upgrade success!', 'green'));
     } else {
         logger.info(colorize.colorize('    Upgrade cancelled.', 'yellow'));
     }
 });
 
 const updateFiles = () => {
-    logger.info(colorize.colorize('    Updating managed files to latest versions', 'cyan'));
+    logger.info(colorize.colorize('Updating managed files to latest versions', 'blue'));
     const answers = getErectorAnswers().concat({ answer: librarianVersions.get(), name: 'librarianVersion' });
     const srcDir = files.resolver.create('src');
     const fileList = [
@@ -145,7 +149,7 @@ const updateFiles = () => {
 
     erector.construct(answers, templates);
 
-    logger.info(colorize.colorize('Files have been upgraded!', 'green'));
+    logger.info(colorize.colorize('    Files have been upgraded!', 'green'));
 };
 
 const getErectorAnswers = () => {
@@ -196,4 +200,21 @@ const updateFlatFile = (existing, replacement) => {
     );
 
     return replaceLines.concat(missingLines).join(newline);
-}
+};
+
+const runPostUpgradeInstall = (npm) => {
+    logger.info(
+        colorize.colorize('Updating NPM dependencies', 'blue')
+    );
+    logger.info(
+        colorize.colorize('    Running', 'yellow'),
+        'npm install'
+    );
+    execute.execute(npm, ['i']);
+
+    logger.info(
+        colorize.colorize('    Running', 'yellow'),
+        'npm upgrade'
+    );
+    execute.execute(npm, ['up']);
+};

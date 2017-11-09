@@ -10,8 +10,12 @@ const colorMap = {
     yellow: 33
 };
 
-exports.colorize = (text, color) => {
+const colorize = (text, color) => {
     color = color in colorMap ? colorMap[color] : colorMap.reset;
 
     return `\x1b[${ color }m${ text }\x1b[0m`;
+};
+
+module.exports = {
+    colorize
 };
