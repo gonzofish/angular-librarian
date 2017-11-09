@@ -94,7 +94,7 @@ const upgradeFiles = (npmCommand) => erector.inquire([
         name: 'proceed',
         question: colorize.colorize('The following will overwrite some of the files in your project. Would you like to continue ', 'red') +
             '(y/N)' +
-            colorize.colorize('?', 'magenta'),
+            colorize.colorize('?', 'red'),
         transform: inputs.createYesNoValue('n', [])
     }
 ]).then((answers) => {

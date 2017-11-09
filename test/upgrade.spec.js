@@ -90,19 +90,19 @@ tap.test('command: upgrade', (suite) => {
         test.plan(6);
 
         make().catch(() => {
-            test.ok(log.firstCall.calledWith('[cyan]Identifying the *newest* angular-librarian version[/cyan]'));
+            test.ok(log.firstCall.calledWith('[blue]Identifying the *newest* Angular Librarian version[/blue]'));
             test.ok(execute.firstCall.calledWith(
                 npm,
                 ['show', 'angular-librarian', 'version']
             ));
-            test.ok(log.secondCall.calledWith('[blue]Identifying the *installed* angular-librarian version[/blue]'));
+            test.ok(log.secondCall.calledWith('[blue]Identifying the *installed* Angular Librarian version[/blue]'));
             test.ok(execute.secondCall.calledWith(
                 npm,
                 ['list', '--depth=0', 'angular-librarian']
             ));
             test.ok(gt.calledWith('300.0.1', '300.0.0'));
             test.ok(log.thirdCall.calledWith(
-                '[yellow]\tUpgrade of angular-librarian is[/yellow]',
+                '[yellow]    Upgrade of Angular Librarian is[/yellow]',
                 '[red]NOT[/red]',
                 '[yellow]required.[/yellow]'
             ));
@@ -120,7 +120,7 @@ tap.test('command: upgrade', (suite) => {
 
         make().catch(() => {
             test.ok(log.getCall(3).calledWith(
-                '[green]    Installing angular-librarian@300.0.1[/green]'
+                '[blue]Installing Angular Librarian 300.0.1[/blue]'
             ));
             test.ok(execute.thirdCall.calledWith(
                 npm,
@@ -139,7 +139,7 @@ tap.test('command: upgrade', (suite) => {
         test.plan(3);
 
         make().catch(() => {
-            test.ok(log.calledWith('[green]Upgrading angular-librarian from:[/green]'));
+            test.ok(log.calledWith('[blue]Upgrading Angular Librarian from:[/blue]'));
             test.ok(log.calledWith('[magenta]    ice-cream[/magenta]'));
             test.ok(execute.calledWith(
                 npm,
@@ -161,7 +161,7 @@ tap.test('command: upgrade', (suite) => {
                 {
                     allowBlank: true,
                     name: 'proceed',
-                    question: 'The following will overwrite some of the files in your project. Would you like to continue (y/N)?',
+                    question: '[red]The following will overwrite some of the files in your project. Would you like to continue [/red](y/N)[red]?[/red]',
                     transform: 'yes-no'
                 }
             ]));
@@ -193,7 +193,7 @@ tap.test('command: upgrade', (suite) => {
         });
     });
 
-    suite.test('should upgrade the files when the user answers yes', (test) => {
+    suite.test('should upgrade the files & dependencies when the user answers yes', (test) => {
         const { construct, inquire } = mocks.erector;
         const { getTemplates, log } = mocks;
         const answers = [
@@ -228,7 +228,7 @@ tap.test('command: upgrade', (suite) => {
         open.returns(answers);
         inquire.resetBehavior();
         inquire.resolves(inquireAnswers);
-        test.plan(4);
+        test.plan(6);
 
         make().then(() => {
             test.ok(getTemplates.calledWith(
@@ -276,10 +276,18 @@ tap.test('command: upgrade', (suite) => {
             ));
             test.ok(construct.calledWith(finalAnswers, 'fake-templates'));
             test.ok(log.calledWith(
-                '[cyan]    Updating managed files to latest versions[/cyan]'
+                '[blue]Updating managed files to latest versions[/blue]'
             ));
             test.ok(log.calledWith(
-                '[green]Files have been upgraded![/green]'
+                '[green]    Files have been upgraded![/green]'
+            ));
+            test.ok(execute.calledWith(
+                npm,
+                ['i']
+            ));
+            test.ok(execute.calledWith(
+                npm,
+                ['up']
             ));
 
             test.end();
