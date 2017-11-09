@@ -23,6 +23,7 @@ let construct;
 let creator;
 let dashToCap;
 let getTemplates;
+let filesSelectorPrefix;
 let inquire;
 let log;
 let logger;
@@ -37,6 +38,7 @@ tap.test('command: directive', (suite) => {
         checkForExamples = sandbox.stub(opts, 'checkIsForExamples');
         construct = sandbox.stub(erector, 'construct');
         creator = sandbox.stub(files.resolver, 'create');
+        filesSelectorPrefix = sandbox.stub(files, 'selectorPrefix');
         getTemplates = sandbox.stub(files, 'getTemplates');
         inquire = sandbox.stub(erector, 'inquire');
         logger = sandbox.stub(logging, 'create');
@@ -99,7 +101,7 @@ tap.test('command: directive', (suite) => {
 
     suite.test('should ask no questions if a dash-case directive name is provided', (test) => {
         const answers = [
-            { answer: 'bacon-blast', name: 'name' },
+            { answer: 'bacon-blast', name: 'directiveName' },
             { answer: 'PascalCaseDirective', name: 'className' },
             { answer: 'camelCase', name: 'selector' }
         ];
@@ -111,6 +113,7 @@ tap.test('command: directive', (suite) => {
         dashToCamel.returns('camelCase');
         dashToCap.returns('PascalCase');
         checkDashFormat.returns(true);
+
         test.plan(2);
         make('bacon-blast').then(() => {
             test.notOk(inquire.called);
@@ -133,19 +136,19 @@ tap.test('command: directive', (suite) => {
 
             test.ok(inquire.calledWith([
                 {
-                    name: 'name',
+                    name: 'directiveName',
                     question: 'Directive name (in dash-case):',
                     transform: caseConvert.testIsDashFormat
                 },
                 {
                     name: 'selector',
-                    transform: caseConvert.dashToCamel,
-                    useAnswer: 'name'
+                    transform: sinon.match.instanceOf(Function),
+                    useAnswer: 'directiveName'
                 },
                 {
                     name: 'className',
                     transform: sinon.match.instanceOf(Function),
-                    useAnswer: 'name'
+                    useAnswer: 'directiveName'
                 }
             ]));
 
@@ -159,7 +162,7 @@ tap.test('command: directive', (suite) => {
         const answers = [
             {
                 answer: 'burger-blitz',
-                name: 'name'
+                name: 'directiveName'
             },
             {
                 answer: 'burgerBlitz',
@@ -186,11 +189,11 @@ tap.test('command: directive', (suite) => {
                 dirname,
                 [
                     {
-                        destination: '/created/src/directives/{{ name }}.directive.ts',
+                        destination: '/created/src/directives/{{ directiveName }}.directive.ts',
                         name: 'app.ts'
                     },
                     {
-                        destination: '/created/src/directives/{{ name }}.directive.spec.ts',
+                        destination: '/created/src/directives/{{ directiveName }}.directive.spec.ts',
                         name: 'test.ts'
                     }
                 ]
@@ -218,7 +221,7 @@ tap.test('command: directive', (suite) => {
         const answers = [
             {
                 answer: 'burger-blitz',
-                name: 'name'
+                name: 'directiveName'
             },
             {
                 answer: 'burgerBlitz',
@@ -246,11 +249,11 @@ tap.test('command: directive', (suite) => {
                 dirname,
                 [
                     {
-                        destination: '/created/examples/directives/{{ name }}.directive.ts',
+                        destination: '/created/examples/directives/{{ directiveName }}.directive.ts',
                         name: 'app.ts'
                     },
                     {
-                        destination: '/created/examples/directives/{{ name }}.directive.spec.ts',
+                        destination: '/created/examples/directives/{{ directiveName }}.directive.spec.ts',
                         name: 'test.ts'
                     }
                 ]
@@ -278,7 +281,7 @@ tap.test('command: directive', (suite) => {
         const answers = [
             {
                 answer: 'burger-blitz',
-                name: 'name'
+                name: 'directiveName'
             },
             {
                 answer: 'burgerBlitz',
@@ -314,7 +317,7 @@ tap.test('command: directive', (suite) => {
             `        expect(directive).toBeTruthy();\n` +
             `    });\n` +
             `});\n`;
-        // const getTemplates = sandbox.stub(files, 'getTemplates');
+
 
         construct.callThrough();
 
