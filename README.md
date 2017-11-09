@@ -131,6 +131,8 @@ npm run g initialize <options>
 #### Prompts
 - `Library name:` a dash-cased name that is used in constructing the `package.json`
     and `*.module.ts` file. It is also used to create the class name of the module.
+- `Prefix (component/directive selector):` an optional prefix to prepend to any
+    components and directives in your library; leave blank to use no prefix
 - `README Title:` the string to insert in the `README.md` file
 - `Repository URL:` the repository where the code will be held
 - `Reinitialize Git project (y/N)?`: if left blank, defaults to no. If yes or y are
