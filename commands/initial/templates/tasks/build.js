@@ -11,6 +11,7 @@ const inlineResources = require('./inline-resources');
 const rollup = require('./rollup');
 
 const colorize = librarianUtils.colorize;
+const execute = librarianUtils.execute;
 const rootDir = path.resolve(__dirname, '..');
 const buildDir = path.resolve(rootDir, 'build');
 const distDir = path.resolve(rootDir, 'dist');
@@ -34,15 +35,35 @@ const complete = (depth = 0) => {
 const evaluateExitCode = (exitCode) => {
     return exitCode === 0 ? Promise.resolve() : Promise.reject();
 };
-const compileCode = () => Promise.all([2015, 5].map((type) => {
-    const result = ngc(['--project', path.resolve(rootDir, `tsconfig.es${ type }.json`)]);
+const getAngularCompilerVersion = () => {
+    const npm = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
+    const lines = execute.execute(npm, ['list', '--depth=0', '@angular/compiler']).split(/\r?\n/);
+    const compilerLine = lines.find((line) => line.indexOf('@angular/compiler@') !== -1);
+    let version;
 
-    if (result.then !== undefined) {
-        result.then((exitCode) =>
-            evaluateExitCode(exitCode)
-        );
+    if (compilerLine) {
+        version = compilerLine.match(/\bangular\/compiler@[^\s]+\s?/) || [''];
+        version = version[0].trim().replace('angular/compiler@', '');
+    }
+
+    if (!version || version === '(empty)') {
+        Promise.reject('Angular Compiler is not installed!');
+    }
+
+    return version;
+};
+const compileCode = () => Promise.all([2015, 5].map((type) => {
+    const compilerVersion = getAngularCompilerVersion();
+    const majorCompilerVersion = +compilerVersion.split('.')[0];
+
+    if (majorCompilerVersion >= 5) {
+        const exitCode = ngc(['--project', path.resolve(rootDir, `tsconfig.es${ type }.json`)]);
+        return evaluateExitCode(exitCode);
     } else {
-        return evaluateExitCode(result);
+        ngc({ project: path.resolve(rootDir, `tsconfig.es${ type }.json`)})
+            .then((exitCode) => 
+            evaluateExitCode(exitCode)
+        )
     }
 }));
 const copyMetadata = () =>
