@@ -14,14 +14,14 @@ const rollupGlobals = require('./rollup-globals');
 
 const doRollup = (libName, dirs) => {
     const nameParts = extractName(libName);
-    const es5Entry = path.resolve(dirs.es5, `${ nameParts.package }.js`);
-    const es2015Entry = path.resolve(dirs.es2015, `${ nameParts.package }.js`);
+    const es5Entry = path.resolve(dirs.es5, `${nameParts.package}.js`);
+    const es2015Entry = path.resolve(dirs.es2015, `${nameParts.package}.js`);
     const destinations = generateDestinations(dirs.dist, nameParts);
     const baseConfig = generateConfig({
-        entry: es5Entry,
+        input: es5Entry,
         external: Object.keys(rollupGlobals),
         globals: rollupGlobals,
-        moduleName: librarianUtils.caseConvert.dashToCamel(nameParts.package),
+        name: librarianUtils.caseConvert.dashToCamel(nameParts.package),
         onwarn: function rollupOnWarn(warning) {
             // keeps TypeScript this errors down
             if (warning.code !== 'THIS_IS_UNDEFINED') {
@@ -35,25 +35,33 @@ const doRollup = (libName, dirs) => {
             }),
             rollupSourcemaps()
         ],
-        sourceMap: true
+        sourcemap: true
     }, dirs.root);
     const fesm2015Config = Object.assign({}, baseConfig, {
-        entry: es2015Entry,
-        dest: destinations.fesm2015,
-        format: 'es'
+        input: es2015Entry,
+        output: {
+            file: destinations.fesm2015,
+            format: 'es'
+        }
     });
     const fesm5Config = Object.assign({}, baseConfig, {
-        dest: destinations.fesm5,
-        format: 'es'
+        output: {
+            file: destinations.fesm5,
+            format: 'es'
+        }
     });
     const minUmdConfig = Object.assign({}, baseConfig, {
-        dest: destinations.minUmd,
-        format: 'umd',
+        output: {
+            file: destinations.minUmd,
+            format: 'umd'
+        },
         plugins: baseConfig.plugins.concat([rollupUglify({})])
     });
     const umdConfig = Object.assign({}, baseConfig, {
-        dest: destinations.umd,
-        format: 'umd'
+        output: {
+            file: destinations.umd,
+            format: 'umd'
+        }
     });
 
     const bundles = [
@@ -61,11 +69,14 @@ const doRollup = (libName, dirs) => {
         fesm5Config,
         minUmdConfig,
         umdConfig
-    ].map((config) =>
-        rollup.rollup(config).then((bundle) =>
-            bundle.write(config)
-        )
-    );
+    ].map(config =>
+        rollup.rollup(config)
+            .then(bundle => bundle.write({
+                file: config.output.file,
+                format: config.output.format,
+                ...config
+            }))
+        );
 
     return Promise.all(bundles);
 };
@@ -97,10 +108,10 @@ const generateDestinations = (dist, nameParts) => {
     }
 
     return Object.freeze({
-        fesm2015: path.resolve(fesmDest,`${ nameParts.package }.js`),
-        fesm5: path.resolve(fesmDest,`${ nameParts.package }.es5.js`),
-        minUmd: path.resolve(bundleDest, `${ nameParts.package }.umd.min.js`),
-        umd: path.resolve(bundleDest, `${ nameParts.package }.umd.js`)
+        fesm2015: path.resolve(fesmDest, `${nameParts.package}.js`),
+        fesm5: path.resolve(fesmDest, `${nameParts.package}.es5.js`),
+        minUmd: path.resolve(bundleDest, `${nameParts.package}.umd.min.js`),
+        umd: path.resolve(bundleDest, `${nameParts.package}.umd.js`)
     });
 };
 
