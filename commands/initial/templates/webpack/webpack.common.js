@@ -34,7 +34,7 @@ const getCommonConfig = (type) => {
         performance: { hints: false },
         plugins: [
             new ContextReplacementPlugin(
-                /angular(\\|\/)core(\\|\/)@angular/,
+                /angular(\\|\/)core(\\|\/)(@angular|esm5)/,
                 __dirname
             ),
             new LoaderOptionsPlugin({
