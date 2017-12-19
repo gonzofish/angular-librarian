@@ -21,15 +21,12 @@ const make = function() {
 let checkForExamples;
 let construct;
 let creator;
-let dashToCap;
 let getTemplates;
-let filesSelectorPrefix;
 let inquire;
 let log;
 let logger;
 let parseOptions;
 let rooter;
-let testDashFormat;
 
 tap.test('command: directive', (suite) => {
     suite.beforeEach((done) => {
@@ -38,7 +35,6 @@ tap.test('command: directive', (suite) => {
         checkForExamples = sandbox.stub(opts, 'checkIsForExamples');
         construct = sandbox.stub(erector, 'construct');
         creator = sandbox.stub(files.resolver, 'create');
-        filesSelectorPrefix = sandbox.stub(files, 'selectorPrefix');
         getTemplates = sandbox.stub(files, 'getTemplates');
         inquire = sandbox.stub(erector, 'inquire');
         logger = sandbox.stub(logging, 'create');
@@ -112,6 +108,34 @@ tap.test('command: directive', (suite) => {
         checkForExamples.returns(false);
         dashToCamel.returns('camelCase');
         dashToCap.returns('PascalCase');
+        checkDashFormat.returns(true);
+
+        test.plan(2);
+        make('bacon-blast').then(() => {
+            test.notOk(inquire.called);
+            test.ok(construct.calledWith(
+                answers,
+                'fake-templates'
+            ));
+            test.end();
+        });
+    });
+
+    suite.test('should prefix the `selector` answer if one has been set', (test) => {
+        const answers = [
+            { answer: 'bacon-blast', name: 'directiveName' },
+            { answer: 'PascalCaseDirective', name: 'className' },
+            { answer: 'myPascalSelector', name: 'selector' }
+        ];
+        const checkDashFormat = sandbox.stub(caseConvert, 'checkIsDashFormat');
+        const dashToCap = sandbox.stub(caseConvert, 'dashToCap');
+        const dashToPascal = sandbox.stub(caseConvert, 'dashToPascal');
+
+        sandbox.stub(files, 'getSelectorPrefix').returns('my');
+
+        checkForExamples.returns(false);
+        dashToCap.returns('PascalCase');
+        dashToPascal.returns('PascalSelector');
         checkDashFormat.returns(true);
 
         test.plan(2);
