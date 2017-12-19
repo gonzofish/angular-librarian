@@ -43,8 +43,11 @@ may need to take steps before running the upgrade command!**
 ### <a id="v1"></a>1.0.0
 
 Older projects that upgrade to v1.0.0 should make sure that the `np` library is
-removed from the local project and installed globally. To ensure `np` is not
-installed locally, after upgrading Librarian (see above):
+removed from the local project and installed globally. When Angular upgraded to
+version 5, it upgraded RxJS to v5.5.x--the `np` library will break if it uses
+RxJS past 5.4.3.
+
+To ensure `np` is not installed locally, after upgrading Librarian (see above):
 
 1. Check that it is not installed:
     > ```shell
