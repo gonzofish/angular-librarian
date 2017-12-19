@@ -1,6 +1,6 @@
 {
   "name": "angular-librarian",
-  "version": "1.0.0-beta.15",
+  "version": "1.0.0",
   "description": "A scaffolding setup for Angular 2+ libraries",
   "main": "index.js",
   "bin": {
