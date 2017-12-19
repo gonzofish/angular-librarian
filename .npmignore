@@ -1,8 +1,12 @@
 .editorconfig
+.eslintrc.json
 .gitattributes
 .github
+.gitignore
 .npmignore
 .nyc_output
+.vscode
+*.log
 *.tgz
 CODE_OF_CONDUCT.md
 coverage
