@@ -63,7 +63,7 @@ const getCommandName = (command) => {
 const askForCommand = () => {
     inquire([{
         name: 'command',
-        question: 'What would you like to generate?'
+        question: 'What would you like to do?'
     }])
     .then((answers) => main(answers[0].answer.split(/\s+/)));
 };
