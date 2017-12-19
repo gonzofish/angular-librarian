@@ -42,6 +42,8 @@ may need to take steps before running the upgrade command!**
 
 ### <a id="v1"></a>1.0.0
 
+#### Removing np
+
 Older projects that upgrade to v1.0.0 should make sure that the `np` library is
 removed from the local project and installed globally. When Angular upgraded to
 version 5, it upgraded RxJS to v5.5.x--the `np` library will break if it uses
@@ -61,6 +63,19 @@ To ensure `np` is not installed locally, after upgrading Librarian (see above):
     > ```shell
     > npm install -g np
     > ```
+
+#### Typings
+
+For a while TypeScript has been leveraging the `@types` organization to manage
+type definitions. Prior to this it used `typings`. Using `typings` now gives a
+deprecation warning, so it can be removed from your projects with:
+
+```shell
+npm rm --save-dev typings
+```
+
+While this shouldn't affect your project, it is always good to remove
+deprecated technologies.
 
 ### <a id="1beta13"></a>1.0.0-beta.13
 
