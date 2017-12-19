@@ -397,11 +397,22 @@ npm run lint
 ### <a id="publish"></a>publish (alias: pub)
 
 Create a tag and publish the library code using the
-[`np` library](https://github.com/sindresorhus/np). Optionally,
-arguments can be passed to make the build work faster.
+[`np` library](https://github.com/sindresorhus/np). Optionally, arguments can
+be passe to make the build work faster.
 
 > **Note**: only use the optional arguments if you are 100% confident
 > your code works with the current dependencies & passes all tests!
+
+> **Important!** To use Librarian's publishing capabilities, you need to have
+> `np` installed globally. This is required because Angular & `np` require
+> separate versions of [RxJS](https://github.com/ReactiveX/rxjs). Using the
+> Angular-required version of RxJS will break `np` and using `np`'s will raise
+> a `peerDependency` warning.
+>
+> You can install `np` by running the following command:
+> ```shell
+> npm install -g np
+> ```
 
 #### Call signatures
 

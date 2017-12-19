@@ -36,8 +36,28 @@ may need to take steps before running the upgrade command!**
 
 ## Migrations
 
+- [1.0.0](#v1)
 - [1.0.0-beta.13](#1beta13)
 - [< 1.0.0-beta.12 to 1.0.0-beta.12](#1beta12)
+
+### <a id="v1"></a>1.0.0
+
+Older projects that upgrade to v1.0.0 should make sure that the `np` library is
+removed from the local project and installed globally. To ensure `np` is not
+installed locally, after upgrading Librarian (see above):
+
+1. Check that it is not installed:
+    > ```shell
+    > npm ls np
+    > ```
+2. If `np` shows up in the `ls` command, remove it:
+    > ```shell
+    > npm rm --save-dev np
+    > ```
+3. Install it globally:
+    > ```shell
+    > npm install -g np
+    > ```
 
 ### <a id="1beta13"></a>1.0.0-beta.13
 
