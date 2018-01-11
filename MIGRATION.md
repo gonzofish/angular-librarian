@@ -42,6 +42,13 @@ may need to take steps before running the upgrade command!**
 
 ### <a id="v1"></a>1.0.0
 
+#### Upgrade Node Version
+
+In order to support the latest and greatest, Librarian now requires a version of
+Node >= 8.6 to support the spread operator on Objects. See 
+[this issue](https://github.com/gonzofish/angular-librarian/issues/88)
+for the discussion.
+
 #### Removing np
 
 Older projects that upgrade to v1.0.0 should make sure that the `np` library is
