@@ -18,8 +18,8 @@ const distDir = path.resolve(rootDir, 'dist');
 const libName = require(path.resolve(rootDir, 'package.json')).name;
 const srcDir = path.resolve(rootDir, 'src');
 const tscDir = path.resolve(rootDir, 'out-tsc');
-const es5Dir = path.resolve(tscDir, 'lib-es5');
-const es2015Dir = path.resolve(tscDir, 'lib-es2015');
+const es5Dir = path.resolve(tscDir, 'lib-es5/build'); 
+const es2015Dir = path.resolve(tscDir, 'lib-es2015/build'); 
 
 const runPromise = (message, fn) => {
     return function() {

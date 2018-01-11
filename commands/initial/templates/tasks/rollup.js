@@ -20,8 +20,11 @@ const doRollup = (libName, dirs) => {
     const baseConfig = generateConfig({
         input: es5Entry,
         external: Object.keys(rollupGlobals),
-        globals: rollupGlobals,
-        name: librarianUtils.caseConvert.dashToCamel(nameParts.package),
+        output: {
+            globals: rollupGlobals,
+            name: librarianUtils.caseConvert.dashToCamel(nameParts.package),
+            sourcemap: true
+        },
         onwarn: function rollupOnWarn(warning) {
             // keeps TypeScript this errors down
             if (warning.code !== 'THIS_IS_UNDEFINED') {
@@ -34,35 +37,34 @@ const doRollup = (libName, dirs) => {
                 module: true
             }),
             rollupSourcemaps()
-        ],
-        sourcemap: true
+        ]
     }, dirs.root);
-    const fesm2015Config = Object.assign({}, baseConfig, {
+    const fesm2015Config = Object.assign({}, erectorUtils.mergeDeep(baseConfig, {
         input: es2015Entry,
         output: {
             file: destinations.fesm2015,
             format: 'es'
         }
-    });
-    const fesm5Config = Object.assign({}, baseConfig, {
+    }));
+    const fesm5Config = Object.assign({}, erectorUtils.mergeDeep(baseConfig, {
         output: {
             file: destinations.fesm5,
             format: 'es'
         }
-    });
-    const minUmdConfig = Object.assign({}, baseConfig, {
+    }));
+    const minUmdConfig = Object.assign({}, erectorUtils.mergeDeep(baseConfig, {
         output: {
             file: destinations.minUmd,
             format: 'umd'
         },
         plugins: baseConfig.plugins.concat([rollupUglify({})])
-    });
-    const umdConfig = Object.assign({}, baseConfig, {
+    }));
+    const umdConfig = Object.assign({}, erectorUtils.mergeDeep(baseConfig, {
         output: {
             file: destinations.umd,
             format: 'umd'
         }
-    });
+    }));
 
     const bundles = [
         fesm2015Config,
@@ -125,7 +127,7 @@ const generateConfig = (base, rootDir) => {
         const includes = (custom.commonjs || []).filter((include) => commonjsIncludes.indexOf(include) === -1);
 
         base.external = base.external.concat(external);
-        base.globals = erectorUtils.mergeDeep(custom.globals, base.globals);
+        base.output.globals = erectorUtils.mergeDeep(custom.globals, base.output.globals);
         commonjsIncludes = commonjsIncludes.concat(includes);
     }
 
