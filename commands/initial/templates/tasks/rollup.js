@@ -69,14 +69,15 @@ const doRollup = (libName, dirs) => {
         fesm5Config,
         minUmdConfig,
         umdConfig
-    ].map(config =>
+    ].map(config => {
         rollup.rollup(config)
             .then(bundle => bundle.write({
                 file: config.output.file,
                 format: config.output.format,
                 ...config
             }))
-        );
+        }
+    );
 
     return Promise.all(bundles);
 };
