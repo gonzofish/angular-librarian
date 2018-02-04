@@ -13,45 +13,40 @@ function run(type) {
     server.start();
 }
 
-function getConfig(type) {
-    switch (type) {
-        case 'headless':
-        case 'hl':
-        case 'h':
-            return getHeadlessConfig();
-        case 'all':
-        case 'a':
-            return getAllConfig();
-        case 'watch':
-        case 'w':
-            return getWatchConfig();
-        default:
-            return getSingleConfig();
-    }
+function getConfig(options) {
+	let config = getAllConfig(options.watch);
+	config.browsers = options.browsers;
+	config.singleRun = !options.watch;
+
+	return config;
 }
 
-function getSingleConfig() {
-    let config = getHeadlessConfig();
+function parseOptions(args){
+	let options = {};
 
-    config.singleRun = true;
-
-    return config;
-}
-
-function getHeadlessConfig() {
-    let config = getAllConfig();
-
-    config.browsers = ['PhantomJS'];
-
-    return config;
-}
-
-function getWatchConfig() {
-    let config = getAllConfig(true);
-
-    config.browsers = ['Chrome'];
-
-    return config;
+	args.forEach((arg, index)=>{
+		let value = arg.match(/^(\w+)/)[1];
+		switch(value){	//there are probably libraries that parse cmd line arguments...
+			case "headless":
+			case "hl":
+			case "h":
+				options.browsers = ["PhantomJS"];
+				break;
+			case "watch":
+			case "w":
+				options.watch = true;
+				break;
+			case "browsers":
+			case "b":
+				let browsers = arg.match(/\w+=([\w,]*)/i);
+				options.browsers = (browsers && !options.browsers) ? browsers[1].split(',') : options.browsers;
+				break;
+			//the 'all' option did not modify the browser options and it did not change the watch option.
+			//therefore removing it will not break current setups. Unless the developer removed all browsers
+			//from the base karma.config.js file
+		}
+	});
+	return options;
 }
 
 const getAllConfig = (watch) => ({
@@ -62,5 +57,7 @@ const getAllConfig = (watch) => ({
 module.exports = run;
 
 if (!module.parent) {
-    run(process.argv[2]);
+	//skip the first two args (exe and script) and grab all options that start with a 'word'
+	let optionArgs = process.argv.filter((value, index) => index > 1 && value.match(/^\w+/));	
+    run(parseOptions(optionArgs));
 }
