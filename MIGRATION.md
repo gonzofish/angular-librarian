@@ -84,6 +84,15 @@ npm rm --save-dev typings
 While this shouldn't affect your project, it is always good to remove
 deprecated technologies.
 
+#### Rollup Failing
+
+If you are having issues similar to [issue #89](https://github.com/gonzofish/angular-librarian/issues/89),
+try deleting your `package-lock.json` file,
+[as suggested](https://github.com/gonzofish/angular-librarian/issues/89#issuecomment-362822908)
+by @SirDarquan. The lock file can cause old files to remain and not be overwritten (because
+its job is to create consistency), by deleting & performing `npm install` again, you may
+have success.
+
 ### <a id="1beta13"></a>1.0.0-beta.13
 
 A small bug was introduced and not accounted for with `tasks/rollup.js`. Line
