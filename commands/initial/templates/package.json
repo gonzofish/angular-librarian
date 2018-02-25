@@ -16,7 +16,7 @@
     "start": "webpack-dev-server --open --config ./webpack/webpack.dev.js",
     "tagVersion": "node ./tasks/tag-version",
     "test": "node ./tasks/test",
-    "compodoc": "./node_modules/.bin/compodoc src -p tsconfig.json --disablePrivateOrInternalSupport"
+    "compodoc": "compodoc src -p tsconfig.doc.json --disableInternal --disablePrivate"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@angular/compiler-cli": "^5.0.0",
-    "@compodoc/compodoc": "^1.0.5",
+    "@compodoc/compodoc": "^1.0.7",
     "@types/jasmine": "^2.0.0",
     "@types/node": "^8.0.0",
     "angular-librarian": "{{ librarianVersion }}",
