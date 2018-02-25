@@ -22,31 +22,30 @@ function getConfig(options) {
 }
 
 function parseOptions(args){
-	let options = {};
-
-	args.forEach((arg, index)=>{
-		let value = arg.match(/^(\w+)/)[1];
+	return args.reduce((previous, arg)=>{
+		const value = arg.match(/^(\w+)/)[1];
+		let current = Object.assign({}, previous);
 		switch(value){	//there are probably libraries that parse cmd line arguments...
-			case "headless":
-			case "hl":
-			case "h":
-				options.browsers = ["PhantomJS"];
+			case 'headless':
+			case 'hl':
+			case 'h':
+				current.browsers = ['PhantomJS'];
 				break;
-			case "watch":
-			case "w":
-				options.watch = true;
+			case 'watch':
+			case 'w':
+				current.watch = true;
 				break;
-			case "browsers":
-			case "b":
+			case 'browsers':
+			case 'b':
 				let browsers = arg.match(/\w+=([\w,]*)/i);
-				options.browsers = (browsers && !options.browsers) ? browsers[1].split(',') : options.browsers;
+				current.browsers = (browsers && !current.browsers) ? browsers[1].split(',') : current.browsers;
 				break;
 			//the 'all' option did not modify the browser options and it did not change the watch option.
 			//therefore removing it will not break current setups. Unless the developer removed all browsers
 			//from the base karma.config.js file
 		}
-	});
-	return options;
+		return current;
+	}, {});
 }
 
 const getAllConfig = (watch) => ({
