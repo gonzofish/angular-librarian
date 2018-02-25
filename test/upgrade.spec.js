@@ -259,6 +259,7 @@ tap.test('command: upgrade', (suite) => {
                     { name: 'tsconfig.es5.json', overwrite: true },
                     { name: 'tsconfig.es2015.json', overwrite: true },
                     { name: 'tsconfig.json', overwrite: true },
+                    { name: 'tsconfig.doc.json', overwrite: true },
                     { name: 'tsconfig.test.json', overwrite: true },
                     { name: 'tslint.json', overwrite: true },
                     {

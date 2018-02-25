@@ -42,6 +42,7 @@ module.exports = (rootDir, ...args) => {
             { destination: srcDir('index.ts'), name: 'src/index.ts' },
             { destination: srcDir('test.js'), name: 'src/test.js', overwrite: true },
             { name: 'tsconfig.json', overwrite: true },
+            { name: 'tsconfig.doc.json', overwrite: true },
             { name: 'tsconfig.es2015.json', overwrite: true },
             { name: 'tsconfig.es5.json', overwrite: true },
             { name: 'tsconfig.test.json', overwrite: true },

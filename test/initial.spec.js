@@ -249,6 +249,7 @@ tap.test('command: initial', (suite) => {
                 { destination: '/created/src/index.ts', name: 'src/index.ts' },
                 { destination: '/created/src/test.js', name: 'src/test.js', overwrite: true },
                 { name: 'tsconfig.json', overwrite: true },
+                { name: 'tsconfig.doc.json', overwrite: true },
                 { name: 'tsconfig.es2015.json', overwrite: true },
                 { name: 'tsconfig.es5.json', overwrite: true },
                 { name: 'tsconfig.test.json', overwrite: true },

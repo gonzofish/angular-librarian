@@ -7,7 +7,7 @@
   "es2015": "./{{ name }}.js",
   "typings": "./{{ packageName }}.d.ts",
   "scripts": {
-    "build": "node ./tasks/build",
+    "build": "node ./tasks/build && npm run compodoc",
     "g": "node ./node_modules/angular-librarian",
     "lint": "tslint ./src/**/*.ts",
     "postbuild": "rimraf build",
@@ -15,7 +15,8 @@
     "prebuild": "rimraf dist out-tsc",
     "start": "webpack-dev-server --open --config ./webpack/webpack.dev.js",
     "tagVersion": "node ./tasks/tag-version",
-    "test": "node ./tasks/test"
+    "test": "node ./tasks/test",
+    "compodoc": "compodoc src -p tsconfig.doc.json --disableInternal --disablePrivate"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@angular/compiler-cli": "^5.0.0",
+    "@compodoc/compodoc": "^1.0.7",
     "@types/jasmine": "^2.0.0",
     "@types/node": "^8.0.0",
     "angular-librarian": "{{ librarianVersion }}",

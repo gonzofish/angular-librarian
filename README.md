@@ -165,6 +165,10 @@ Creates the project structure and a slew of files:
 |__package.json
 |__README.md
 |__tsconfig.json
+|__tsconfig.doc.json
+|__tsconfig.es5.json
+|__tsconfig.es2015.json
+|__tsconfig.test.json
 |__tslint.json
 ```
 
@@ -192,6 +196,9 @@ Creates the project structure and a slew of files:
     the library
 - `test.ts`: contains code needed to get the Angular test environment bootstrapped
 - `tsconfig.json`: the TypeScript configuration for the project
+- `tsconfig.*.json`: the TypeScript configuration for specific tasks (`doc` is for
+    documentation generationg, `es5` & `es2015` are for builds, and `test` is for
+    testing)
 - `tslint.json`: the linting rules for the project
 - `vendor.ts`: contains a list of dependencies that Angular needs loaded before the
     application is loaded
