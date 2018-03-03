@@ -15,7 +15,8 @@ function run(type) {
 
 function getConfig(options) {
 	let config = getAllConfig(options.watch);
-	config.browsers = options.browsers;
+	const fallbackBrowsers = config.browsers && !config.browsers.length ? config.browsers : ['PhantomJS'];
+	config.browsers = options.browsers || fallbackBrowsers;
 	config.singleRun = !options.watch;
 
 	return config;
