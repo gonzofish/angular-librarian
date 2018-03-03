@@ -514,11 +514,19 @@ Configurations:
 
 Command | Testing TypeScript
 ---     | ---
-default | Run through PhantomJS one time with no file watching
-headless (aliases: hl, h)| Run through PhantomJS with files being watched & tests automatically re-run
-watch (alias: w)| Run through Chrome with files being watched & tests automatically re-run
+default | Run through defined browsers one time with no file watching
+headless (aliases: hl, h)| Run through PhantomJS
+watch (alias: w)| Run through defined browsers with files being watched & tests automatically re-run
+browsers (alias: b)| Overrides the browsers to use for testing. Note: These are applied last and merges 
+will be lost
 
-Note that Chrome still requires a manual refresh on the Debug tab to see updated test results.
+These commands can be combined allowing you to work the way you need to for a variety of situations. For
+instance using `ngl test watch headless` will run though PhantomJS with files being watched & tests
+automatically re-run. Or if you have defined in your karma config file to run against Chrome, Firefox, IE
+and Edge but there is only an issue with IE you want to work on, then you can simply run 
+`ngl test watch browsers=IE` and only IE will run with files being watched and tests automatically re-run.
+
+Note that browsers still requires a manual refresh on the Debug tab to see updated test results.
 
 ## <a id="custom-config"></a>Custom Configurations
 

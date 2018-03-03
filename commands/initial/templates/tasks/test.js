@@ -13,45 +13,40 @@ function run(type) {
     server.start();
 }
 
-function getConfig(type) {
-    switch (type) {
-        case 'headless':
-        case 'hl':
-        case 'h':
-            return getHeadlessConfig();
-        case 'all':
-        case 'a':
-            return getAllConfig();
-        case 'watch':
-        case 'w':
-            return getWatchConfig();
-        default:
-            return getSingleConfig();
-    }
+function getConfig(options) {
+	let config = getAllConfig(options.watch);
+	const fallbackBrowsers = config.browsers && !config.browsers.length ? config.browsers : ['PhantomJS'];
+	config.browsers = options.browsers || fallbackBrowsers;
+	config.singleRun = !options.watch;
+
+	return config;
 }
 
-function getSingleConfig() {
-    let config = getHeadlessConfig();
-
-    config.singleRun = true;
-
-    return config;
-}
-
-function getHeadlessConfig() {
-    let config = getAllConfig();
-
-    config.browsers = ['PhantomJS'];
-
-    return config;
-}
-
-function getWatchConfig() {
-    let config = getAllConfig(true);
-
-    config.browsers = ['Chrome'];
-
-    return config;
+function parseOptions(args){
+	return args.reduce((previous, arg)=>{
+		const value = arg.match(/^(\w+)/)[1];
+		let current = Object.assign({}, previous);
+		switch(value){	//there are probably libraries that parse cmd line arguments...
+			case 'headless':
+			case 'hl':
+			case 'h':
+				current.browsers = ['PhantomJS'];
+				break;
+			case 'watch':
+			case 'w':
+				current.watch = true;
+				break;
+			case 'browsers':
+			case 'b':
+				let browsers = arg.match(/\w+=([\w,]*)/i);
+				current.browsers = (browsers && !current.browsers) ? browsers[1].split(',') : current.browsers;
+				break;
+			//the 'all' option did not modify the browser options and it did not change the watch option.
+			//therefore removing it will not break current setups. Unless the developer removed all browsers
+			//from the base karma.config.js file
+		}
+		return current;
+	}, {});
 }
 
 const getAllConfig = (watch) => ({
@@ -62,5 +57,7 @@ const getAllConfig = (watch) => ({
 module.exports = run;
 
 if (!module.parent) {
-    run(process.argv[2]);
+	//skip the first two args (exe and script) and grab all options that start with a 'word'
+	let optionArgs = process.argv.filter((value, index) => index > 1 && value.match(/^\w+/));	
+    run(parseOptions(optionArgs));
 }
