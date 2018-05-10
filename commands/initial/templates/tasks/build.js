@@ -43,7 +43,7 @@ const getAngularCompilerVersion = () => {
 
     if (compilerLine) {
         version = compilerLine.match(/\bangular\/compiler@[^\s]+\s?/) || [''];
-        version = version[0].trim().replace('angular/compiler@', '');
+        version = version[0].trim().replace('angular/compiler@', '').replace('^', '');
     }
 
     if (!version || version === '(empty)') {
