@@ -1,3 +1,8 @@
+# With the addition of `ng generate library` to the Angular CLI, you should be using the CLI, as it will be the most up-to-date and consistent method of creating your library. [Docs on `generate library`](https://github.com/angular/angular-cli/wiki/generate-library).
+
+Feel free to keep using Angular Librarian, though, but it will receive few, if any, more updates. Thanks to everyone who helped in its development and utilized it!
+
+
 # Angular Librarian
 
 [![Build Status](https://semaphoreci.com/api/v1/gonzofish/angular-librarian/branches/master/badge.svg)](https://semaphoreci.com/gonzofish/angular-librarian)
